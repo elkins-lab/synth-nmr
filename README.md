@@ -2,7 +2,7 @@
 
 **NMR spectroscopy calculations for protein structures**
 
-A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/gelkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
+A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
 
 ## Features
 
@@ -127,7 +127,7 @@ If you use synth-nmr in your research, please cite:
   author = {Elkins, George},
   title = {synth-nmr: NMR spectroscopy calculations for protein structures},
   year = {2026},
-  url = {https://github.com/gelkins/synth-nmr}
+  url = {https://github.com/elkins/synth-nmr}
 }
 ```
 
@@ -137,7 +137,7 @@ MIT License - see LICENSE file for details
 
 ## Related Projects
 
-- [synth-pdb](https://github.com/gelkins/synth-pdb) - Synthetic protein structure generation
+- [synth-pdb](https://github.com/elkins/synth-pdb) - Synthetic protein structure generation
 - [Biotite](https://www.biotite-python.org/) - Computational biology toolkit
 
 ## Contributing
@@ -146,4 +146,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Support
 
-For issues and questions, please use the [GitHub issue tracker](https://github.com/gelkins/synth-nmr/issues).
+For issues and questions, please use the [GitHub issue tracker](https://github.com/elkins/synth-nmr/issues).
