@@ -1,5 +1,5 @@
 """
-NEF (NMR Exchange Format) I/O module for synth-pdb.
+NEF (NMR Exchange Format) I/O module for synth-nmr.
 Handles writing synthetic NMR data to valid NEF files.
 """
 
@@ -13,7 +13,7 @@ def write_nef_file(
     filename: str,
     sequence: str,
     restraints: List[Dict],
-    system_name: str = "synth-pdb-project"
+    system_name: str = "synth-nmr-project"
 ) -> None:
     """
     Write a minimal valid NEF file containing sequence and distance restraints.
@@ -34,7 +34,7 @@ def write_nef_file(
     nc += "\n"
     nc += "_nef_nmr_meta_data.nef_format_version 1.1\n"
     nc += f"_nef_nmr_meta_data.creation_date {datetime.datetime.now().isoformat()}\n"
-    nc += "_nef_nmr_meta_data.program_name synth-pdb\n"
+    nc += "_nef_nmr_meta_data.program_name synth-nmr\n"
     nc += "\n"
     
     # 2. Sequence (nef_sequence)
@@ -114,7 +114,7 @@ def write_nef_relaxation(
     sequence: str,
     relaxation_data: Dict[int, Dict[str, float]],
     field_freq_mhz: float = 600.0,
-    system_name: str = "synth-pdb-project"
+    system_name: str = "synth-nmr-project"
 ) -> None:
     """
     Append Relaxation Data (R1, R2, NOE) to a NEF file.
@@ -139,7 +139,7 @@ def write_nef_relaxation(
     nc = "data_" + system_name + "\n\n"
     nc += "_nef_nmr_meta_data.nef_format_version 1.1\n"
     nc += f"_nef_nmr_meta_data.creation_date {datetime.datetime.now().isoformat()}\n"
-    nc += "_nef_nmr_meta_data.program_name synth-pdb\n\n"
+    nc += "_nef_nmr_meta_data.program_name synth-nmr\n\n"
     
     # Write Sequence (Required)
     nc += "save_nef_sequence\n"
@@ -226,7 +226,7 @@ def write_nef_chemical_shifts(
     filename: str,
     sequence: str,
     shift_data: Dict[str, Dict[int, Dict[str, float]]],
-    system_name: str = "synth-pdb-project"
+    system_name: str = "synth-nmr-project"
 ) -> None:
     """
     write a NEF file with Chemical Shift List.
@@ -258,7 +258,7 @@ def write_nef_chemical_shifts(
     # Metadata
     nc += "_nef_nmr_meta_data.nef_format_version 1.1\n"
     nc += f"_nef_nmr_meta_data.creation_date {datetime.datetime.now().isoformat()}\n"
-    nc += "_nef_nmr_meta_data.program_name synth-pdb\n\n"
+    nc += "_nef_nmr_meta_data.program_name synth-nmr\n\n"
     
     # Write Sequence (Required)
     nc += "save_nef_sequence\n"
