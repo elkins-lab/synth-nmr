@@ -1,5 +1,7 @@
 # synth-nmr
 
+<img src="images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
+
 **NMR spectroscopy calculations for protein structures**
 
 A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
