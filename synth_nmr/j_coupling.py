@@ -85,7 +85,18 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
             
         # Glycine has HA2/HA3, usually averaged or specific.
         # This equation assumes standard H-N-Ca-Ha geometry.
-        # Standard Karplus: theta = phi - 60 deg (- pi/3)
+        # For Glycine, which has two alpha protons (HA2/HA3), this calculation provides
+        # a single value based on the averaged phi angle. It does not explicitly
+        # distinguish between the potentially different couplings for HA2 and HA3.
+
+        # EDUCATIONAL NOTE: The relationship theta = phi - 60 is a geometric consequence
+        # of how the phi angle and the Karplus angle are defined.
+        # - Phi (C'-N-Ca-C') measures the rotation around the N-Ca bond.
+        # - Theta for 3J(HN-HA) is the dihedral H-N-Ca-HA.
+        # In an ideal trans peptide plane, the HN and C' atoms are roughly 180 degrees
+        # apart relative to the N-Ca bond. The HA proton is at a stereochemically
+        # fixed position relative to the Ca-C' bond. This results in an approximate
+        # 60-degree phase offset between the two dihedral angles.
         theta = phi_rad - (np.deg2rad(60.0))
         
         # Calculate J
@@ -95,9 +106,6 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
                 (KARPLUS_PARAMS['B'] * cos_theta) + \
                 KARPLUS_PARAMS['C']
                 
-        # Add noise? Optional. Real measurements have error ~0.5 Hz.
-        # For pure education, clean curves are better.
-        
         results[chain_id][res_id] = round(j_val, 2)
         
     return results

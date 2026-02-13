@@ -11,7 +11,7 @@ def test_write_nef_file_basic(tmp_path):
         {
             'chain_1': 'A', 'residue_index_1': 1, 'res_name_1': 'GLY', 'atom_name_1': 'HA2',
             'chain_2': 'A', 'residue_index_2': 2, 'res_name_2': 'ALA', 'atom_name_2': 'HN',
-            'actual_distance': 3.5, 'upper_limit': 4.0, 'lower_limit': 1.8
+            'distance': 3.5, 'upper_limit': 4.0, 'lower_limit': 1.8
         }
     ]
     

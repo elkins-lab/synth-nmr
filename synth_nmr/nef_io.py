@@ -98,7 +98,7 @@ def write_nef_file(
         row = f"      {idx} {idx} "
         row += f"{r['chain_1']} {r['residue_index_1']} {r['res_name_1']} {r['atom_name_1']} "
         row += f"{r['chain_2']} {r['residue_index_2']} {r['res_name_2']} {r['atom_name_2']} "
-        row += f"{r['actual_distance']:.3f} {r['upper_limit']:.3f} {r['lower_limit']:.3f} 1.0\n"
+        row += f"{r['distance']:.3f} {r['upper_limit']:.3f} {r['lower_limit']:.3f} 1.0\n"
         nc += row
 
     nc += "   stop_\n"

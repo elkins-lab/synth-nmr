@@ -256,7 +256,6 @@ def calculate_csi(shifts: Dict[str, Dict[int, Dict[str, float]]], structure: str
                 csi_data[chain_id][res_id] = delta
                 
     return csi_data
-    return csi_data
 
 def _get_aromatic_rings(structure):
     """
@@ -326,6 +325,10 @@ def _calculate_ring_current_shift(proton_coord, rings):
     Formula: delta = Intensity * B_factor * (1 - 3*cos^2(theta)) / r^3
     """
     total_shift = 0.0
+    # B_FACTOR is an empirical scaling constant, typically derived from fitting
+    # experimental data or theoretical calculations for a reference aromatic system.
+    # It converts the dimensionless geometric factor and intensity into ppm.
+    # Typical values range from 8 to 15 ppm*A^3.
     B_FACTOR = 11.0 # Empirical scaling factor (ppm * A^3)
     
     for j in range(rings.shape[0]):

@@ -22,7 +22,7 @@ def test_calculate_noes_simple_dimer():
     restraints = calculate_synthetic_noes(atoms, cutoff=5.0)
     assert len(restraints) == 1
     r = restraints[0]
-    assert r['actual_distance'] == 3.0
+    assert r['distance'] == 3.0
     assert r['upper_limit'] == 3.5 # buffer 0.5
     assert r['residue_index_1'] == 1
     assert r['residue_index_2'] == 2
@@ -47,7 +47,7 @@ def test_write_nef_structure(tmp_path):
     restraints = [{
         'residue_index_1': 1, 'res_name_1': 'ALA', 'atom_name_1': 'H', 'chain_1': 'A',
         'residue_index_2': 2, 'res_name_2': 'GLY', 'atom_name_2': 'H', 'chain_2': 'A',
-        'actual_distance': 3.0, 'upper_limit': 3.5, 'lower_limit': 1.8
+        'distance': 3.0, 'upper_limit': 3.5, 'lower_limit': 1.8
     }]
     
     write_nef_file(str(output_file), sequence, restraints)

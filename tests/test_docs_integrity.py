@@ -293,8 +293,8 @@ class TestDocumentationIntegrity(unittest.TestCase):
     #        "Alpha-Helix Trap",
     #        "Halls of Mirrors",
     #        "Data Factory Overview:",
-    #    ]
-    #    self._check_file_contains(self.dataset_path, required_notes)
+    #]
+    #self._check_file_contains(self.dataset_path, required_notes)
 
     #def test_orientogram_educational_notes(self):
     #    """Ensure orientogram.py retains orientations note."""

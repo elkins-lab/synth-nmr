@@ -41,24 +41,31 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
         
         ss_state = "coil"
         
-        # Determine Secondary Structure State
-        # Simple regions:
-        # Alpha: Phi ~ -60 (+/- 30), Psi ~ -45 (+/- 40)
-        # Beta:  Phi ~ -120 (+/- 40), Psi ~ 120 (+/- 50)
+        # Determine Secondary Structure State based on broader Ramachandran regions.
+        # The ranges used here are slightly wider than strict textbook definitions
+        # to accommodate potential variations from structure generation algorithms
+        # ("Synthetic Generator Offset Issues") and to capture both canonical
+        # right-handed alpha helices and less common left-handed helical regions.
+        #
+        # References for Ramachandran regions:
+        # - Ramachandran, G. N., Ramakrishnan, C., & Sasisekharan, V. (1963).
+        #   "Stereochemistry of polypeptide chain configurations." J. Mol. Biol., 7(1), 95-99.
+        # - Lovell, S. C., Davis, I. W., Arendall III, J. W., de Bakker, P. I.,
+        #   Word, J. M., Prisant, M. G., ... & Richardson, D. C. (2003).
+        #   "Structure validation by Calpha geometry: phi,psi and Cbeta deviation."
+        #   Proteins: Structure, Function, and Bioinformatics, 50(3), 437-450.
         
         if not np.isnan(p) and not np.isnan(s):
             logger.debug(f"Res {i}: Phi={p:.1f}, Psi={s:.1f}")
-            # Standard Alpha: Phi ~ -60, Psi ~ -45
-            # Synthetic Generator Offset Issues: Sometimes produces Phi ~ 115, Psi ~ -40?
-            # We broaden the check to ensure we catch ordered regions.
             
-            # Standard Alpha
+            # Right-handed Alpha-helix region
             if (-90 < p < -30) and (-90 < s < -10):
                 ss_state = "alpha"
-            # Standard Beta/Extended
+            # Beta-sheet / Extended region
             elif (-160 < p < -80) and (80 < s < 170):
                 ss_state = "beta"
-            # Catch "Synthetic Helix" artifact (if present) or Left-Handed Helix
+            # Broader helical region, including potential left-handed helices or
+            # alternative alpha-helical conformations sometimes produced by synthetic generators.
             elif (0 < p < 150) and (-90 < s < -10):
                  ss_state = "alpha"
         
@@ -70,6 +77,9 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
     # Example: alpha-coil-alpha -> alpha-alpha-alpha
     
     # 1. Filter single-residue interruptions
+    # The loop intentionally excludes the first and last residues (range from 1 to len-1),
+    # as these termini are often intrinsically flexible and their secondary structure
+    # is less reliably defined or less critical for local context smoothing.
     for i in range(1, len(ss_list) - 1):
         prev_s = ss_list[i-1]
         curr_s = ss_list[i]

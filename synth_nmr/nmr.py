@@ -56,8 +56,7 @@ def calculate_synthetic_noes(
             'index_1': int, 'res_name_1': str, 'atom_name_1': str, 'chain_1': str,
             'index_2': int, 'res_name_2': str, 'atom_name_2': str, 'chain_2': str,
             'distance': float,
-            'upper_limit': float,
-            'weight': float (1.0)
+            'upper_limit': float
         }
     """
     logger.info(f"Calculating synthetic NOEs (cutoff={cutoff}A)...")
@@ -80,29 +79,14 @@ def calculate_synthetic_noes(
     cell_list = struc.CellList(protons, cell_size=cutoff)
     
     # 3. Find neighbors
-    # This returns an adjacency matrix (or list of pairs)
-    # create_adjacency_matrix returns indices relative to the 'protons' array
-    adjacency = cell_list.create_adjacency_matrix(cutoff)
-    
+    # EDUCATIONAL NOTE: Neighbor Search Strategy
+    # A naive search for all pairs of protons would be O(N^2), which is too slow for large proteins.
+    # We use a CellList (also known as a grid search) to accelerate this to O(N).
+    # 1. The space is divided into a grid of cells (size = cutoff).
+    # 2. For each proton, we only search for neighbors in its own cell and adjacent cells.
+    # This loop iterates through each proton, finds its neighbors using the efficient
+    # `cell_list.get_atoms`, and then filters for unique pairs (j > i) to avoid duplicates.
     restraints = []
-    
-    # Get indices of pairs (protons_i, protons_j)
-    # We only want i < j to avoid duplicates and self-interactions
-    # The adjacency matrix is symmetric.
-    
-    # Iterate through the non-zero elements of the adjacency matrix
-    # Note: create_adjacency_matrix returns a boolean matrix in older biotite, 
-    # or sparse matrix? In recent biotite, checking docs/logic: usually returns adjacency list or matrix.
-    # Actually, for CellList, usually we query. Let's use get_atoms approach which is clearer for pairwise.
-    # However, adjacency matrix is fastest for all-vs-all.
-    
-    # Let's use a simpler double loop logic optimized by CellList if possible,
-    # or just brute force for small peptides? No, CellList is better.
-    # Using `get_atoms` radius search is good.
-    
-    # Better approach with Biotite:
-    # Get all indices where distance < cutoff.
-    # Since we have the cell list, we can just ask for all pairs.
     
     # Let's iterate over all protons and find neighbors for each
     for i in range(n_protons):
@@ -162,9 +146,8 @@ def calculate_synthetic_noes(
                 'atom_name_2': atom2,
                 'chain_2': chain2,
                 
-                'actual_distance': float(dist),
-                'upper_limit': float(dist + buffer),
-                'lower_limit': 1.8, # Standard lower bound VdW
+                'distance': float(dist),
+                'upper_limit': float(dist + buffer)
             }
             restraints.append(restraint)
             

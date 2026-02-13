@@ -82,6 +82,11 @@ MODIFIED_AMINO_ACIDS: List[str] = [
 ]
 
 ALL_VALID_AMINO_ACIDS: List[str] = STANDARD_AMINO_ACIDS + MODIFIED_AMINO_ACIDS + D_AMINO_ACIDS
+# Note on usage:
+# - `STANDARD_AMINO_ACIDS` should be used when specifically expecting canonical L-amino acids.
+# - `ALL_VALID_AMINO_ACIDS` should be used when checking against any recognized amino acid type,
+#   including D-amino acids and post-translationally modified residues.
+#   Be mindful of this distinction when validating or processing residue names.
 
 # --- Amino Acid Frequencies (Approximate percentages in proteins) ---
 # Source: Based on general protein composition data (e.g., from D. M. Smith, The Encyclopedia of Life Sciences, 2001)

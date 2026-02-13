@@ -59,7 +59,7 @@ def spectral_density(omega: float, tau_m: float, s2: float, tau_f: float = 0.0) 
         omega: Frequency (rad/s)
         tau_m: Global rotational correlation time (seconds)
         s2: Generalized order parameter (0.0 to 1.0)
-        tau_f: Fast internal correlation time (seconds). Default 0 (assumed very fast).
+        tau_f: Fast internal correlation time (seconds). If 0 (default), internal motion is considered infinitely fast/negligible, and the function simplifies to a one-time scale model-free.
     """
     # Simple Model Free (assuming tf is very small/negligible or incorporated)
     # If tau_f is provided, calculate effective time tau_e
@@ -171,8 +171,7 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
              sasa_per_residue[curr_res_id] = current_sum
             
     except Exception as e:
-        logger.warning(f"SASA calculation failed ({e}). Defaulting to Exposed (1.0).")
-        # sasa_per_residue will be empty, loop below handles this via .get() default
+        logger.warning(f"SASA calculation failed ({e}). All residues will be treated as fully exposed (rel_sasa=1.0), which typically leads to lower S2 values.")
         
     s2_map = {}
     
@@ -326,44 +325,20 @@ def calculate_relaxation_rates(
         j_sum = spectral_density(omega_h + omega_n, tau_m, s2)
         
         # Calculate Rates
-        # R1 = (d^2/4) * [J(wH-wN) + 3J(wN) + 6J(wH+wN)] + c^2 * J(wN)
-        # Note the factor 1/4 or similar for d^2 depending on definition of d.
-        # My d defined above: (mu0/4pi) * hbar * gammaH * gammaN * r^-3
-        # Standard Abragam eq:
-        # R1 = (d^2) * ... if d includes the factor. 
-        # Let's use the explicit pre-factor term P = (d^2)
+        # References for relaxation rate equations:
+        # 1. Palmer, A. G. (2001). "NMR relaxation in biology: experimental aspects and model-free analysis."
+        #    Encyclopedia of Nuclear Magnetic Resonance, Vol. 9, pp. 277-293. (Often cited as standard for Model-Free)
+        # 2. Cavanagh, J., Fairbrother, W. J., Palmer, A. G., & Skelton, N. J. (1996).
+        #    "Protein NMR Spectroscopy: Principles and Practice." Academic Press. (Chapter 6 for relaxation)
         
-        # P = d_sq
-        # R1 = P * (1*j_diff + 3*j_wn + 6*j_sum) + c_sq * j_wn
-        # WAIT. Factor checks.
-        
-        # Reference: protein-nmr.org.uk or Cavanagh et al.
-        # Dipolar term coeff: d_sq = (mu0/4pi)^2 * hbar^2 * gH^2 * gN^2 * r^-6
-        # Eq: R1 = (d_sq / 4) ... ? No.
-        # Let's assume standard form:
-        # R1 = (d^2) * ( ... ) + CSA term
-        
-        # Re-verify d definition in Cavanagh:
-        # d = (mu0 hbar gH gN) / (4 pi r^3)
-        # R1 = (d^2) [ J(wH-wN) + 3J(wN) + 6J(wH+wN) ] + c^2 J(wN)
-        # This assumes J(w) definition has the 2/5 or similar. 
-        # My J(w) has 2/5.
-        
-        # Corrections:
-        # The equation often is R1 = (d^2) * (1/4)? NO, Dipolar relaxation usually defined directly.
-        # Let's stick to the form that works with J=2/5...
-        #
-        # d_sq calculated above is the full constant squared.
+        # R1 (Longitudinal Relaxation Rate)
         r1_val = d_sq * (j_diff + 3*j_wn + 6*j_sum) + c_sq * j_wn
         
-        # R2
-        # R2 = 0.5 * d_sq * [4*J(0) + J(diff) + 3*J(wn) + 6*J(wh) + 6*J(sum)] + (1/6)*c_sq * [4*J(0) + 3*J(wn)]
+        # R2 (Transverse Relaxation Rate)
         r2_val = 0.5 * d_sq * (4*j_0 + j_diff + 3*j_wn + 6*j_wh + 6*j_sum) + \
                  (1.0/6.0) * c_sq * (4*j_0 + 3*j_wn)
                  
-        # NOE
-        # NOE = 1 + (gamma_H / gamma_N) * d_sq * [6*J(sum) - J(diff)] / R1
-        # Note: gamma quotient is negative (-10)
+        # NOE (Heteronuclear Steady-State NOE)
         noe_val = 1.0 + (GAMMA_H / GAMMA_N) * d_sq * (6*j_sum - j_diff) * (1.0 / r1_val)
         
         results[rid] = {
