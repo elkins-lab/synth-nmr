@@ -2,7 +2,7 @@
 import pytest
 import os
 import tempfile
-from synth_pdb.nef_io import read_nef_restraints, write_nef_file
+from synth_nmr.nef_io import read_nef_restraints, write_nef_file
 
 def test_read_nef_restraints_valid():
     """Test reading restraints from a valid NEF file."""

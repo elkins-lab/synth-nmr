@@ -1,13 +1,13 @@
 import pytest
 import numpy as np
 import biotite.structure as struc
-from synth_pdb.chemical_shifts import (
+from synth_nmr.chemical_shifts import (
     predict_chemical_shifts,
     calculate_csi,
     _get_aromatic_rings,
     _calculate_ring_current_shift
 )
-import synth_pdb.chemical_shifts as cs_mod
+import synth_nmr.chemical_shifts as cs_mod
 
 def test_ring_current_trp_coverage():
     """Test TRP ring identification and its effect on shifts."""

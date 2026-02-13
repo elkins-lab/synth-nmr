@@ -1,7 +1,7 @@
 from typing import List, Dict, Set, Any, Tuple
 
 """
-This module contains data definitions for the synth_pdb package, starting
+This module contains data definitions for the synth_nmr package, starting
 with the 20 standard amino acids and their atomic configurations.
 """
 

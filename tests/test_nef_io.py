@@ -1,7 +1,7 @@
 
 import os
 import pytest
-from synth_pdb.nef_io import write_nef_file, write_nef_relaxation, write_nef_chemical_shifts
+from synth_nmr.nef_io import write_nef_file, write_nef_relaxation, write_nef_chemical_shifts
 
 def test_write_nef_file_basic(tmp_path):
     """Test writing a basic NEF file with restraints."""

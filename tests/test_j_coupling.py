@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 import biotite.structure as struc
-from synth_pdb.j_coupling import calculate_hn_ha_coupling
+from synth_nmr.j_coupling import calculate_hn_ha_coupling
 
 @pytest.fixture
 def mock_structure(mocker):

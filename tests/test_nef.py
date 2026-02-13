@@ -4,8 +4,8 @@ import numpy as np
 import biotite.structure as struc
 from io import StringIO
 import os
-from synth_pdb.nmr import calculate_synthetic_noes
-from synth_pdb.nef_io import write_nef_file
+from synth_nmr.nmr import calculate_synthetic_noes
+from synth_nmr.nef_io import write_nef_file
 
 def test_calculate_noes_simple_dimer():
     """Test NOE calculation on a simple 2-atom system."""

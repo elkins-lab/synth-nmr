@@ -1,7 +1,7 @@
 
 import pytest
 import numpy as np
-from synth_pdb.coupling import calculate_hn_ha_coupling, predict_couplings_from_structure
+from synth_nmr.coupling import calculate_hn_ha_coupling, predict_couplings_from_structure
 
 class TestJCoupling:
     """
