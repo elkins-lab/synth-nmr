@@ -383,3 +383,64 @@ def test_aromatic_ring_identification_tyr():
     assert len(rings) == 1
     assert rings[0, 6] == 1.2 # TYR intensity
 
+def test_numba_fallback(mocker):
+    """Test that the njit decorator falls back to a regular function when numba is not installed."""
+    mocker.patch.dict('sys.modules', {'numba': None})
+    import importlib
+    import synth_nmr.chemical_shifts
+    importlib.reload(synth_nmr.chemical_shifts)
+    from synth_nmr.chemical_shifts import _calculate_ring_current_shift
+    
+    ring = np.array([[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0]])
+    proton_coord = np.array([0.0, 0.0, 2.0])
+    shift = _calculate_ring_current_shift(proton_coord, ring)
+    assert shift < 0
+    importlib.reload(synth_nmr.chemical_shifts)
+
+def test_get_aromatic_rings_no_rings():
+    """Test _get_aromatic_rings with a structure that has no aromatic residues."""
+    from synth_nmr.chemical_shifts import _get_aromatic_rings
+    structure = struc.AtomArray(5)
+    structure.res_name = np.array(["ALA"] * 5)
+    rings = _get_aromatic_rings(structure)
+    assert rings.shape == (0, 7)
+
+def test_numba_fallback_with_args(mocker):
+    """Test the njit decorator fallback when called with arguments."""
+    mocker.patch.dict('sys.modules', {'numba': None})
+    import importlib
+    import synth_nmr.chemical_shifts
+    importlib.reload(synth_nmr.chemical_shifts)
+    from synth_nmr.chemical_shifts import njit
+
+    @njit(fastmath=True)
+    def my_func(x):
+        return x + 1
+    
+    assert my_func(1) == 2
+    importlib.reload(synth_nmr.chemical_shifts)
+
+def test_predict_chemical_shifts_index_error():
+    """Test predict_chemical_shifts with a missing atom to trigger IndexError."""
+    from synth_nmr.chemical_shifts import predict_chemical_shifts
+    # Structure with a PHE ring but no HA on the first residue
+    structure = struc.AtomArray(7)
+    structure.res_name = np.array(["ALA"] + ["PHE"] * 6)
+    structure.res_id = np.array([1] + [2] * 6)
+    structure.chain_id = np.array(["A"] * 7)
+    structure.atom_name = np.array(["CA", "CG", "CD1", "CD2", "CE1", "CE2", "CZ"])
+    shifts = predict_chemical_shifts(structure)
+    
+    # The 'HA' key will be present, but its value should be close to the random coil value
+    # because the ring current shift was not applied.
+    assert "HA" in shifts["A"][1]
+    rc_ha = RANDOM_COIL_SHIFTS["ALA"]["HA"]
+    assert pytest.approx(shifts["A"][1]["HA"], 0.3) == rc_ha
+
+def test_get_aromatic_rings_else_continue():
+    """Test _get_aromatic_rings with a non-aromatic residue to cover else: continue."""
+    from synth_nmr.chemical_shifts import _get_aromatic_rings
+    structure = struc.AtomArray(5)
+    structure.res_name = np.array(["GLY"] * 5)
+    rings = _get_aromatic_rings(structure)
+    assert rings.shape == (0, 7)

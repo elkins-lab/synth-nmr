@@ -76,3 +76,6 @@ dmypy.json
 
 # Ruff
 .ruff_cache/
+
+# PyPi publish script
+publish.sh
