@@ -12,6 +12,7 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 - **Relaxation Rates**: R1, R2, and heteronuclear NOE predictions
 - **Chemical Shifts**: SPARTA+ based predictions with ring current corrections
 - **J-Couplings**: Karplus equation for scalar couplings
+- **RDC Calculations**: Prediction of residual dipolar couplings
 - **NEF I/O**: Read and write NMR Exchange Format files
 - **Secondary Structure**: Automatic classification for enhanced predictions
 
@@ -34,7 +35,8 @@ from synth_nmr import (
     calculate_synthetic_noes,
     calculate_relaxation_rates,
     predict_chemical_shifts,
-    calculate_hn_ha_coupling
+    calculate_hn_ha_coupling,
+    calculate_rdcs
 )
 
 # Load a protein structure
@@ -56,6 +58,13 @@ shifts = predict_chemical_shifts(structure)
 
 # Calculate J-couplings
 j_couplings = calculate_hn_ha_coupling(structure)
+
+# Predict RDCs
+rdcs = calculate_rdcs(
+    structure,
+    Da=10.0, # Axial component of alignment tensor (Hz)
+    R=0.5    # Rhombic component of alignment tensor
+)
 ```
 
 ## Requirements
@@ -104,6 +113,16 @@ Calculate ³J(HN-Hα) couplings using the Karplus equation.
 - `structure`: biotite AtomArray
 
 **Returns:** Dictionary of J-coupling values per residue
+
+#### `calculate_rdcs(structure, Da, R)`
+Predict residual dipolar couplings (RDCs) for backbone N-H vectors.
+
+**Parameters:**
+- `structure`: biotite AtomArray
+- `Da`: Axial component of the alignment tensor in Hz
+- `R`: Rhombicity of the alignment tensor (dimensionless)
+
+**Returns:** Dictionary of RDC values per residue
 
 ## Use Cases
 
@@ -154,6 +173,9 @@ This package relies on the following peer-reviewed research:
 
 - **NMR Relaxation**: The underlying theory for relaxation rate predictions.
   > Lipari, G., & Szabo, A. (1982). *Journal of the American Chemical Society*, 104(17), 4546–4559.
+
+- **Residual Dipolar Couplings**: Seminal work on applying RDCs to proteins.
+  > Bax, A., & Tjandra, N. (1997). *Journal of the American Chemical Society*, 119(49), 12041-12042.
 
 ## Contributing
 
