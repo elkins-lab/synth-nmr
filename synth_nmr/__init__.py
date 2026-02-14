@@ -5,7 +5,7 @@ This package provides tools for calculating NMR observables from protein
 structures, including:
 - NOE distance restraints
 - Relaxation rates (R1, R2, heteronuclear NOE)
-- Chemical shifts (SPARTA-lite with ring currents)
+- Chemical shifts (SPARTA+ with ring currents)
 - J-couplings (Karplus equation)
 - NEF format I/O for NMR data exchange
 

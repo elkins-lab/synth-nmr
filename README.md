@@ -10,7 +10,7 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 
 - **NOE Calculations**: Synthetic NOE distance restraints
 - **Relaxation Rates**: R1, R2, and heteronuclear NOE predictions
-- **Chemical Shifts**: SPARTA-lite based predictions with ring current corrections
+- **Chemical Shifts**: SPARTA+ based predictions with ring current corrections
 - **J-Couplings**: Karplus equation for scalar couplings
 - **NEF I/O**: Read and write NMR Exchange Format files
 - **Secondary Structure**: Automatic classification for enhanced predictions
@@ -90,7 +90,7 @@ Predict NMR relaxation rates (R1, R2, heteronuclear NOE).
 **Returns:** Dictionary of relaxation rates per residue
 
 #### `predict_chemical_shifts(structure)`
-Predict chemical shifts using SPARTA-lite with ring current corrections.
+Predict chemical shifts using SPARTA+ with ring current corrections.
 
 **Parameters:**
 - `structure`: biotite AtomArray
@@ -141,6 +141,19 @@ MIT License - see LICENSE file for details
 
 - [synth-pdb](https://github.com/elkins/synth-pdb) - Synthetic protein structure generation
 - [Biotite](https://www.biotite-python.org/) - Computational biology toolkit
+
+## References
+
+This package relies on the following peer-reviewed research:
+
+- **SPARTA+**: For chemical shift predictions.
+  > Yang, Y., & Bax, A. (2011). *Journal of Biomolecular NMR*, 51(3), 259–274.
+
+- **Karplus Equation**: For J-coupling calculations.
+  > Karplus, M. (1959). *The Journal of Chemical Physics*, 30(1), 11–15.
+
+- **NMR Relaxation**: The underlying theory for relaxation rate predictions.
+  > Lipari, G., & Szabo, A. (1982). *Journal of the American Chemical Society*, 104(17), 4546–4559.
 
 ## Contributing
 

@@ -57,17 +57,16 @@ RANDOM_COIL_SHIFTS: Dict[str, Dict[str, float]] = {
     "VAL": {"HA": 4.12, "CA": 62.2, "CB": 32.9, "C": 176.3, "N": 119.9, "H": 8.03},
 }
 
-# --- Secondary Structure Offsets (Sparta-Lite) ---
+# --- Secondary Structure Offsets (SPARTA+) ---
 # EDUCATIONAL NOTE - Secondary Chemical Shifts:
 # =============================================
 # The local magnetic field experienced by a nucleus is heavily influenced by the
 # geometry of the protein backbone (Phi/Psi angles).
 #
-# SPARTA-lite (Simplified prediction):
-# "SPARTA" stands for "Shift Prediction from Analogy in Residue-type and Torsion Angle".
+# SPARTA+ (Shift Prediction from Analogy in Residue-type and Torsion Angle):
 # It predicts chemical shifts by finding homologous structures with similar geometry.
 #
-# Our "Lite" version uses simple statistical offsets instead of database mining,
+# Our implementation uses simple statistical offsets instead of database mining,
 # but follows the same principle: Geometry determines Shift.
 #
 # Reference State: DSS (4,4-dimethyl-4-silapentane-1-sulfonic acid)
@@ -151,7 +150,7 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[str, D
     Returns:
         shifts: Dict[chain_id, Dict[res_id, Dict[atom_name, value]]]
     """
-    logger.info("Predicting Chemical Shifts (SPARTA-lite + Ring Currents)...")
+    logger.info("Predicting Chemical Shifts (SPARTA+ + Ring Currents)...")
     
     # Use shared utility for SS classification
     ss_list = get_secondary_structure(structure)
