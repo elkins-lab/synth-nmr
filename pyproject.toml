@@ -44,6 +44,9 @@ Homepage = "https://github.com/elkins/synth-nmr"
 Repository = "https://github.com/elkins/synth-nmr"
 Documentation = "https://github.com/elkins/synth-nmr#readme"
 
+[project.scripts]
+synth-nmr-cli = "synth_nmr.synth_nmr_cli:main"
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["synth_nmr*"]
