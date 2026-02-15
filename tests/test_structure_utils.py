@@ -59,5 +59,79 @@ class TestStructureUtils(unittest.TestCase):
             ss = get_secondary_structure(structure)
             self.assertEqual(ss, ["alpha", "alpha", "alpha"])
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_get_secondary_structure_known_motifs(self):
+        """
+        Test the classification of known secondary structure motifs
+        (alpha-helix, beta-strand, coil) based on ideal dihedral angles.
+        """
+        # --- Alpha Helix Motif ---
+        alpha_structure = struc.AtomArray(9) # 3 residues (N, CA, C per residue)
+        alpha_structure.atom_name = np.array(["N", "CA", "C"] * 3)
+        alpha_structure.res_id = np.array([1,1,1,2,2,2,3,3,3])
+        alpha_structure.res_name = np.array(["ALA"] * 9)
+        alpha_structure.coord = np.zeros((9,3)) # Coords not important for this mock
+
+        # Ideal alpha-helical Phi/Psi
+        alpha_phi = np.deg2rad(np.array([-60.0, -60.0, -60.0]))
+        alpha_psi = np.deg2rad(np.array([-45.0, -45.0, -45.0]))
+        alpha_omega = np.deg2rad(np.array([180.0] * 3)) # Trans-peptide bond
+
+        with unittest.mock.patch('biotite.structure.dihedral_backbone', return_value=(alpha_phi, alpha_psi, alpha_omega)):
+            ss_alpha = get_secondary_structure(alpha_structure)
+            self.assertEqual(ss_alpha, ["alpha", "alpha", "alpha"])
+
+        # --- Beta Strand Motif ---
+        beta_structure = struc.AtomArray(9)
+        beta_structure.atom_name = np.array(["N", "CA", "C"] * 3)
+        beta_structure.res_id = np.array([1,1,1,2,2,2,3,3,3])
+        beta_structure.res_name = np.array(["ALA"] * 9)
+        beta_structure.coord = np.zeros((9,3))
+
+        # Ideal beta-strand Phi/Psi
+        beta_phi = np.deg2rad(np.array([-120.0, -120.0, -120.0]))
+        beta_psi = np.deg2rad(np.array([120.0, 120.0, 120.0]))
+        beta_omega = np.deg2rad(np.array([180.0] * 3))
+
+        with unittest.mock.patch('biotite.structure.dihedral_backbone', return_value=(beta_phi, beta_psi, beta_omega)):
+            ss_beta = get_secondary_structure(beta_structure)
+            self.assertEqual(ss_beta, ["beta", "beta", "beta"])
+
+        # --- Random Coil Motif ---
+        coil_structure = struc.AtomArray(9)
+        coil_structure.atom_name = np.array(["N", "CA", "C"] * 3)
+        coil_structure.res_id = np.array([1,1,1,2,2,2,3,3,3])
+        coil_structure.res_name = np.array(["ALA"] * 9)
+        coil_structure.coord = np.zeros((9,3))
+
+        # Non-ideal Phi/Psi for coil
+        coil_phi = np.deg2rad(np.array([-75.0, 20.0, -10.0]))
+        coil_psi = np.deg2rad(np.array([150.0, -50.0, 80.0]))
+        coil_omega = np.deg2rad(np.array([180.0] * 3))
+
+        with unittest.mock.patch('biotite.structure.dihedral_backbone', return_value=(coil_phi, coil_psi, coil_omega)):
+            ss_coil = get_secondary_structure(coil_structure)
+            # Depending on the phi_deg ranges in get_secondary_structure, these might be "coil"
+            # The current ranges are -80 < phi_deg < -40 for alpha, -160 < phi_deg < -80 for beta
+            # So, -75 should be alpha, 20 should be coil, -10 should be coil.
+            # The get_secondary_structure has smoothing, so might change.
+            # Let's mock a sequence that clearly falls into 'coil' for all.
+            # The easiest way is to set angles outside alpha/beta ranges.
+            
+            # Recalculate based on known motif ranges
+            # -80 < phi_deg < -40: alpha
+            # -160 < phi_deg < -80: beta
+            # Else: coil
+            
+            # So if phi = 0 or 20, it is 'coil'
+            # If phi = -75, it is 'alpha'
+            # If phi = -10, it is 'coil'
+            
+            # Let's make sure the phi values are clearly 'coil'
+            coil_phi_adjusted = np.deg2rad(np.array([170.0, 170.0, 170.0])) # All outside alpha/beta ranges
+            coil_psi_adjusted = np.deg2rad(np.array([0.0, 0.0, 0.0]))
+            
+            with unittest.mock.patch('biotite.structure.dihedral_backbone', return_value=(coil_phi_adjusted, coil_psi_adjusted, coil_omega)):
+                ss_coil_adjusted = get_secondary_structure(coil_structure)
+                self.assertEqual(ss_coil_adjusted, ["coil", "coil", "coil"])
+
+

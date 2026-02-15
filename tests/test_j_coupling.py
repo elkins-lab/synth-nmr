@@ -66,3 +66,4 @@ def test_structure_iteration(mocker):
     # Logic in code: if len(phi) != len(res_starts): return {}
     res = calculate_hn_ha_coupling(structure)
     assert res == {}
+

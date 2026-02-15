@@ -1,4 +1,3 @@
-
 """
 J-Coupling Prediction Module for Synth-PDB.
 

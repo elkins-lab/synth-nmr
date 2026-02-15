@@ -57,6 +57,10 @@ RANDOM_COIL_SHIFTS: Dict[str, Dict[str, float]] = {
     "VAL": {"HA": 4.12, "CA": 62.2, "CB": 32.9, "C": 176.3, "N": 119.9, "H": 8.03},
 }
 
+# Module-level variable for noise scale, allowing easy monkeypatching in tests
+_NOISE_SCALE = 0.15
+
+
 # --- Secondary Structure Offsets (SPARTA+) ---
 # EDUCATIONAL NOTE - Secondary Chemical Shifts:
 # =============================================
@@ -126,8 +130,11 @@ from synth_nmr.structure_utils import get_secondary_structure
 
 def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[str, Dict[str, float]]]:
     """
-    Predict chemical shifts based on secondary structure (Phi/Psi).
+    Predict chemical shifts based on secondary structure and ring currents.
     
+    This function combines random coil shifts, secondary structure-based offsets (SPARTA+-like),
+    and ring current effects from aromatic residues to predict protein chemical shifts.
+
     EDUCATIONAL NOTE - Prediction Algorithm:
     ========================================
     1. Calculate Backbone Dihedrals (Phi/Psi) for every residue.
@@ -139,122 +146,178 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[str, D
        Shift = Random_Coil + Structure_Offset + Noise
        
     LIMITATIONS:
-    - Ring Current Effects: Aromatic rings (Phe, Tyr, Trp) create strong magnetic
-      fields that shift nearby protons. We omit this for simplicity ($O(N^2)$ geometry check).
-    - H-Bonding: Hydrogen bonds affect Amide H shifts significantly. We omit this.
-    - Sequence History: Real shifts depend on (i-1) and (i+1) neighbor types. We omit this.
+    - Ring Current Effects (for protons): While an O(N^2) geometry check was previously
+      a concern, these effects are now included for protons near aromatic rings
+      (Phe, Tyr, Trp, His) using a point-dipole approximation. This is crucial for
+      protons in close proximity to aromatic systems. Carbon atoms are not currently
+      included for ring current effects.
+    - H-Bonding: Hydrogen bonds affect Amide H shifts significantly. We omit this for simplicity.
+    - Sequence History: Real shifts depend on (i-1) and (i+1) neighbor types. We omit this for simplicity.
     
     Args:
-        structure: AtomArray containing the protein
+        structure: A biotite.structure.AtomArray containing the protein. Must not be empty.
         
     Returns:
-        shifts: Dict[chain_id, Dict[res_id, Dict[atom_name, value]]]
+        A nested dictionary of predicted shifts: {chain_id: {res_id: {atom_name: value}}}
+        
+    Raises:
+        TypeError: If the input is not a biotite.structure.AtomArray.
+        ValueError: If the input structure is empty.
     """
-    logger.info("Predicting Chemical Shifts (SPARTA+ + Ring Currents)...")
-    
-    # Use shared utility for SS classification
-    ss_list = get_secondary_structure(structure)
-    
-    # Identify aromatic rings once for the whole structure
-    rings = _get_aromatic_rings(structure)
-    if rings.size > 0:
-        logger.debug(f"DEBUG: Found {rings.shape[0]} aromatic rings for shift calculation.")
-    
-    # We need to iterate over residues
-    res_starts = struc.get_residue_starts(structure)
-    
-    results = {} # Keyed by Chain -> ResID -> Atom -> Value
-    
-    for i, start_idx in enumerate(res_starts):
-        # Identify residue
-        res_atoms = structure[start_idx : res_starts[i+1] if i+1 < len(res_starts) else None]
-        res_name = res_atoms.res_name[0]
-        chain_id = res_atoms.chain_id[0]
-        res_id = res_atoms.res_id[0]
-        
-        if res_name not in RANDOM_COIL_SHIFTS:
-            continue
+    logger.info("Predicting chemical shifts (SPARTA+ model with ring currents)...")
+
+    # 1. Input Validation
+    if not isinstance(structure, struc.AtomArray):
+        raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
+    if structure.array_length() == 0:
+        logger.warning("Input 'structure' is empty. Cannot predict chemical shifts.")
+        return {}
+
+    try:
+        # 2. Get Secondary Structure and Aromatic Ring Info
+        ss_list = get_secondary_structure(structure)
+        rings = _get_aromatic_rings(structure)
+        if rings.size > 0:
+            logger.debug(f"Found {rings.shape[0]} aromatic rings for ring current calculation.")
+
+        # 3. Iterate through residues and calculate shifts
+        results = {}
+        for i, start_idx in enumerate(struc.get_residue_starts(structure)):
+            end_idx = struc.get_residue_starts(structure)[i+1] if i + 1 < len(struc.get_residue_starts(structure)) else None
+            res_atoms = structure[start_idx:end_idx]
             
-        ss_state = ss_list[i] if i < len(ss_list) else "coil"
-        logger.debug(f"DEBUG: Res {i} {res_name} -> {ss_state}")
-        
-        # Calculate Shifts
-        rc = RANDOM_COIL_SHIFTS[res_name]
-        atom_shifts = {}
-        
-        for atom_type, base_val in rc.items():
-            offset = SECONDARY_SHIFTS.get(atom_type, {}).get(ss_state, 0.0)
-            
-            # Add small random noise for "realism" (0.1 - 0.3 ppm)
-            # Experimental assignments always have error/variation
-            noise = np.random.normal(0, 0.15) if base_val != 0 else 0
-            
-            if base_val != 0:
-                # 1. Base + Secondary Shift
-                val = base_val + offset + noise
+            res_id = res_atoms.res_id[0]
+            res_name = res_atoms.res_name[0]
+            chain_id = res_atoms.chain_id[0]
+
+            if res_name not in RANDOM_COIL_SHIFTS:
+                logger.debug(f"Skipping non-standard residue: {res_name} {res_id}")
+                continue
+
+            ss_state = ss_list[i] if i < len(ss_list) else "coil"
+            logger.debug(f"Processing ResID {res_id} ({res_name}), SS: {ss_state}")
+
+            rc_shifts = RANDOM_COIL_SHIFTS[res_name]
+            atom_shifts = {}
+
+            for atom_type, base_val in rc_shifts.items():
+                if base_val == 0:  # Skip atoms with no defined random coil shift (e.g., Proline H)
+                    continue
+
+                # Start with base random coil value
+                val = base_val
                 
-                # 2. Add Tertiary Ring Current Effects
-                # Only affects protons (H, HA, HB...) and sometimes Carbon.
-                # Primarily Protons are interesting for NOESY/Structure.
-                # Use .size check for numpy array
-                if rings.size > 0 and ("H" in atom_type or atom_type == "H"):
-                    # Get atom coordinate
+                # Add secondary structure offset
+                offset = SECONDARY_SHIFTS.get(atom_type, {}).get(ss_state, 0.0)
+                val += offset
+                
+                # Add ring current shift for protons
+                if rings.size > 0 and atom_type.startswith('H'):
                     try:
                         target_atom = res_atoms[res_atoms.atom_name == atom_type][0]
                         rc_shift = _calculate_ring_current_shift(target_atom.coord, rings)
                         val += rc_shift
                     except IndexError:
-                        pass 
-# Atom not found in structure (e.g. sometimes amide H is missing)
-                
-                atom_shifts[atom_type] = round(val, 3)
-        
-        if chain_id not in results:
-            results[chain_id] = {}
-        results[chain_id][res_id] = atom_shifts
-        
-    return results
+                        # Atom not found in this specific residue, skip ring current
+                        logger.debug(f"Atom {atom_type} not found in residue {res_id} for ring current calculation.")
+                        pass
 
-def calculate_csi(shifts: Dict[str, Dict[int, Dict[str, float]]], structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
-    """
-    Calculate Chemical Shift Index (CSI) deviations (Observed - RandomCoil).
-    
-    This metric is used to predict secondary structure:
-    - Positive Delta(CA) (> 0.7 ppm) -> HELIX
-    - Negative Delta(CA) (< -0.7 ppm) -> SHEET
-    
-    returns: {chain_id: {res_id: delta_ppm}}
-    """
-    csi_data = {}
-    
-    # Map residue names for lookup
-    # Need 3-letter codes
-    res_names = {}
-    
-    # Iterate through structure to build map: ResID -> ResName
-    # Using residue starts to handle multi-atom residues correctly
-    res_starts = struc.get_residue_starts(structure)
-    for idx in res_starts:
-        res = structure[idx]
-        res_names[res.res_id] = res.res_name
-        
-    for chain_id, chain_shifts in shifts.items():
-        csi_data[chain_id] = {}
-        for res_id, atom_shifts in chain_shifts.items():
-            if res_id not in res_names:
-                continue
-                
-            res_name = res_names[res_id]
+                # Add small random noise for "realism" (0.1 - 0.3 ppm)
+                # Experimental assignments always have error/variation
+                noise = np.random.normal(0, _NOISE_SCALE) if base_val != 0 else 0
+                val += noise
+
+                atom_shifts[atom_type] = round(val, 3)
+
+            if chain_id not in results:
+                results[chain_id] = {}
+            results[chain_id][res_id] = atom_shifts
             
-            # CSI usually uses C-alpha or C-beta
-            # We will use C-alpha (CA) as the primary index
-            if "CA" in atom_shifts and res_name in RANDOM_COIL_SHIFTS:
-                measured = atom_shifts["CA"]
-                random = RANDOM_COIL_SHIFTS[res_name]["CA"]
-                delta = measured - random
-                csi_data[chain_id][res_id] = delta
-                
-    return csi_data
+        logger.info(f"Successfully predicted chemical shifts for {struc.get_residue_count(structure)} residues.")
+        return results
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during chemical shift prediction: {e}", exc_info=True)
+        raise
+
+def calculate_csi(
+    shifts: Dict[str, Dict[int, Dict[str, float]]], 
+    structure: struc.AtomArray
+) -> Dict[str, Dict[int, float]]:
+    """
+    Calculate the Chemical Shift Index (CSI) for C-alpha atoms.
+    
+    The CSI is the deviation of an observed chemical shift from its random coil value.
+    It is a reliable indicator of secondary structure.
+    - Positive Delta(CA) > 0.7 ppm suggests a Helical conformation.
+    - Negative Delta(CA) < -0.7 ppm suggests a Sheet conformation.
+    
+    Args:
+        shifts: A dictionary of chemical shifts, as produced by `predict_chemical_shifts`.
+        structure: A biotite.structure.AtomArray, required for mapping residue IDs to names.
+        
+    Returns:
+        A dictionary containing the C-alpha CSI for each residue: {chain_id: {res_id: delta_ppm}}
+        
+    Raises:
+        TypeError: If inputs are not of the correct type.
+        ValueError: If inputs are empty.
+    """
+    logger.info("Calculating Chemical Shift Index (CSI) for C-alpha atoms...")
+
+    # 1. Input Validation
+    if not isinstance(shifts, dict):
+        raise TypeError("Input 'shifts' must be a dictionary.")
+    if not shifts:
+        logger.warning("Input 'shifts' dictionary is empty. Returning no CSI data.")
+        return {}
+    if not isinstance(structure, struc.AtomArray):
+        raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
+    if structure.array_length() == 0:
+        logger.warning("Input 'structure' is empty. Cannot calculate CSI.")
+        return {}
+
+    try:
+        # 2. Create a mapping from residue ID to residue name for quick lookup
+        res_names = {}
+        for idx in struc.get_residue_starts(structure):
+            res = structure[idx]
+            res_names[res.res_id] = res.res_name
+        if not res_names:
+            logger.warning("Could not create a residue map from the provided structure.")
+            return {}
+
+        # 3. Calculate CSI
+        csi_data = {}
+        for chain_id, chain_shifts in shifts.items():
+            if not isinstance(chain_shifts, dict): continue
+            csi_data[chain_id] = {}
+            
+            for res_id, atom_shifts in chain_shifts.items():
+                if not isinstance(atom_shifts, dict): continue
+
+                res_name = res_names.get(res_id)
+                if not res_name:
+                    logger.debug(f"Residue ID {res_id} from shifts not found in structure. Skipping.")
+                    continue
+
+                if "CA" in atom_shifts and res_name in RANDOM_COIL_SHIFTS:
+                    measured = atom_shifts["CA"]
+                    random_coil_val = RANDOM_COIL_SHIFTS[res_name].get("CA")
+                    
+                    if random_coil_val is not None:
+                        delta = measured - random_coil_val
+                        csi_data[chain_id][res_id] = round(delta, 3)
+                        logger.debug(f"CSI for {res_name} {res_id}: Measured={measured}, RC={random_coil_val}, Delta={delta}")
+                    else:
+                        logger.debug(f"No random coil 'CA' value for {res_name}. Skipping CSI calculation for this residue.")
+        
+        logger.info("CSI calculation complete.")
+        return csi_data
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during CSI calculation: {e}", exc_info=True)
+        raise
 
 def _get_aromatic_rings(structure):
     """

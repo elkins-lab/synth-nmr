@@ -8,8 +8,8 @@ def test_read_nef_restraints_valid():
     """Test reading restraints from a valid NEF file."""
     restraints = [
         {
-            'chain_1': 'A', 'residue_index_1': 1, 'res_name_1': 'ALA', 'atom_name_1': 'H',
-            'chain_2': 'A', 'residue_index_2': 5, 'res_name_2': 'GLY', 'atom_name_2': 'HA',
+            'chain_1': 'A', 'index_1': 1, 'res_name_1': 'ALA', 'atom_name_1': 'H',
+            'chain_2': 'A', 'index_2': 5, 'res_name_2': 'GLY', 'atom_name_2': 'HA',
             'distance': 4.5, 'upper_limit': 5.0, 'lower_limit': 1.8
         }
     ]

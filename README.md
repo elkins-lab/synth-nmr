@@ -177,6 +177,12 @@ This package relies on the following peer-reviewed research:
 - **Residual Dipolar Couplings**: Seminal work on applying RDCs to proteins.
   > Bax, A., & Tjandra, N. (1997). *Journal of the American Chemical Society*, 119(49), 12041-12042.
 
+- **Nuclear Overhauser Effect**: Foundational experimental observation.
+  > Solomon, I. (1955). *Physical Review*, 99(2), 559.
+
+- **2D NOESY**: Development of two-dimensional NOE spectroscopy for biomolecules.
+  > Kumar, A., Ernst, R. R., & Wüthrich, K. (1980). *Biochemical and Biophysical Research Communications*, 95(1), 1-6.
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.

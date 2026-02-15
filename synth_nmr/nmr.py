@@ -14,7 +14,7 @@ from typing import List, Tuple, Dict, Optional
 logger = logging.getLogger(__name__)
 
 def calculate_synthetic_noes(
-    structure: struc.AtomArray, 
+    structure: struc.AtomArray,
     cutoff: float = 5.0,
     buffer: float = 0.5,
     exclude_intra_residue: bool = False
@@ -46,110 +46,122 @@ def calculate_synthetic_noes(
     
     Args:
         structure: The AtomArray containing the protein (must have Hydrogens).
-        cutoff: Maximum distance (Angstroms) to consider an NOE. Default 5.0.
-        buffer: Amount to add to actual distance for the Upper Bound. Default 0.5.
+        cutoff: Maximum distance (Angstroms) to consider an NOE. Must be > 0.
+        buffer: Amount to add to actual distance for the Upper Bound. Must be >= 0.
         exclude_intra_residue: If True, ignore NOEs within same residue.
         
     Returns:
-        List of restraint dictionaries:
+        List of restraint dictionaries, corrected to match documentation:
         {
             'index_1': int, 'res_name_1': str, 'atom_name_1': str, 'chain_1': str,
             'index_2': int, 'res_name_2': str, 'atom_name_2': str, 'chain_2': str,
             'distance': float,
             'upper_limit': float
         }
+        
+    Raises:
+        TypeError: If the input structure is not a biotite.structure.AtomArray.
+        ValueError: If cutoff or buffer have invalid values.
     """
-    logger.info(f"Calculating synthetic NOEs (cutoff={cutoff}A)...")
-    
-    # 1. Select only Protons (Element 'H')
-    # Filter for element H
-    h_mask = structure.element == "H"
-    
-    # Safety Check: If no hydrogens, we can't calculate NOEs
-    if not np.any(h_mask):
-        logger.warning("No hydrogens found in structure! Cannot calculate NOEs. Did you forget to add hydrogens/minimize?")
+    logger.info(
+        f"Calculating synthetic NOEs with cutoff={cutoff} Å, buffer={buffer} Å, "
+        f"exclude_intra_residue={exclude_intra_residue}."
+    )
+
+    # 1. Input Validation
+    if not isinstance(structure, struc.AtomArray):
+        raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
+    if cutoff <= 0:
+        raise ValueError("'cutoff' distance must be positive.")
+    if buffer < 0:
+        raise ValueError("'buffer' must be non-negative.")
+    if structure.array_length() == 0:
+        logger.warning("Input 'structure' is empty. Returning no restraints.")
         return []
+
+    try:
+        # 1. Select only Protons (Element 'H')
+        # Filter for element H
+        h_mask = structure.element == "H"
         
-    protons = structure[h_mask]
-    n_protons = len(protons)
-    logger.debug(f"Found {n_protons} protons for NOE calculation.")
-    
-    # 2. Calculate Cell List for efficient neighbor search
-    # We want pairs within cutoff.
-    cell_list = struc.CellList(protons, cell_size=cutoff)
-    
-    # 3. Find neighbors
-    # EDUCATIONAL NOTE: Neighbor Search Strategy
-    # A naive search for all pairs of protons would be O(N^2), which is too slow for large proteins.
-    # We use a CellList (also known as a grid search) to accelerate this to O(N).
-    # 1. The space is divided into a grid of cells (size = cutoff).
-    # 2. For each proton, we only search for neighbors in its own cell and adjacent cells.
-    # This loop iterates through each proton, finds its neighbors using the efficient
-    # `cell_list.get_atoms`, and then filters for unique pairs (j > i) to avoid duplicates.
-    restraints = []
-    
-    # Let's iterate over all protons and find neighbors for each
-    for i in range(n_protons):
-        # Center atom
-        center = protons[i]
-        coord = center.coord
+        # Safety Check: If no hydrogens, we can't calculate NOEs
+        if not np.any(h_mask):
+            logger.warning(
+                "No hydrogens found in structure. Cannot calculate NOEs. "
+                "Consider adding hydrogens to the structure first."
+            )
+            return []
+            
+        protons = structure[h_mask]
+        n_protons = protons.array_length()
+        logger.debug(f"Found {n_protons} protons for NOE calculation.")
         
-        # Find indices of neighbors in 'protons' array
-        # radius search returns indices in 'protons'
-        indices = cell_list.get_atoms(coord, radius=cutoff)
+        # 2. Calculate Cell List for efficient neighbor search
+        # We want pairs within cutoff.
+        cell_list = struc.CellList(protons, cell_size=cutoff)
         
-        # Filter indices to only keep j > i (unique pairs)
-        indices = indices[indices > i]
+        # 3. Find neighbors
+        # EDUCATIONAL NOTE: Neighbor Search Strategy
+        # A naive search for all pairs of protons would be O(N^2), which is too slow for large proteins.
+        # We use a CellList (also known as a grid search) to accelerate this to O(N).
+        # 1. The space is divided into a grid of cells (size = cutoff).
+        # 2. For each proton, we only search for neighbors in its own cell and adjacent cells.
+        # This loop iterates through each proton, finds its neighbors using the efficient
+        # `cell_list.get_atoms`, and then filters for unique pairs (j > i) to avoid duplicates.
+        restraints = []
         
-        for j in indices:
-            neighbor = protons[j]
+        # Let's iterate over all protons and find neighbors for each
+        for i in range(n_protons):
+            # Center atom
+            center = protons[i]
+            # Find indices of neighbors in 'protons' array
+            indices = cell_list.get_atoms(center.coord, radius=cutoff)
             
-            # Helper to get atom info
-            idx1 = center.res_id
-            name1 = center.res_name
-            atom1 = center.atom_name
-            chain1 = center.chain_id
+            # Filter for unique pairs (j > i) to avoid duplicates and self-pairs
+            indices = indices[indices > i]
             
-            idx2 = neighbor.res_id
-            name2 = neighbor.res_name
-            atom2 = neighbor.atom_name
-            chain2 = neighbor.chain_id
-            
-            # Check exclusion logic
-            if exclude_intra_residue and (idx1 == idx2) and (chain1 == chain2):
-                continue
+            for j in indices:
+                neighbor = protons[j]
                 
-            # Basic exclusion: don't restrain geminal protons (e.g. HB2-HB3) on same carbon?
-            # Usually these are fixed distance. For "Synthetic" data, maybe we keep them or filter.
-            # Standard NOE lists often exclude fixed distances (geminal/vicinal if fixed).
-            # For simplicity in V1, we include everything not same atom (j > i handles same atom).
-            # Let's exclude same residue for now if requested, but default keep it?
-            # Actually, real NOE lists exclude intra-residue trivial ones often.
-            # Let's check distance.
-            
-            dist = np.linalg.norm(center.coord - neighbor.coord)
-            
-            # Hard exclusion of very close atoms (bonded or geminal < ~1.8A)
-            # Bonded H-H doesn't exist. Geminal H-H on CH2 is ~1.78A.
-            # Real NOEs are usually > 1.8 or 2.0.
-            if dist < 1.85:
-                continue 
+                # Check exclusion logic for intra-residue pairs
+                is_intra_residue = (center.res_id == neighbor.res_id) and (center.chain_id == neighbor.chain_id)
+
+                if exclude_intra_residue and is_intra_residue:
+                    continue
                 
-            restraint = {
-                'residue_index_1': idx1,
-                'res_name_1': name1,
-                'atom_name_1': atom1,
-                'chain_1': chain1,
+                dist = struc.distance(center, neighbor)
+
+                # Explicitly exclude very close intra-residue geminal protons (e.g., HBx-HBx on same carbon)
+                # These are usually trivial in NOE lists and have fixed distances (~1.77 Å).
+                if is_intra_residue and dist < 2.0 and \
+                   center.atom_name.startswith('HB') and neighbor.atom_name.startswith('HB'):
+                    continue
                 
-                'residue_index_2': idx2,
-                'res_name_2': name2,
-                'atom_name_2': atom2,
-                'chain_2': chain2,
+                # Global exclusion for very short distances (e.g., direct bonds)
+                if dist < 1.0: # Very short distances are likely errors or direct bonds
+                    continue 
+                    
+                restraint = {
+                    'index_1': center.res_id,
+                    'res_name_1': center.res_name,
+                    'atom_name_1': center.atom_name,
+                    'chain_1': center.chain_id,
+                    
+                    'index_2': neighbor.res_id,
+                    'res_name_2': neighbor.res_name,
+                    'atom_name_2': neighbor.atom_name,
+                    'chain_2': neighbor.chain_id,
+                    
+                    'distance': float(dist),
+                    'upper_limit': float(dist + buffer)
+                }
+                restraints.append(restraint)
                 
-                'distance': float(dist),
-                'upper_limit': float(dist + buffer)
-            }
-            restraints.append(restraint)
-            
-    logger.info(f"Generated {len(restraints)} synthetic NOE restraints.")
-    return restraints
+        logger.info(f"Generated {len(restraints)} synthetic NOE restraints.")
+        return restraints
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during NOE calculation: {e}", exc_info=True)
+        # Re-raise the exception to not silently fail, allowing upstream handling
+        raise
+

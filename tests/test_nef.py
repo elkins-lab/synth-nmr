@@ -24,8 +24,8 @@ def test_calculate_noes_simple_dimer():
     r = restraints[0]
     assert r['distance'] == 3.0
     assert r['upper_limit'] == 3.5 # buffer 0.5
-    assert r['residue_index_1'] == 1
-    assert r['residue_index_2'] == 2
+    assert r['index_1'] == 1
+    assert r['index_2'] == 2
 
 def test_calculate_noes_cutoff_exclusion():
     """Test that atoms outside cutoff are excluded."""
@@ -45,8 +45,8 @@ def test_write_nef_structure(tmp_path):
     output_file = tmp_path / "test.nef"
     sequence = "AG"
     restraints = [{
-        'residue_index_1': 1, 'res_name_1': 'ALA', 'atom_name_1': 'H', 'chain_1': 'A',
-        'residue_index_2': 2, 'res_name_2': 'GLY', 'atom_name_2': 'H', 'chain_2': 'A',
+        'index_1': 1, 'res_name_1': 'ALA', 'atom_name_1': 'H', 'chain_1': 'A',
+        'index_2': 2, 'res_name_2': 'GLY', 'atom_name_2': 'H', 'chain_2': 'A',
         'distance': 3.0, 'upper_limit': 3.5, 'lower_limit': 1.8
     }]
     
