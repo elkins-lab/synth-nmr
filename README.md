@@ -27,6 +27,73 @@ For improved performance with JIT compilation:
 pip install synth-nmr[performance]
 ```
 
+## Command-Line Interface
+
+`synth-nmr` provides a command-line interface for common tasks, allowing you to perform calculations directly from your terminal.
+
+### Usage
+
+You can run `synth-nmr` CLI commands directly or enter an interactive mode.
+
+#### Non-Interactive Mode
+
+Execute commands by passing them as arguments to the `synth_nmr.synth_nmr_cli` module:
+
+```bash
+python -m synth_nmr.synth_nmr_cli <command> [arguments]
+```
+
+**Examples:**
+
+1.  **Read a PDB file and calculate RDCs:**
+    ```bash
+    python -m synth_nmr.synth_nmr_cli read pdb protein.pdb calculate rdc 10.0 0.5
+    ```
+
+2.  **Read a PDB file and predict chemical shifts:**
+    ```bash
+    python -m synth_nmr.synth_nmr_cli read pdb protein.pdb predict shifts
+    ```
+
+3.  **Read a PDB file and calculate J-couplings:**
+    ```bash
+    python -m synth_nmr.synth_nmr_cli read pdb protein.pdb calculate j-coupling
+    ```
+
+#### Interactive Mode
+
+To enter interactive mode, run the CLI without any arguments:
+
+```bash
+python -m synth_nmr.synth_nmr_cli
+```
+
+Once in interactive mode, you will see a `SynthNMR>` prompt. Type `help` to see available commands:
+
+```
+SynthNMR> help
+Commands:
+  read pdb <filename>
+  calculate rdc [Da] [R]
+  predict shifts
+  calculate j-coupling
+  exit
+SynthNMR> read pdb protein.pdb
+SynthNMR> calculate rdc 10.0 0.5
+SynthNMR> exit
+```
+
+### Available Commands
+
+-   `read pdb <filename>`: Loads a protein structure from the specified PDB file. This command must be executed before any calculation commands.
+-   `calculate rdc [Da] [R]`: Calculates Residual Dipolar Couplings.
+    -   `Da`: (Optional) Axial component of the alignment tensor in Hz (default: 10.0).
+    -   `R`: (Optional) Rhombicity of the alignment tensor (dimensionless) (default: 0.5).
+-   `predict shifts`: Predicts chemical shifts using SPARTA+ with ring current corrections.
+-   `calculate j-coupling`: Calculates ³J(HN-Hα) couplings using the Karplus equation.
+-   `help`: (Interactive mode only) Displays a list of available commands.
+-   `exit`: (Interactive mode only) Exits the CLI.
+
 ## Quick Start
 
 ```python
