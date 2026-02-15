@@ -1,6 +1,6 @@
 # synth-nmr
 
-<img src="images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
+<img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
 
 **NMR spectroscopy calculations for protein structures**
 
