@@ -107,7 +107,7 @@ def ubiquitin_structure_1d3z_with_hydrogens() -> struc.AtomArray:
     PDB_ID = "1D3Z"
     
     # Use local PDB file
-    pdb_file = pdb.PDBFile.read(f"{PDB_ID}.pdb")
+    pdb_file = pdb.PDBFile.read(f"data/{PDB_ID}.pdb")
     structure = pdb.get_structure(pdb_file, model=1)
     
     # Filter for protein and remove alternate location identifiers
