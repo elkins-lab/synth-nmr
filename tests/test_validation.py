@@ -8,6 +8,8 @@ import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 from io import StringIO
 import requests
+from synth_nmr.validation import compare_chemical_shifts
+from synth_nmr.chemical_shifts import ShiftX2Predictor, predict_chemical_shifts
 from synth_nmr.j_coupling import calculate_hn_ha_coupling
 
 @pytest.fixture
@@ -65,3 +67,97 @@ def test_j_coupling_validation_against_1d3z(ubiquitin_structure):
     assert len(predicted_vals) > 50
     rmsd = np.sqrt(np.mean((np.array(predicted_vals) - np.array(experimental_vals))**2))
     assert rmsd < 2.2, f"RMSD for J-couplings is {rmsd:.2f} Hz, which is too high."
+
+def test_compare_chemical_shifts():
+    """Test the shift comparison logic with synthetic data."""
+    # Data format: {chain: {res: {atom: val}}}
+    pred = {
+        "A": {
+            1: {"CA": 55.0, "HA": 4.5},
+            2: {"CA": 60.0, "HA": 4.0}
+        }
+    }
+    
+    # Reference with slight deviations
+    ref = {
+        "A": {
+            1: {"CA": 55.5, "HA": 4.6},
+            2: {"CA": 59.5, "HA": 3.9}
+        }
+    }
+    
+    stats = compare_chemical_shifts(pred, ref, atom_types=["CA", "HA"])
+    
+    assert "CA" in stats
+    assert "HA" in stats
+    assert stats["CA"]["count"] == 2
+    # RMSE for CA: sqrt(((55-55.5)^2 + (60-59.5)^2)/2) = sqrt((0.25+0.25)/2) = 0.5
+    assert np.isclose(stats["CA"]["rmse"], 0.5)
+
+def test_shiftx2_predictor_availability():
+    """Test the availability check (should be False in this environment)."""
+    predictor = ShiftX2Predictor("non_existent_executable")
+    assert not predictor.is_available()
+
+def test_shiftx2_parse_output(tmp_path):
+    """Test parsing logic of ShiftX2 wrapper."""
+    # Create a mock ShiftX2 output file
+    mock_file = tmp_path / "test.cs"
+    mock_content = """
+ NUM RES ATOMNAME SHIFT
+ 1   MET CA       54.321
+ 1   MET HA       4.123
+ 2   GLY CA       45.678
+"""
+    mock_file.write_text(mock_content)
+    
+    predictor = ShiftX2Predictor()
+    shifts = predictor._parse_output(str(mock_file))
+    
+    assert shifts["A"][1]["CA"] == 54.321
+    assert shifts["A"][1]["HA"] == 4.123
+    assert shifts["A"][2]["CA"] == 45.678
+
+def test_integration_workflow_mocked(monkeypatch):
+    """
+    Simulate a full validation workflow using a mock ShiftX2.
+    """
+    # 1. Mock ShiftX2Predictor.predict to return fixed shifts
+    def mock_predict(self, structure):
+        return {
+            "A": {
+                i: {"CA": 50.0 + i} for i in range(1, 6)
+            }
+        }
+    
+    monkeypatch.setattr(ShiftX2Predictor, "predict", mock_predict)
+    
+    # 2. Setup a dummy structure
+    atom1 = struc.Atom([0,0,0], res_id=1, res_name="ALA", atom_name="CA", chain_id="A")
+    atom2 = struc.Atom([1,1,1], res_id=2, res_name="ALA", atom_name="CA", chain_id="A")
+    structure = struc.array([atom1, atom2])
+    
+    # 3. Predict internally
+    # Note: predict_chemical_shifts needs more than 2 atoms usually for SS, 
+    # but for this mock test we just want to see if the comparison runs.
+    # We'll mock the internal predictor too for stability in this test
+    monkeypatch.setattr("synth_nmr.chemical_shifts._NOISE_SCALE", 0.0)
+    
+    internal_shifts = {
+        "A": {
+            1: {"CA": 51.5},
+            2: {"CA": 52.5}
+        }
+    }
+    
+    # 4. Use "ShiftX2"
+    sx2 = ShiftX2Predictor()
+    sx2_shifts = sx2.predict(structure)
+    
+    # 5. Compare
+    stats = compare_chemical_shifts(internal_shifts, sx2_shifts, atom_types=["CA"])
+    
+    assert stats["CA"]["count"] == 2
+    # Internal (51.5, 52.5) vs SX2 (51.0, 52.0) -> Error 0.5 each -> RMSE 0.5
+    assert np.isclose(stats["CA"]["rmse"], 0.5)
+

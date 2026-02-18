@@ -3,6 +3,10 @@ import numpy as np
 import biotite.structure as struc
 from typing import Dict, List, Tuple
 import logging
+import subprocess
+import os
+import tempfile
+import biotite.structure.io.pdb as pdb
 
 logger = logging.getLogger(__name__)
 
@@ -418,3 +422,96 @@ def _calculate_ring_current_shift(proton_coord, rings):
         total_shift += shift
         
     return total_shift
+
+class ShiftX2Predictor:
+    """
+    Wrapper for the external ShiftX2 predictor.
+    
+    Requires the 'shiftx2.py' (or 'shiftx2') executable to be in the system PATH.
+    ShiftX2 can be installed via SBGrid: 'sbgrid-cli install shiftx2'
+    """
+    
+    def __init__(self, executable: str = "shiftx2.py"):
+        self.executable = executable
+
+    def is_available(self) -> bool:
+        """Check if ShiftX2 executable is available in PATH."""
+        from shutil import which
+        return which(self.executable) is not None
+
+    def predict(self, structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
+        """
+        Run ShiftX2 on a Biotite AtomArray.
+        
+        Args:
+            structure: Biotite AtomArray.
+            
+        Returns:
+            Predicted shifts in the standard dictionary format.
+        """
+        if not self.is_available():
+            raise RuntimeError(f"ShiftX2 executable '{self.executable}' not found. "
+                               "Please install it (e.g., via SBGrid) and add it to your PATH.")
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            pdb_path = os.path.join(tmpdir, "input.pdb")
+            out_path = os.path.join(tmpdir, "input.cs") # ShiftX2 output
+            
+            # 1. Write structure to temporary PDB
+            pdb_file = pdb.PDBFile()
+            pdb_file.set_structure(structure)
+            pdb_file.write(pdb_path)
+            
+            # 2. Execute ShiftX2
+            # Command: shiftx2.py -i <input.pdb> -o <output.cs>
+            # Note: Specific flags might vary by version; -i and -o are common.
+            try:
+                subprocess.run([self.executable, "-i", pdb_path, "-o", out_path], 
+                               check=True, capture_output=True, text=True)
+            except subprocess.CalledProcessError as e:
+                logger.error(f"ShiftX2 failed: {e.stderr}")
+                raise RuntimeError(f"ShiftX2 execution failed: {e.stderr}")
+
+            # 3. Parse ShiftX2 output (Simplified CSV/Tabular parsing)
+            return self._parse_output(out_path)
+
+    def _parse_output(self, file_path: str) -> Dict[str, Dict[int, Dict[str, float]]]:
+        """
+        Parse ShiftX2's default output format.
+        Expects a tabular format with columns like: NUM, RES, ATOMNAME, SHIFT
+        """
+        shifts = {"A": {}} # Assuming single chain for simplicity
+        
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"ShiftX2 output file not found: {file_path}")
+
+        with open(file_path, "r") as f:
+            lines = f.readlines()
+            
+        # Skip header lines (usually starts with 'NUM' or similar)
+        header_found = False
+        for line in lines:
+            line = line.strip()
+            if not line: continue
+            
+            if "NUM" in line and "RES" in line:
+                header_found = True
+                continue
+            if not header_found:
+                continue
+                
+            parts = line.split()
+            if len(parts) >= 4:
+                try:
+                    res_id = int(parts[0])
+                    # res_name = parts[1]
+                    atom_name = parts[2]
+                    val = float(parts[3])
+                    
+                    if res_id not in shifts["A"]:
+                        shifts["A"][res_id] = {}
+                    shifts["A"][res_id][atom_name] = val
+                except ValueError:
+                    continue
+                    
+        return shifts
