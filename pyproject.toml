@@ -31,6 +31,10 @@ classifiers = [
 
 [project.optional-dependencies]
 performance = ["numba>=0.55.0"]
+ml = [
+    "torch>=2.0.0",
+    "scikit-learn>=1.0.0",
+]
 dev = [
     "pytest>=7.0",
     "pytest-mock>=3.10.0",

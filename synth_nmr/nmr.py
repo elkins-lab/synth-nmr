@@ -1,5 +1,5 @@
 """
-NMR Spectroscopy utilities for synth-pdb.
+NMR Spectroscopy utilities for synth-nmr.
 
 This module is responsible for calculating synthetic NMR observables from
 generated structures, such as Nuclear Overhauser Effects (NOEs) based on
