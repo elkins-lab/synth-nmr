@@ -132,6 +132,52 @@ RING_INTENSITIES = {
 
 from synth_nmr.structure_utils import get_secondary_structure
 
+def _get_random_coil_shifts(res_name: str) -> Dict[str, float]:
+    """
+    Extract baseline Random Coil shifts for a given residue.
+    
+    EDUCATIONAL NOTE - Random Coil Shifts:
+    ======================================
+    "Random Coil" refers to a protein state with no fixed secondary structure (a flexible chain).
+    The chemical shift of an atom in a random coil depends primarily on its amino acid type.
+    
+    These values serve as the "baseline" or "zero point" for structure prediction.
+    Any deviation from these values (Secondary Shift) indicates structural formation:
+    - Alpha Helix formation moves C-alpha downfield (higher ppm) and N upfield (lower ppm).
+    - Beta Sheet formation moves C-alpha upfield (lower ppm) and N downfield (higher ppm).
+    
+    Reference: Wishart, D.S. et al. (1995) J. Biomol. NMR.
+    Referenced to DSS at 25C.
+    Values for: HA, CA, CB, C, N, HN (Amide H)
+    Units: ppm
+    """
+    return RANDOM_COIL_SHIFTS.get(res_name, {})
+
+def _apply_secondary_structure_offsets(atom_type: str, ss_state: str, base_val: float) -> float:
+    """
+    Apply SPARTA+ style statistical offsets based on helical or sheet geometries.
+    
+    EDUCATIONAL NOTE - Secondary Chemical Shifts:
+    =============================================
+    The local magnetic field experienced by a nucleus is heavily influenced by the
+    geometry of the protein backbone (Phi/Psi angles).
+    
+    SPARTA+ (Shift Prediction from Analogy in Residue-type and Torsion Angle):
+    It predicts chemical shifts by finding homologous structures with similar geometry.
+    
+    Our implementation uses simple statistical offsets instead of database mining,
+    but follows the same principle: Geometry determines Shift.
+    
+    Reference State: DSS (4,4-dimethyl-4-silapentane-1-sulfonic acid)
+    This is the "Zero" for proton/carbon NMR, much like sea level for altitude.
+    Using a standard reference ensures shifts are comparable across different labs.
+    
+    Approximate mean offsets for Helical and Sheet conformations relative to random coil
+    Based on general statistics (e.g. Spera & Bax 1991)
+    """
+    offset = SECONDARY_SHIFTS.get(atom_type, {}).get(ss_state, 0.0)
+    return base_val + offset
+
 def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[str, Dict[str, float]]]:
     """
     Predict chemical shifts based on secondary structure and ring currents.
@@ -194,26 +240,22 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[str, D
             res_name = res_atoms.res_name[0]
             chain_id = res_atoms.chain_id[0]
 
-            if res_name not in RANDOM_COIL_SHIFTS:
+            rc_shifts = _get_random_coil_shifts(res_name)
+            if not rc_shifts:
                 logger.debug(f"Skipping non-standard residue: {res_name} {res_id}")
                 continue
 
             ss_state = ss_list[i] if i < len(ss_list) else "coil"
             logger.debug(f"Processing ResID {res_id} ({res_name}), SS: {ss_state}")
 
-            rc_shifts = RANDOM_COIL_SHIFTS[res_name]
             atom_shifts = {}
 
             for atom_type, base_val in rc_shifts.items():
                 if base_val == 0:  # Skip atoms with no defined random coil shift (e.g., Proline H)
                     continue
 
-                # Start with base random coil value
-                val = base_val
-                
-                # Add secondary structure offset
-                offset = SECONDARY_SHIFTS.get(atom_type, {}).get(ss_state, 0.0)
-                val += offset
+                # Add secondary structure offset to the random coil baseline
+                val = _apply_secondary_structure_offsets(atom_type, ss_state, base_val)
                 
                 # Add ring current shift for protons
                 if rings.size > 0 and atom_type.startswith('H'):

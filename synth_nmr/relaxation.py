@@ -82,6 +82,76 @@ def spectral_density(omega: float, tau_m: float, s2: float, tau_f: float = 0.0) 
 
 from synth_nmr.structure_utils import get_secondary_structure
 
+def _predict_s2_from_sasa(rel_sasa: float, base_s2: float) -> float:
+    """
+    Modulate the base Order Parameter (S2) depending on Solvent Accessible Surface Area (SASA).
+    
+    EDUCATIONAL NOTE - SASA and S2:
+    ===============================
+    Protein interiors are tightly packed. If a residue is fully buried (rel_sasa=0),
+    it is geometrically restricted from moving, getting a bonus to its S2 rigidity (+0.05).
+    Conversely, if it's fully exposed to solvent (rel_sasa=1.0), it has more
+    freedom of motion, receiving a penalty flexibility (-0.15).
+    """
+    return base_s2 + 0.05 * (1.0 - rel_sasa) - 0.15 * rel_sasa
+
+def _apply_termini_effects(res_id: int, start_res: int, end_res: int, current_s2: float) -> float:
+    """
+    Apply chain-fraying flexibility penalties to the terminal residues.
+    
+    EDUCATIONAL NOTE - Termini Dynamics:
+    ====================================
+    Regardless of secondary structure assigned by backbone dihedral angles, the
+    first and last few residues of a polypeptide chain lack the full network of
+    hydrogen bonds and packing constraints (Fraying usually affects first/last 2-3 residues).
+    They consistently exhibit high amplitude, fast timescale motions (lower S2) due to "fraying".
+    Termini effects override secondary structure.
+    """
+    if res_id <= start_res + 1 or res_id >= end_res - 1:
+        return 0.50
+    return current_s2
+
+def _calculate_dipolar_constant(r_nh: float) -> float:
+    """
+    Calculate the squared Dipolar integration constant (d^2) for N-H relaxation.
+    
+    EDUCATIONAL NOTE - Dipolar Integration Constant (d):
+    ====================================================
+    The dominant relaxation mechanism for 15N is the Dipole-Dipole interaction
+    with the directly attached Amide Proton (H).
+    d = (μ0 * ħ * γH * γN) / (4π * r^3)
+    
+    Where:
+    - μ0: Vacuum permeability
+    - r: N-H bond length (approx 1.02 Å)
+    - γH, γN: Gyromagnetic ratios
+    
+    This constant represents the strength of the magnetic interaction distance dependence (r^-3).
+    In relaxation rate equations (R1, R2), it appears squared (d^2), leading to the famous r^-6 dependence.
+    """
+    dd_const = (MU_0 / (4 * np.pi)) * H_BAR * GAMMA_H * GAMMA_N * (r_nh**-3)
+    return dd_const**2
+
+def _calculate_csa_constant(csa_n: float, omega_n: float) -> float:
+    """
+    Calculate the squared Chemical Shift Anisotropy (CSA) constant (c^2) for 15N.
+    
+    EDUCATIONAL NOTE - Chemical Shift Anisotropy (CSA) Constant (c):
+    ================================================================
+    The second major relaxation mechanism is CSA. The electron cloud around the 15N nucleus
+    is not spherical, so as the protein tumbles, the local magnetic field fluctuates.
+    c = (Δσ * ωN) / √3
+    
+    Where:
+    - Δσ (CSA_N): The anisotropy parameter (-160 ppm typical for Beta Sheet / Helix average).
+    - ωN: The Larmor frequency of Nitrogen (field dependent!).
+    
+    Note: Because 'c' depends on ωN (and thus B0), CSA relaxation increases quadratically
+    with magnetic field strength. At high fields (>800 MHz), CSA becomes dominant over Dipolar.
+    """
+    csa_const = (csa_n * omega_n) / np.sqrt(3)
+    return csa_const**2
+
 def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
     """
     Predict Generalized Order Parameters (S2) based on secondary structure,
@@ -211,14 +281,10 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
                 base_s2 = 0.70 # Increased base slightly, so exposed loops drop to ~0.50
                 
             # Termini effects override secondary structure
-            # Fraying usually affects first/last 2-3 residues
-            if rid <= start_res + 1 or rid >= end_res - 1:
-                base_s2 = 0.50
+            base_s2 = _apply_termini_effects(rid, start_res, end_res, base_s2)
                 
             # Modulate by SASA
-            # Buried (rel_sasa=0) -> Bonus rigidity (+0.1)
-            # Exposed (rel_sasa=1) -> Penalty flexibility (-0.1)
-            s2 = base_s2 + 0.05 * (1.0 - rel_sasa) - 0.15 * rel_sasa
+            s2 = _predict_s2_from_sasa(rel_sasa, base_s2)
             
             # Add realistic noise
             s2 += np.random.normal(0, 0.02)
@@ -290,39 +356,9 @@ def calculate_relaxation_rates(
         logger.debug(f"B0 Field: {b0:.2f} T")
         logger.debug(f"wH: {omega_h:.2e} rad/s, wN: {omega_n:.2e} rad/s")
         
-        # EDUCATIONAL NOTE - Dipolar Integration Constant (d):
-        # ====================================================
-        # The dominant relaxation mechanism for 15N is the Dipole-Dipole interaction
-        # with the directly attached Amide Proton (H).
-        # d = (μ0 * ħ * γH * γN) / (4π * r^3)
-        #
-        # Where:
-        # - μ0: Vacuum permeability
-        # - r: N-H bond length (approx 1.02 Å)
-        # - γH, γN: Gyromagnetic ratios
-        # 
-        # This constant represents the strength of the magnetic interaction distance dependence (r^-3).
-        # In relaxation rate equations (R1, R2), it appears squared (d^2), leading to the famous r^-6 dependence.
+        d_sq = _calculate_dipolar_constant(R_NH)
         
-        # Use .size check for numpy array
-        dd_const = (MU_0 / (4 * np.pi)) * H_BAR * GAMMA_H * GAMMA_N * (R_NH**-3)
-        d_sq = dd_const**2
-        
-        # EDUCATIONAL NOTE - Chemical Shift Anisotropy (CSA) Constant (c):
-        # ================================================================
-        # The second major relaxation mechanism is CSA. The electron cloud around the 15N nucleus
-        # is not spherical, so as the protein tumbles, the local magnetic field fluctuates.
-        # c = (Δσ * ωN) / √3
-        #
-        # Where:
-        # - Δσ (CSA_N): The anisotropy parameter (-160 ppm typical for Beta Sheet / Helix average).
-        # - ωN: The Larmor frequency of Nitrogen (field dependent!).
-        #
-        # Note: Because 'c' depends on ωN (and thus B0), CSA relaxation increases quadratically
-        # with magnetic field strength. At high fields (>800 MHz), CSA becomes dominant over Dipolar.
-        
-        csa_const = (CSA_N * omega_n) / np.sqrt(3)
-        c_sq = csa_const**2
+        c_sq = _calculate_csa_constant(CSA_N, omega_n)
         
         results = {}
         
