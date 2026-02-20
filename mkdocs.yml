@@ -1,0 +1,128 @@
+site_name: synth-nmr
+site_url: https://elkins.github.io/synth-nmr
+repo_url: https://github.com/elkins/synth-nmr
+repo_name: elkins/synth-nmr
+site_description: NMR spectroscopy calculations for protein structures
+site_author: George Elkins
+copyright: Copyright &copy; 2026 George Elkins
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  palette: 
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+# Enhanced navigation structure
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation & CLI: getting_started.md
+  - Scientific Background:
+    - Introduction & Theory: science/index.md
+    - Chemical Shifts: science/chemical_shifts.md
+    - Relaxation (Dynamics): science/relaxation.md
+    - NOEs (Distances): science/noes.md
+    - J-Couplings (Dihedrals): science/j_couplings.md
+    - RDCs (Orientations): science/rdcs.md
+  - Tutorials:
+    - Basic Predictions: tutorials/basic_nmr_prediction.ipynb
+    - Relaxation Analysis: tutorials/relaxation_analysis.ipynb
+  - API Reference:
+    - Overview: api/index.md
+    - Chemical Shifts: api/chemical_shifts.md
+    - Relaxation: api/relaxation.md
+    - NOEs: api/nmr.md
+    - J-Coupling: api/j_coupling.md
+    - RDCs: api/rdc.md
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["."]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            group_by_category: true
+            show_category_heading: true
+            show_if_no_docstring: false
+            inherited_members: false
+            filters:
+              - "!^_"  # Exclude private members
+  - mkdocs-jupyter:
+      include_source: true
+      execute: false  # Don't execute notebooks during build
+      allow_errors: false
+      kernel_name: python3
+
+# Markdown extensions
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      base_path: [docs]
+  - pymdownx.superfences:
+      custom_fences:
+        - name: math
+          class: arithmatex
+          format: !!python/name:pymdownx.arithmatex.fence_mathjax_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - def_list
+  - footnotes
+  - tables
+  - abbr
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+# Extra javascript for MathJax
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

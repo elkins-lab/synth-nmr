@@ -79,3 +79,7 @@ dmypy.json
 
 # PyPi publish script
 publish.sh
+
+# mkdocs documentation
+/site
+
