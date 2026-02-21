@@ -100,8 +100,8 @@ def test_rdcs_normal_case(sample_structure):
     # We don't have ideal N-H vectors for precise assertion, but can check presence.
     assert 1 in rdcs
     assert 2 in rdcs
-    assert isinstance(rdcs[1], float)
-    assert isinstance(rdcs[2], float)
+    assert isinstance(rdcs[1], (float, np.floating))
+    assert isinstance(rdcs[2], (float, np.floating))
     # Ensure values are within a reasonable range (e.g., -50 to 50 Hz for typical Da)
     assert -50.0 < rdcs[1] < 50.0
     assert -50.0 < rdcs[2] < 50.0

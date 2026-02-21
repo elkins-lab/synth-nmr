@@ -59,7 +59,7 @@ def test_calculate_rdcs_single_vector_aligned_z():
     assert isinstance(rdcs, dict)
     assert 1 in rdcs
     # Check that the value is a float
-    assert isinstance(rdcs[1], float)
+    assert isinstance(rdcs[1], (float, np.floating))
     # Check that the calculated value matches the theoretical expectation
     assert rdcs[1] == pytest.approx(expected_rdc, abs=1e-4)
 

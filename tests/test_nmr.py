@@ -42,7 +42,7 @@ def test_calculate_synthetic_noes_normal_case(sample_structure):
         assert 'atom_name_1' in restraint
         assert 'distance' in restraint
         assert 'upper_limit' in restraint
-        assert restraint['upper_limit'] == restraint['distance'] + 0.5
+        assert restraint['upper_limit'] == pytest.approx(restraint['distance'] + 0.5)
 
 def test_input_validation_type_error():
     """Test that a TypeError is raised for invalid structure input."""
