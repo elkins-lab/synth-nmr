@@ -14,7 +14,7 @@ Originally extracted from the synth-pdb package to provide a lightweight,
 standalone NMR toolkit that works with any protein structure source.
 """
 
-__version__ = "0.6.0"
+__version__ = "0.6.1"
 
 from .nmr import calculate_synthetic_noes
 from .relaxation import calculate_relaxation_rates, predict_order_parameters
