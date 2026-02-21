@@ -1,16 +1,21 @@
 # synth-nmr
 
+[![Tests](https://github.com/elkins/synth-nmr/actions/workflows/test.yml/badge.svg)](https://github.com/elkins/synth-nmr/actions/workflows/test.yml)
+[![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
+
 <img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
 
 **NMR spectroscopy calculations for protein structures**
 
 A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
 
+**[Read the full documentation here!](https://elkins.github.io/synth-nmr/)**
+
 ## Features
 
 - **NOE Calculations**: Synthetic NOE distance restraints
 - **Relaxation Rates**: R1, R2, and heteronuclear NOE predictions
-- **Chemical Shifts**: SPARTA+ based predictions with ring current corrections
+- **Chemical Shifts**: High-accuracy Neural Network predictions with SPARTA+ empirical fallback
 - **J-Couplings**: Karplus equation for scalar couplings
 - **RDC Calculations**: Prediction of residual dipolar couplings
 - **NEF I/O**: Read and write NMR Exchange Format files

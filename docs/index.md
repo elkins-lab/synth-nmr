@@ -12,7 +12,7 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 
 - **NOE Calculations**: Synthetic Nuclear Overhauser Effect distance restraints.
 - **Relaxation Rates**: $R_{1}$, $R_{2}$, and heteronuclear NOE predictions based on Model-Free formalism.
-- **Chemical Shifts**: SPARTA+ based predictions with ring current corrections.
+- **Chemical Shifts**: High-accuracy Neural Network predictions with SPARTA+ empirical fallback.
 - **J-Couplings**: Karplus equation applications for scalar couplings.
 - **RDC Calculations**: Prediction of Residual Dipolar Couplings from alignment tensors.
 - **NEF I/O**: Native support for the NMR Exchange Format.
