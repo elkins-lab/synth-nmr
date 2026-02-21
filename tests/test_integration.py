@@ -43,7 +43,7 @@ def create_minimal_structure(n_residues=3):
 def test_package_import():
     """Test that the package can be imported."""
     import synth_nmr
-    assert synth_nmr.__version__ == "0.5.0"
+    assert synth_nmr.__version__ == "0.6.0"
 
 
 def test_calculate_synthetic_noes():
