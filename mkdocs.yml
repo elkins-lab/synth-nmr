@@ -52,6 +52,7 @@ nav:
     - RDCs (Orientations): science/rdcs.md
   - Tutorials:
     - Basic Predictions: tutorials/basic_nmr_prediction.ipynb
+    - Advanced Observables: tutorials/advanced_observables.ipynb
     - Relaxation Analysis: tutorials/relaxation_analysis.ipynb
   - API Reference:
     - Overview: api/index.md

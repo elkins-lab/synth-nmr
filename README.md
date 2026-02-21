@@ -26,6 +26,7 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 Try out `synth-nmr` immediately in your browser using Google Colab!
 
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/basic_nmr_prediction.ipynb) **Basic NMR Prediction**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/advanced_observables.ipynb) **Advanced Observables: J-Couplings, NOEs, and RDCs**
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
 
 ## Installation
