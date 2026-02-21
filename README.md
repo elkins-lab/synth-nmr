@@ -21,6 +21,13 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 - **NEF I/O**: Read and write NMR Exchange Format files
 - **Secondary Structure**: Automatic classification for enhanced predictions
 
+## Interactive Tutorials
+
+Try out `synth-nmr` immediately in your browser using Google Colab!
+
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/basic_nmr_prediction.ipynb) **Basic NMR Prediction**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
+
 ## Installation
 
 ```bash
