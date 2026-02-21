@@ -450,10 +450,13 @@ class NeuralShiftPredictor:
             ) from exc
 
         import biotite.structure as struc
-        from synth_nmr.chemical_shifts import predict_chemical_shifts
+        from synth_nmr.chemical_shifts import predict_empirical_shifts, RANDOM_COIL_SHIFTS
 
-        # Step 1 — Get empirical predictions (our grounded baseline)
-        empirical = predict_chemical_shifts(structure)
+        if len(structure) == 0:
+            return {}
+
+        # Step 1 — Get empirical predictions (our grounded baseline for topology mapping)
+        empirical = predict_empirical_shifts(structure)
 
         # Step 2 — Build feature matrix and run the neural correction
         X = build_residue_features(structure)
@@ -461,10 +464,10 @@ class NeuralShiftPredictor:
 
         self.model.eval()
         with torch.no_grad():
-            # delta: [N_residues, 6]  — ΔCS for each nucleus
+            # delta: [N_residues, 6]  — ΔCS for each nucleus (Experimental - Random Coil)
             delta = self.model(x).numpy()
 
-        # Step 3 — Add corrections to empirical predictions
+        # Step 3 — Add corrections to Random Coil baseline
         # Map residue index → (chain_id, res_id) for merging
         res_starts = struc.get_residue_starts(structure)
         result: Dict[str, Dict[int, Dict[str, float]]] = {}
@@ -472,22 +475,25 @@ class NeuralShiftPredictor:
         for i, start in enumerate(res_starts):
             chain_id = structure.chain_id[start]
             res_id = int(structure.res_id[start])
+            res_name = structure.res_name[start]
 
-            # Start from empirical shifts for this residue
+            # Start from empirical shifts for this residue just to know which atoms exist
             emp_atoms = empirical.get(chain_id, {}).get(res_id, {})
+            rc_atoms = RANDOM_COIL_SHIFTS.get(res_name, {})
             corrected: Dict[str, float] = {}
 
             for j, nucleus in enumerate(NUCLEUS_ORDER):
-                if nucleus in emp_atoms:
-                    # Apply neural correction; clamp to plausible range
+                if nucleus in emp_atoms and rc_atoms.get(nucleus, 0.0) > 0:
+                    # Apply neural prediction to the random coil baseline
                     corrected[nucleus] = round(
-                        float(np.clip(emp_atoms[nucleus] + delta[i, j], 0.0, 220.0)),
+                        float(np.clip(rc_atoms[nucleus] + delta[i, j], 0.0, 220.0)),
                         3,
                     )
 
-            if chain_id not in result:
-                result[chain_id] = {}
-            result[chain_id][res_id] = corrected
+            if corrected:
+                if chain_id not in result:
+                    result[chain_id] = {}
+                result[chain_id][res_id] = corrected
 
         return result
 

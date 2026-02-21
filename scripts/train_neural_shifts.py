@@ -108,47 +108,59 @@ def load_pdb_directory(pdb_dir: str):
 # Dataset building
 # ---------------------------------------------------------------------------
 
-def build_dataset(structures):
+def build_dataset(dataset_pairs: list):
     """
-    Build (X, y) arrays from a list of AtomArrays.
+    Build (X, y) arrays from a list of (AtomArray, ExperimentalShifts) pairs.
 
     X : [N_residues_total, 74]  — feature vectors
-    y : [N_residues_total,  6]  — ΔCS targets (empirical − random coil)
+    y : [N_residues_total,  6]  — ΔCS targets (experimental − random coil)
 
     Returns (X, y) as float32 numpy arrays, and the count of successfully
     processed residues.
     """
-    from synth_nmr.neural_shifts import build_residue_features, NUCLEUS_ORDER, N_FEATURES
-    from synth_nmr.chemical_shifts import predict_chemical_shifts, RANDOM_COIL_SHIFTS
+    from synth_nmr.neural_shifts import build_residue_features, NUCLEUS_ORDER
+    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
     import biotite.structure as struc
 
     X_list, y_list = [], []
+    valid_residue_count = 0
 
-    for idx, struct in enumerate(structures):
+    for idx, (struct, exp_shifts) in enumerate(dataset_pairs):
         try:
             X = build_residue_features(struct)
-            shifts = predict_chemical_shifts(struct)
             res_starts = struc.get_residue_starts(struct)
 
-            y = np.zeros((len(res_starts), len(NUCLEUS_ORDER)), dtype=np.float32)
+            # We pre-allocate X and y, but might not use all rows if a residue lacks shifts
+            X_valid = []
+            y_valid = []
 
             for i, start in enumerate(res_starts):
-                chain_id = struct.chain_id[start]
                 res_id = int(struct.res_id[start])
                 res_name = struct.res_name[start]
 
-                emp_atoms = shifts.get(chain_id, {}).get(res_id, {})
+                emp_atoms = exp_shifts.get(res_id, {})
                 rc = RANDOM_COIL_SHIFTS.get(res_name, {})
+
+                # Only include this residue if it has at least one experimental shift
+                if not emp_atoms:
+                    continue
+
+                y_row = np.zeros(len(NUCLEUS_ORDER), dtype=np.float32)
+                has_valid_nucleus = False
 
                 for j, nuc in enumerate(NUCLEUS_ORDER):
                     if nuc in emp_atoms and rc.get(nuc, 0.0) > 0:
-                        # ΔCS = empirical prediction − random coil baseline
-                        # This is what the neural network learns to predict from
-                        # geometry, neighbour identity, and secondary structure.
-                        y[i, j] = emp_atoms[nuc] - rc[nuc]
+                        has_valid_nucleus = True
+                        y_row[j] = emp_atoms[nuc] - rc[nuc]
 
-            X_list.append(X)
-            y_list.append(y)
+                if has_valid_nucleus:
+                    X_valid.append(X[i])
+                    y_valid.append(y_row)
+                    valid_residue_count += 1
+
+            if len(X_valid) > 0:
+                X_list.append(np.array(X_valid, dtype=np.float32))
+                y_list.append(np.array(y_valid, dtype=np.float32))
 
         except Exception as e:
             logger.warning("Dataset build: skipping structure %d: %s", idx, e)
@@ -158,7 +170,7 @@ def build_dataset(structures):
 
     X_all = np.vstack(X_list)
     y_all = np.vstack(y_list)
-    logger.info("Dataset: %d residues, X=%s, y=%s", len(X_all), X_all.shape, y_all.shape)
+    logger.info("Dataset: %d valid residues with assignments, X=%s, y=%s", valid_residue_count, X_all.shape, y_all.shape)
     return X_all, y_all
 
 
@@ -266,16 +278,12 @@ def evaluate(model, X_test, y_test):
 # ---------------------------------------------------------------------------
 
 def main():
-    parser = argparse.ArgumentParser(description="Train NeuralShiftPredictor")
-    # Data sources (mutually exclusive — either generate or load from directory)
+    parser = argparse.ArgumentParser(description="Train NeuralShiftPredictor on Experimental Data")
+    # Data sources (mutually exclusive)
     data_grp = parser.add_mutually_exclusive_group()
     data_grp.add_argument(
-        "--n-samples", type=int, default=200,
-        help="Number of synthetic structures to generate (default: 200).",
-    )
-    data_grp.add_argument(
-        "--pdb-dir", type=str, default=None,
-        help="Load PDB files from this directory instead of generating synthetic ones.",
+        "--experimental-data", action="store_true", default=True,
+        help="Download and use experimental BMRB/PDB reference pairs (default).",
     )
     # Training hyperparameters
     parser.add_argument("--epochs",     type=int,   default=200,   help="Training epochs")
@@ -297,19 +305,18 @@ def main():
         sys.exit(1)
 
     from sklearn.model_selection import train_test_split
+    from synth_nmr.data_pipeline import load_matched_dataset
 
-    # 1 — Load / generate structures
-    if args.pdb_dir:
-        structures = load_pdb_directory(args.pdb_dir)
-    else:
-        structures = generate_synthetic_structures(args.n_samples, args.random_state)
+    # 1 — Load structures and experimental BMRB shifts
+    logger.info("Initializing experimental data pipeline...")
+    dataset_pairs = load_matched_dataset(data_dir="data")
 
-    if not structures:
-        print("ERROR: No structures available for training.")
+    if not dataset_pairs:
+        print("ERROR: No experimental structures available for training.")
         sys.exit(1)
 
     # 2 — Build feature/label dataset
-    X, y = build_dataset(structures)
+    X, y = build_dataset(dataset_pairs)
 
     # 3 — Train/test split (stratify not needed for regression)
     X_train, X_test, y_train, y_test = train_test_split(

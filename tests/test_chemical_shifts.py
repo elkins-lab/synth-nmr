@@ -444,3 +444,27 @@ def test_get_aromatic_rings_else_continue():
     structure.res_name = np.array(["GLY"] * 5)
     rings = _get_aromatic_rings(structure)
     assert rings.shape == (0, 7)
+
+def test_predict_chemical_shifts_fallback(mocker):
+    """Test that predict_chemical_shifts falls back to empirical if NeuralShiftPredictor fails."""
+    import synth_nmr.chemical_shifts
+    from synth_nmr.chemical_shifts import predict_chemical_shifts
+    
+    # Spy on the empirical fallback function
+    spy_empirical = mocker.spy(synth_nmr.chemical_shifts, 'predict_empirical_shifts')
+    
+    # Force the neural predictor to fail during prediction
+    mocker.patch("synth_nmr.neural_shifts.NeuralShiftPredictor.predict", side_effect=RuntimeError("Mocked missing torch"))
+    
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["ALA"])
+    structure.res_id = np.array([1])
+    structure.chain_id = np.array(["A"])
+    structure.atom_name = np.array(["CA"])
+    structure.coord = np.array([[0,0,0]])
+    
+    shifts = predict_chemical_shifts(structure)
+    
+    assert "A" in shifts
+    assert 1 in shifts["A"]
+    spy_empirical.assert_called_once()

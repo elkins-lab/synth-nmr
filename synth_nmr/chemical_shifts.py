@@ -178,7 +178,25 @@ def _apply_secondary_structure_offsets(atom_type: str, ss_state: str, base_val: 
     offset = SECONDARY_SHIFTS.get(atom_type, {}).get(ss_state, 0.0)
     return base_val + offset
 
-def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[str, Dict[str, float]]]:
+def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
+    """
+    Predict chemical shifts using the highest-accuracy available model.
+    Attempts to use the NeuralShiftPredictor (experimental trained) first.
+    If 'torch' or the model weights are missing, falls back to SPARTA+ empirical prediction.
+    """
+    try:
+        from synth_nmr.neural_shifts import NeuralShiftPredictor
+        predictor = NeuralShiftPredictor()
+        return predictor.predict(structure)
+    except (ImportError, FileNotFoundError, RuntimeError) as e:
+        logger.warning(
+            f"NeuralShiftPredictor not available: {e}. "
+            "Falling back to empirical chemical shift prediction (SPARTA+ algorithm)."
+        )
+        return predict_empirical_shifts(structure)
+
+
+def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
     """
     Predict chemical shifts based on secondary structure and ring currents.
     
