@@ -515,7 +515,8 @@ class ShiftX2Predictor:
 
         with tempfile.TemporaryDirectory() as tmpdir:
             pdb_path = os.path.join(tmpdir, "input.pdb")
-            out_path = os.path.join(tmpdir, "input.cs") # ShiftX2 output
+            # Some versions of shiftx2 ignore -o and append .cs to the input file
+            expected_out_path = pdb_path + ".cs"
             
             # 1. Write structure to temporary PDB
             pdb_file = pdb.PDBFile()
@@ -523,17 +524,19 @@ class ShiftX2Predictor:
             pdb_file.write(pdb_path)
             
             # 2. Execute ShiftX2
-            # Command: shiftx2.py -i <input.pdb> -o <output.cs>
-            # Note: Specific flags might vary by version; -i and -o are common.
+            # Command: shiftx2.py -i <input.pdb>
             try:
-                subprocess.run([self.executable, "-i", pdb_path, "-o", out_path], 
+                subprocess.run([self.executable, "-i", pdb_path], 
                                check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
                 logger.error(f"ShiftX2 failed: {e.stderr}")
                 raise RuntimeError(f"ShiftX2 execution failed: {e.stderr}")
 
+            logger.debug(f"Tmpdir contents: {os.listdir(tmpdir)}")
+            logger.debug(f"Expecting out path: {expected_out_path}")
+
             # 3. Parse ShiftX2 output (Simplified CSV/Tabular parsing)
-            return self._parse_output(out_path)
+            return self._parse_output(expected_out_path)
 
     def _parse_output(self, file_path: str) -> Dict[str, Dict[int, Dict[str, float]]]:
         """
@@ -560,7 +563,7 @@ class ShiftX2Predictor:
             if not header_found:
                 continue
                 
-            parts = line.split()
+            parts = [p.strip() for p in line.split(',')]
             if len(parts) >= 4:
                 try:
                     res_id = int(parts[0])
