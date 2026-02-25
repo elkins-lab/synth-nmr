@@ -180,17 +180,35 @@ def _apply_secondary_structure_offsets(atom_type: str, ss_state: str, base_val: 
 
 def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
     """
-    Predict chemical shifts using the default SPARTA+ empirical model.
-    
-    Based on evaluation against SHIFTX2, this empirical method provides high
-    baseline accuracy for backbone shifts.
-    
+    Predict chemical shifts using the highest-accuracy available model.
+    Attempt to use SHIFTX2 first, as it provides the best baseline accuracy.
+    If SHIFTX2 is not available in the system PATH, or if prediction fails,
+    falls back to the SPARTA+ empirical prediction model.
+
     Note: The `NeuralShiftPredictor` (available in `synth_nmr.neural_shifts`) is
     strictly experimental and serves as an educational example of how Protein
     Language Models (PLMs) could be applied to NMR prediction. It currently requires
     extensive retraining with geometric attention mechanisms to match or exceed
     classical empirical force fields.
     """
+    shiftx_predictor = ShiftX2Predictor()
+
+    if shiftx_predictor.is_available():
+        try:
+            shifts = shiftx_predictor.predict(structure)
+            if shifts:
+                logger.info("Successfully predicted chemical shifts using SHIFTX2.")
+                return shifts
+            else:
+                logger.warning("SHIFTX2 returned empty predictions. Falling back to empirical SPARTA+ model.")
+        except Exception as e:
+            logger.warning(f"SHIFTX2 prediction failed: {e}. Falling back to empirical SPARTA+ model.")
+    else:
+        logger.warning(
+            "SHIFTX2 executable not found in PATH or not executable. "
+            "Falling back to empirical chemical shift prediction (SPARTA+ algorithm). "
+            "For best results, install SHIFTX2 (e.g., via 'sbgrid-cli install shiftx2' or http://www.shiftx2.ca/download.html)."
+        )
     return predict_empirical_shifts(structure)
 
 
