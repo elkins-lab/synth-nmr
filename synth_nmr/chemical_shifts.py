@@ -180,20 +180,18 @@ def _apply_secondary_structure_offsets(atom_type: str, ss_state: str, base_val: 
 
 def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
     """
-    Predict chemical shifts using the highest-accuracy available model.
-    Attempts to use the NeuralShiftPredictor (experimental trained) first.
-    If 'torch' or the model weights are missing, falls back to SPARTA+ empirical prediction.
+    Predict chemical shifts using the default SPARTA+ empirical model.
+    
+    Based on evaluation against SHIFTX2, this empirical method provides high
+    baseline accuracy for backbone shifts.
+    
+    Note: The `NeuralShiftPredictor` (available in `synth_nmr.neural_shifts`) is
+    strictly experimental and serves as an educational example of how Protein
+    Language Models (PLMs) could be applied to NMR prediction. It currently requires
+    extensive retraining with geometric attention mechanisms to match or exceed
+    classical empirical force fields.
     """
-    try:
-        from synth_nmr.neural_shifts import NeuralShiftPredictor
-        predictor = NeuralShiftPredictor()
-        return predictor.predict(structure)
-    except (ImportError, FileNotFoundError, RuntimeError) as e:
-        logger.warning(
-            f"NeuralShiftPredictor not available: {e}. "
-            "Falling back to empirical chemical shift prediction (SPARTA+ algorithm)."
-        )
-        return predict_empirical_shifts(structure)
+    return predict_empirical_shifts(structure)
 
 
 def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
@@ -489,6 +487,7 @@ class ShiftX2Predictor:
     
     Requires the 'shiftx2.py' (or 'shiftx2') executable to be in the system PATH.
     ShiftX2 can be installed via SBGrid: 'sbgrid-cli install shiftx2'
+    It can also be downloaded from here: http://www.shiftx2.ca/download.html
     """
     
     def __init__(self, executable: str = "shiftx2.py"):

@@ -103,11 +103,10 @@ def test_shiftx2_parse_output(tmp_path):
     """Test parsing logic of ShiftX2 wrapper."""
     # Create a mock ShiftX2 output file
     mock_file = tmp_path / "test.cs"
-    mock_content = """
- NUM RES ATOMNAME SHIFT
- 1   MET CA       54.321
- 1   MET HA       4.123
- 2   GLY CA       45.678
+    mock_content = """NUM,RES,ATOMNAME,SHIFT
+1,MET,CA,54.321
+1,MET,HA,4.123
+2,GLY,CA,45.678
 """
     mock_file.write_text(mock_content)
     
