@@ -21,6 +21,7 @@
 """A command-line interface for synth-nmr."""
 import sys
 import os
+from typing import List
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 from synth_nmr.rdc import calculate_rdcs
@@ -38,7 +39,7 @@ def main() -> None:
         # Interactive mode
         interactive_mode()
 
-def process_commands(args: list[str]) -> None:
+def process_commands(args: List[str]) -> None:
     """Process a list of commands."""
     global structure
     i = 0
