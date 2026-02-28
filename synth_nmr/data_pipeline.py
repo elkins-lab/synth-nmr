@@ -78,7 +78,7 @@ def parse_bmrb_shifts(filepath: str) -> Dict[int, Dict[str, float]]:
     Returns:
         A dictionary mapping: {seq_id: {atom_name: shift_value_ppm}}
     """
-    experimental_shifts = {}
+    experimental_shifts: Dict[int, Dict[str, float]] = {}
     
     try:
         with open(filepath, 'r') as f:
@@ -88,10 +88,10 @@ def parse_bmrb_shifts(filepath: str) -> Dict[int, Dict[str, float]]:
         return experimental_shifts
 
     in_atom_chem_shift_loop = False
-    loop_headers = []
+    loop_headers: List[str] = []
     
     # Store all values, then average if there are multiple (e.g. HA2/HA3 -> HA)
-    experimental_shifts_collected = {}
+    experimental_shifts_collected: Dict[int, Dict[str, List[float]]] = {}
 
     for line in lines:
         line = line.strip()

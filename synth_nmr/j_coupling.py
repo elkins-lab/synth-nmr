@@ -57,7 +57,7 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
     res_starts = struc.get_residue_starts(structure)
     # Filter to only amino acids? Usually safe.
     
-    results = {}
+    results: Dict[str, Dict[int, float]] = {}
     
     # Iterate over residues
     # Angles array matches number of residues

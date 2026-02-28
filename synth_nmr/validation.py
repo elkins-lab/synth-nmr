@@ -47,11 +47,11 @@ def compare_chemical_shifts(
             logger.warning(f"Insufficient data to compare atom type: {atom}")
             continue
             
-        y_pred = np.array(y_pred)
-        y_ref = np.array(y_ref)
+        y_pred_np = np.array(y_pred)
+        y_ref_np = np.array(y_ref)
         
-        rmse = np.sqrt(np.mean((y_pred - y_ref)**2))
-        pearson = np.corrcoef(y_pred, y_ref)[0, 1]
+        rmse = np.sqrt(np.mean((y_pred_np - y_ref_np)**2))
+        pearson = np.corrcoef(y_pred_np, y_ref_np)[0, 1]
         
         stats[atom] = {
             "rmse": round(float(rmse), 3),
@@ -61,7 +61,7 @@ def compare_chemical_shifts(
         
     return stats
 
-def print_validation_report(stats: Dict[str, Dict[str, float]]):
+def print_validation_report(stats: Dict[str, Dict[str, float]]) -> None:
     """
     Print a formatted validation report.
     """

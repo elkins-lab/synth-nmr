@@ -160,7 +160,7 @@ def write_nef_relaxation(
     nc += "save_\n\n"
     
     # Helper to write a measurement list
-    def write_list(metric_name, nef_name, unit):
+    def write_list(metric_name: str, nef_name: str, unit: str) -> str:
         block = f"save_{nef_name}_{int(field_freq_mhz)}MHz\n"
         block += f"   _nef_nmr_measurement_list.sf_category nef_nmr_measurement_list\n"
         block += f"   _nef_nmr_measurement_list.sf_framecode {nef_name}_{int(field_freq_mhz)}MHz\n"
@@ -348,10 +348,10 @@ def read_nef_restraints(filename: str) -> List[Dict]:
     # State machine for parsing
     in_restraint_saveframe = False
     in_loop = False
-    headers = []
+    headers: List[str] = []
     
     # Header indices mapped to keys
-    col_map = {}
+    col_map: Dict[str, int] = {}
     
     try:
         with open(filename, 'r') as f:

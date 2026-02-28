@@ -126,7 +126,7 @@ USAGE
 
 import logging
 import os
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, Any
 
 import numpy as np
 
@@ -160,7 +160,7 @@ _DEFAULT_CHECKPOINT = os.path.join(
 
 # ── Feature engineering ──────────────────────────────────────────────────────
 
-def build_residue_features(structure) -> np.ndarray:
+def build_residue_features(structure: Any) -> np.ndarray:
     """
     Build the per-residue feature matrix (shape [N_residues, 74]) from a
     biotite AtomArray.
@@ -208,7 +208,7 @@ def build_residue_features(structure) -> np.ndarray:
         psi_angles = np.zeros(n_res)
 
     # Pad/trim to match n_res exactly
-    def _pad(arr, length):
+    def _pad(arr: Any, length: int) -> np.ndarray:
         arr = np.asarray(arr, dtype=np.float32)
         if len(arr) == length:
             return arr
@@ -305,7 +305,7 @@ def build_residue_features(structure) -> np.ndarray:
 def _make_mlp(hidden_dims: Tuple[int, ...] = (128, 64, 32),
               n_features: int = N_FEATURES,
               n_outputs: int = 6,
-              dropout: float = 0.2):
+              dropout: float = 0.2) -> Any:
     """
     Construct the MLP nn.Module.
 
@@ -406,9 +406,9 @@ class NeuralShiftPredictor:
     """
 
     def __init__(self, model_path: Optional[str] = None,
-                 hidden_dims: Tuple[int, ...] = (128, 64, 32)):
+                 hidden_dims: Tuple[int, ...] = (128, 64, 32)) -> None:
         self.hidden_dims = hidden_dims
-        self.model = None
+        self.model: Any = None
         self._model_path: Optional[str] = None
 
         if model_path:
@@ -428,7 +428,7 @@ class NeuralShiftPredictor:
     # Public API
     # ------------------------------------------------------------------
 
-    def predict(self, structure) -> Dict[str, Dict[int, Dict[str, float]]]:
+    def predict(self, structure: Any) -> Dict[str, Dict[int, Dict[str, float]]]:
         """
         Predict chemical shifts using the empirical baseline + neural ΔCS.
 

@@ -29,7 +29,7 @@ from synth_nmr.j_coupling import calculate_hn_ha_coupling
 
 structure = None
 
-def main():
+def main() -> None:
     """The main function for the synth-nmr CLI."""
     if len(sys.argv) > 1:
         # Non-interactive mode
@@ -38,7 +38,7 @@ def main():
         # Interactive mode
         interactive_mode()
 
-def process_commands(args):
+def process_commands(args: list[str]) -> None:
     """Process a list of commands."""
     global structure
     i = 0
@@ -110,7 +110,7 @@ def process_commands(args):
             print(f"Error: Unknown command: {command}")
             i += 1
 
-def interactive_mode():
+def interactive_mode() -> None:
     """Run the CLI in interactive mode."""
     global structure
     print("Welcome to the synth-nmr CLI!")

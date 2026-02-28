@@ -2,7 +2,7 @@
 import numpy as np
 import biotite.structure as struc
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 try:
     from numba import njit
 except ImportError:
-    def njit(func=None, **kwargs):
+    def njit(func: Any = None, **kwargs: Any) -> Any:
         if func is None:
             return lambda f: f
         return func
@@ -303,7 +303,7 @@ def calculate_relaxation_rates(
     structure: struc.AtomArray,
     field_mhz: float = 600.0,
     tau_m_ns: float = 10.0,
-    s2_map: Dict[int, float] = None
+    s2_map: Optional[Dict[int, float]] = None
 ) -> Dict[int, Dict[str, float]]:
     """
     Calculate R1, R2, and Heteronuclear NOE for all backbone Amides (N-H).

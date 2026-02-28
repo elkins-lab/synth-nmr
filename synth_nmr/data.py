@@ -555,7 +555,7 @@ AMINO_ACID_ATOMS: Dict[str, List[Dict[str, Any]]] = {
 # Reference: Dunbrack & Cohen (1997) Protein Science
 # Note: Only the most common rotamer is included for each amino acid
 
-ROTAMER_LIBRARY: Dict[str, List[Dict[str, List[float]]]] = {
+ROTAMER_LIBRARY: Dict[str, List[Dict[str, Any]]] = {
     # Aliphatic amino acids
     'ALA': [],  # No side-chain dihedrals
     'VAL': [
@@ -663,7 +663,7 @@ ROTAMER_LIBRARY: Dict[str, List[Dict[str, List[float]]]] = {
 #
 # This simplified library maps secondary structure types ('alpha', 'beta', etc.)
 # to specific rotamer probability distributions.
-BACKBONE_DEPENDENT_ROTAMER_LIBRARY: Dict[str, Dict[str, List[Dict[str, List[float]]]]] = {
+BACKBONE_DEPENDENT_ROTAMER_LIBRARY: Dict[str, Dict[str, List[Dict[str, Any]]]] = {
     'VAL': {
         'alpha': [
             # In Helix: g- is dominant, trans is rare
@@ -894,7 +894,7 @@ BETA_TURN_TYPES: Dict[str, List[Tuple[float, float]]] = {
 # CA-CB-G-D  (Chi2)
 # CB-G-D-E   (Chi3)
 # G-D-E-Z    (Chi4)
-AMINO_ACID_CHI_DEFINITIONS: Dict[str, List[Dict[str, List[str]]]] = {
+AMINO_ACID_CHI_DEFINITIONS: Dict[str, List[Dict[str, Any]]] = {
     'VAL': [{'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG1']}],
     'THR': [{'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'OG1']}],
     'ILE': [

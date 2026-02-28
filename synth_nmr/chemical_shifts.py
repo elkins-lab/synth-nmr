@@ -1,7 +1,7 @@
 
 import numpy as np
 import biotite.structure as struc
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 import logging
 import subprocess
 import os
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 try:
     from numba import njit
 except ImportError:
-    def njit(func=None, **kwargs):
+    def njit(func: Any = None, **kwargs: Any) -> Any:
         if func is None:
             return lambda f: f
         return func
@@ -265,7 +265,7 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
             logger.debug(f"Found {rings.shape[0]} aromatic rings for ring current calculation.")
 
         # 3. Iterate through residues and calculate shifts
-        results = {}
+        results: Dict[str, Dict[int, Dict[str, float]]] = {}
         for i, start_idx in enumerate(struc.get_residue_starts(structure)):
             end_idx = struc.get_residue_starts(structure)[i+1] if i + 1 < len(struc.get_residue_starts(structure)) else None
             res_atoms = structure[start_idx:end_idx]
@@ -368,7 +368,7 @@ def calculate_csi(
             return {}
 
         # 3. Calculate CSI
-        csi_data = {}
+        csi_data: Dict[str, Dict[int, float]] = {}
         for chain_id, chain_shifts in shifts.items():
             if not isinstance(chain_shifts, dict): continue
             csi_data[chain_id] = {}
@@ -399,7 +399,7 @@ def calculate_csi(
         logger.error(f"An unexpected error occurred during CSI calculation: {e}", exc_info=True)
         raise
 
-def _get_aromatic_rings(structure):
+def _get_aromatic_rings(structure: struc.AtomArray) -> np.ndarray:
     """
     Identify aromatic rings and calculate their centers and normal vectors.
     """
@@ -460,7 +460,7 @@ def _get_aromatic_rings(structure):
     return ring_array
 
 @njit
-def _calculate_ring_current_shift(proton_coord, rings):
+def _calculate_ring_current_shift(proton_coord: np.ndarray, rings: np.ndarray) -> float:
     """
     Calculate total ring current shift for a proton from all rings.
     'rings' is a numpy array of shape (N, 7): [cx, cy, cz, nx, ny, nz, intensity]
@@ -560,7 +560,7 @@ class ShiftX2Predictor:
         Parse ShiftX2's default output format.
         Expects a tabular format with columns like: NUM, RES, ATOMNAME, SHIFT
         """
-        shifts = {"A": {}} # Assuming single chain for simplicity
+        shifts: Dict[str, Dict[int, Dict[str, float]]] = {"A": {}} # Assuming single chain for simplicity
         
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"ShiftX2 output file not found: {file_path}")
