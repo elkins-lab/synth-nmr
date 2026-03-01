@@ -20,7 +20,6 @@
 
 """A command-line interface for synth-nmr."""
 import sys
-import os
 from typing import List
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
@@ -29,6 +28,7 @@ from synth_nmr.chemical_shifts import predict_chemical_shifts
 from synth_nmr.j_coupling import calculate_hn_ha_coupling
 
 structure = None
+
 
 def main() -> None:
     """The main function for the synth-nmr CLI."""
@@ -39,14 +39,15 @@ def main() -> None:
         # Interactive mode
         interactive_mode()
 
+
 def process_commands(args: List[str]) -> None:
     """Process a list of commands."""
     global structure
     i = 0
     while i < len(args):
         command = args[i].lower()
-        if command == "read" and i + 2 < len(args) and args[i+1].lower() == "pdb":
-            filename = args[i+2]
+        if command == "read" and i + 2 < len(args) and args[i + 1].lower() == "pdb":
+            filename = args[i + 2]
             try:
                 pdb_file = pdb.PDBFile.read(filename)
                 structure = pdb_file.get_structure()
@@ -58,24 +59,24 @@ def process_commands(args: List[str]) -> None:
             except Exception as e:
                 print(f"Error: Failed to read PDB file: {e}")
             i += 3
-        elif command == "calculate" and i + 1 < len(args) and args[i+1].lower() == "rdc":
+        elif command == "calculate" and i + 1 < len(args) and args[i + 1].lower() == "rdc":
             if structure is None:
                 print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
                 i += 2
                 continue
             Da = 10.0
             R = 0.5
-            if i + 2 < len(args) and not args[i+2].isalpha():
+            if i + 2 < len(args) and not args[i + 2].isalpha():
                 try:
-                    Da = float(args[i+2])
+                    Da = float(args[i + 2])
                     i += 1
                 except ValueError:
                     print("Error: Invalid value for Da. Must be a float.")
                     i += 1
                     continue
-            if i + 2 < len(args) and not args[i+2].isalpha():
+            if i + 2 < len(args) and not args[i + 2].isalpha():
                 try:
-                    R = float(args[i+2])
+                    R = float(args[i + 2])
                     i += 1
                 except ValueError:
                     print("Error: Invalid value for R. Must be a float.")
@@ -85,7 +86,7 @@ def process_commands(args: List[str]) -> None:
             for res_id, rdc in rdcs.items():
                 print(f"ResID: {res_id}, RDC: {rdc}")
             i += 2
-        elif command == "predict" and i + 1 < len(args) and args[i+1].lower() == "shifts":
+        elif command == "predict" and i + 1 < len(args) and args[i + 1].lower() == "shifts":
             if structure is None:
                 print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
                 i += 2
@@ -97,7 +98,7 @@ def process_commands(args: List[str]) -> None:
                     for atom_name, shift_val in atom_shifts.items():
                         print(f"  {atom_name}: {shift_val}")
             i += 2
-        elif command == "calculate" and i + 1 < len(args) and args[i+1].lower() == "j-coupling":
+        elif command == "calculate" and i + 1 < len(args) and args[i + 1].lower() == "j-coupling":
             if structure is None:
                 print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
                 i += 2
@@ -111,6 +112,7 @@ def process_commands(args: List[str]) -> None:
             print(f"Error: Unknown command: {command}")
             i += 1
 
+
 def interactive_mode() -> None:
     """Run the CLI in interactive mode."""
     global structure
@@ -123,7 +125,7 @@ def interactive_mode() -> None:
             line = sys.stdin.readline().strip()
             if not line:
                 continue
-            
+
             parts = line.split()
             command = parts[0].lower()
 
@@ -197,7 +199,6 @@ def interactive_mode() -> None:
             break
         except Exception as e:
             print(f"An error occurred: {e}")
-
 
 
 if __name__ == "__main__":

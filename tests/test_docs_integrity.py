@@ -1,37 +1,38 @@
 import unittest
 import os
 
+
 class TestDocumentationIntegrity(unittest.TestCase):
     """
     Safeguard to ensure educational notes are not accidentally removed.
-    
+
     These tests scan the source code for specific educational content that
     must be preserved to maintain the pedagogical value of the project.
     """
-    
+
     def setUp(self):
         # Define paths relative to this test file
         self.base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.nmr_path = os.path.join(self.base_dir, 'synth_nmr', 'nmr.py')
-        self.chemical_shifts_path = os.path.join(self.base_dir, 'synth_nmr', 'chemical_shifts.py')
-        self.relaxation_path = os.path.join(self.base_dir, 'synth_nmr', 'relaxation.py')
-        self.j_coupling_path = os.path.join(self.base_dir, 'synth_nmr', 'j_coupling.py')
-        self.nef_io_path = os.path.join(self.base_dir, 'synth_nmr', 'nef_io.py')
-        self.dataset_path = os.path.join(self.base_dir, 'synth_nmr', 'dataset.py')
-        self.data_path = os.path.join(self.base_dir, 'synth_nmr', 'data.py')
-        self.coupling_path = os.path.join(self.base_dir, 'synth_nmr', 'coupling.py')
+        self.nmr_path = os.path.join(self.base_dir, "synth_nmr", "nmr.py")
+        self.chemical_shifts_path = os.path.join(self.base_dir, "synth_nmr", "chemical_shifts.py")
+        self.relaxation_path = os.path.join(self.base_dir, "synth_nmr", "relaxation.py")
+        self.j_coupling_path = os.path.join(self.base_dir, "synth_nmr", "j_coupling.py")
+        self.nef_io_path = os.path.join(self.base_dir, "synth_nmr", "nef_io.py")
+        self.dataset_path = os.path.join(self.base_dir, "synth_nmr", "dataset.py")
+        self.data_path = os.path.join(self.base_dir, "synth_nmr", "data.py")
+        self.coupling_path = os.path.join(self.base_dir, "synth_nmr", "coupling.py")
 
     def _check_file_contains(self, filepath, substrings):
         """Helper to assert file contains list of substrings."""
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with open(filepath, "r", encoding="utf-8") as f:
             content = " ".join(f.read().split())
-            
+
         for substring in substrings:
             normalized_substring = " ".join(substring.split())
             self.assertIn(
-                normalized_substring, 
-                content, 
-                f"Missing educational note in {os.path.basename(filepath)}: '{substring[:50]}...'"
+                normalized_substring,
+                content,
+                f"Missing educational note in {os.path.basename(filepath)}: '{substring[:50]}...'",
             )
 
     def test_nmr_educational_notes(self):
@@ -48,7 +49,8 @@ class TestDocumentationIntegrity(unittest.TestCase):
         """Ensure chemical_shifts.py retains key educational blocks."""
         required_notes = [
             "EDUCATIONAL NOTE - Random Coil Shifts:",
-            "Random Coil", "flexible chain",
+            "Random Coil",
+            "flexible chain",
             "EDUCATIONAL NOTE - Secondary Chemical Shifts:",
             "deviation from these values (Secondary Shift)",
             "EDUCATIONAL NOTE - Ring Current Physics:",
@@ -87,9 +89,9 @@ class TestDocumentationIntegrity(unittest.TestCase):
         required_notes = [
             "EDUCATIONAL NOTE - Engh & Huber Parameters (The Gold Standard):",
             "Gold Standard",
-            "EDUCATIONAL NOTE - Proline Sterics (The \"Proline Effect\"):",
+            'EDUCATIONAL NOTE - Proline Sterics (The "Proline Effect"):',
             "structure breaker",
-            "EDUCATIONAL NOTE - The \"Mirror Image\" World:",
+            'EDUCATIONAL NOTE - The "Mirror Image" World:',
             "EDUCATIONAL NOTE - Backbone Dependency:",
             "EDUCATIONAL NOTE - Rotamers for Non-Branched Residues:",
             "EDUCATIONAL NOTE - Aromatic Residues (PHE, TYR, TRP):",
@@ -105,15 +107,15 @@ class TestDocumentationIntegrity(unittest.TestCase):
         ]
         self._check_file_contains(self.nef_io_path, required_notes)
 
-    #def test_dataset_educational_notes(self):
+    # def test_dataset_educational_notes(self):
     #    """Ensure dataset.py retains key educational blocks."""
     #    required_notes = [
     #        "EDUCATIONAL NOTE - The Balanced Dataset Problem:",
     #        "Alpha-Helix Trap",
     #        "Halls of Mirrors",
     #        "Data Factory Overview:",
-    #]
-    #self._check_file_contains(self.dataset_path, required_notes)
+    # ]
+    # self._check_file_contains(self.dataset_path, required_notes)
 
     def test_coupling_educational_notes(self):
         """Ensure coupling.py retains Karplus note."""

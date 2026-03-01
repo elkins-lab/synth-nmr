@@ -32,53 +32,68 @@ STANDARD_AMINO_ACIDS: List[str] = [
 
 # EDUCATIONAL NOTE - Proline Sterics (The "Proline Effect"):
 # --------------------------------------------------------
-# Proline is the "structure breaker" of the protein world. Unlike any other 
+# Proline is the "structure breaker" of the protein world. Unlike any other
 # amino acid, its sidechain is cyclized back onto the backbone Nitrogen.
-# 
+#
 # Consequences:
-# 1. Exceptional Rigidity: The N-CA bond is locked in a ring, preventing 
-#    rotation. This makes Proline the most restricted residue in the 
+# 1. Exceptional Rigidity: The N-CA bond is locked in a ring, preventing
+#    rotation. This makes Proline the most restricted residue in the
 #    Ramachandran plot.
-# 2. No H-Bonding Donor: Proline lacks the amide Hydrogen (H) that normally 
+# 2. No H-Bonding Donor: Proline lacks the amide Hydrogen (H) that normally
 #    participates in alpha-helix and beta-sheet hydrogen bonding.
 # 3. Cis-Trans Isomerization: While 99.9% of peptide bonds are "trans" (180 deg),
-#    Proline is unique in that "cis" (0 deg) is energetically accessible, 
+#    Proline is unique in that "cis" (0 deg) is energetically accessible,
 #    often forming sharp turns in protein chains.
 
 # --- D-Amino Acids ---
 # Mapping from 3-letter L-code to 3-letter D-code for PDB compatibility.
 # Glycine is achiral and therefore has no D-form.
-# 
+#
 # EDUCATIONAL NOTE - The "Mirror Image" World:
 # -------------------------------------------
 # Amino acids (except Glycine) are chiral, meaning they have a "handedness."
-# In nature, almost all proteins are made of L-amino acids (Left-handed). 
+# In nature, almost all proteins are made of L-amino acids (Left-handed).
 # However, D-amino acids (Right-handed) exist and are structurally fascinating:
-# 
+#
 # 1. Protease Resistance: Because most proteases are evolved to bind L-peptides,
-#    incorporating D-amino acids can "camouflage" a peptide from degradation, 
+#    incorporating D-amino acids can "camouflage" a peptide from degradation,
 #    extending its half-life from minutes to hours in the bloodstream.
-# 2. Bacterial Signatures: D-Ala and D-Glu are key components of the bacterial 
-#    cell wall (peptidoglycan). This makes them a target for the immune system 
+# 2. Bacterial Signatures: D-Ala and D-Glu are key components of the bacterial
+#    cell wall (peptidoglycan). This makes them a target for the immune system
 #    and antibiotics like Vancomycin.
-# 3. Structural Induction: D-amino acids favor different backbone angles. 
-#    For example, a "D-Proline" can induce a different type of beta-turn 
+# 3. Structural Induction: D-amino acids favor different backbone angles.
+#    For example, a "D-Proline" can induce a different type of beta-turn
 #    that is energetically impossible for L-Proline.
 #
 # These 3-letter codes are standardized in the PDB (e.g., DAL for D-Alanine).
 L_TO_D_MAPPING: Dict[str, str] = {
-    "ALA": "DAL", "ARG": "DAR", "ASN": "DAN", "ASP": "DAS", "CYS": "DCY",
-    "GLU": "DGL", "GLN": "DGN", "HIS": "DHI", "ILE": "DIL", "LEU": "DLE",
-    "LYS": "DLY", "MET": "DME", "PHE": "DPH", "PRO": "DPR", "SER": "DSE",
-    "THR": "DTH", "TRP": "DTR", "TYR": "DTY", "VAL": "DVA"
+    "ALA": "DAL",
+    "ARG": "DAR",
+    "ASN": "DAN",
+    "ASP": "DAS",
+    "CYS": "DCY",
+    "GLU": "DGL",
+    "GLN": "DGN",
+    "HIS": "DHI",
+    "ILE": "DIL",
+    "LEU": "DLE",
+    "LYS": "DLY",
+    "MET": "DME",
+    "PHE": "DPH",
+    "PRO": "DPR",
+    "SER": "DSE",
+    "THR": "DTH",
+    "TRP": "DTR",
+    "TYR": "DTY",
+    "VAL": "DVA",
 }
 D_AMINO_ACIDS: List[str] = list(L_TO_D_MAPPING.values())
 
 # Post-Translational Modifications
 MODIFIED_AMINO_ACIDS: List[str] = [
-    "SEP", # Phosphoserine
-    "TPO", # Phosphothreonine
-    "PTR", # Phosphotyrosine
+    "SEP",  # Phosphoserine
+    "TPO",  # Phosphothreonine
+    "PTR",  # Phosphotyrosine
 ]
 
 ALL_VALID_AMINO_ACIDS: List[str] = STANDARD_AMINO_ACIDS + MODIFIED_AMINO_ACIDS + D_AMINO_ACIDS
@@ -147,46 +162,46 @@ ONE_TO_THREE_LETTER_CODE: Dict[str, str] = {
 #   - Lovell et al. (2003) Proteins: Structure, Function, and Bioinformatics
 
 RAMACHANDRAN_PRESETS: Dict[str, Dict[str, float]] = {
-    'alpha': {
-        'phi': -57.0,   # Alpha helix (right-handed)
-        'psi': -47.0,
+    "alpha": {
+        "phi": -57.0,  # Alpha helix (right-handed)
+        "psi": -47.0,
     },
-    'beta': {
-        'phi': -135.0,  # Beta sheet (antiparallel)
-        'psi': 135.0,
+    "beta": {
+        "phi": -135.0,  # Beta sheet (antiparallel)
+        "psi": 135.0,
     },
-    'ppii': {
-        'phi': -75.0,   # Polyproline II helix (left-handed)
-        'psi': 145.0,
+    "ppii": {
+        "phi": -75.0,  # Polyproline II helix (left-handed)
+        "psi": 145.0,
     },
-    'extended': {
-        'phi': -120.0,  # Extended/stretched conformation
-        'psi': 120.0,
+    "extended": {
+        "phi": -120.0,  # Extended/stretched conformation
+        "psi": 120.0,
     },
-    'curved': {
-        # A specialized "tight" conformation to help the initial guess of cyclic peptides 
+    "curved": {
+        # A specialized "tight" conformation to help the initial guess of cyclic peptides
         # have N and C ends meet in 3D space.
-        'phi': -80.0,
-        'psi': -20.0,
+        "phi": -80.0,
+        "psi": -20.0,
     },
     # Residue-specific for random sampling
-    'GLY': {
-        'phi_mean': 0.0,
-        'phi_std': 80.0,
-        'psi_mean': 0.0,
-        'psi_std': 80.0,
+    "GLY": {
+        "phi_mean": 0.0,
+        "phi_std": 80.0,
+        "psi_mean": 0.0,
+        "psi_std": 80.0,
     },
-    'PRO': {
-        'phi_mean': -60.0,
-        'phi_std': 15.0,
-        'psi_mean': 120.0,
-        'psi_std': 50.0,
+    "PRO": {
+        "phi_mean": -60.0,
+        "phi_std": 15.0,
+        "psi_mean": 120.0,
+        "psi_std": 50.0,
     },
-    'GENERAL': {
-        'phi_mean': -90.0,
-        'phi_std': 40.0,
-        'psi_mean': 0.0,
-        'psi_std': 80.0,
+    "GENERAL": {
+        "phi_mean": -90.0,
+        "phi_std": 40.0,
+        "psi_mean": 0.0,
+        "psi_std": 80.0,
     },
 }
 
@@ -195,36 +210,54 @@ RAMACHANDRAN_PRESETS: Dict[str, Dict[str, float]] = {
 # Used for realistic random conformation sampling
 
 RAMACHANDRAN_REGIONS: Dict[str, Dict[str, Any]] = {
-    'general': {
-        'favored': [
-            {'name': 'alpha', 'phi': -60.0, 'psi': -45.0, 'std': 10.0, 'weight': 0.60},
-            {'name': 'beta', 'phi': -135.0, 'psi': 135.0, 'std': 10.0, 'weight': 0.30},
-            {'name': 'left', 'phi': 60.0, 'psi': 45.0, 'std': 10.0, 'weight': 0.10},
+    "general": {
+        "favored": [
+            {"name": "alpha", "phi": -60.0, "psi": -45.0, "std": 10.0, "weight": 0.60},
+            {"name": "beta", "phi": -135.0, "psi": 135.0, "std": 10.0, "weight": 0.30},
+            {"name": "left", "phi": 60.0, "psi": 45.0, "std": 10.0, "weight": 0.10},
         ],
     },
-    'GLY': {
+    "GLY": {
         # Glycine is more flexible (no side chain)
-        'favored': [
-            {'name': 'alpha', 'phi': -60.0, 'psi': -45.0, 'std': 15.0, 'weight': 0.40},
-            {'name': 'beta', 'phi': -135.0, 'psi': 135.0, 'std': 20.0, 'weight': 0.30},
-            {'name': 'left', 'phi': 60.0, 'psi': 45.0, 'std': 15.0, 'weight': 0.30},
+        "favored": [
+            {"name": "alpha", "phi": -60.0, "psi": -45.0, "std": 15.0, "weight": 0.40},
+            {"name": "beta", "phi": -135.0, "psi": 135.0, "std": 20.0, "weight": 0.30},
+            {"name": "left", "phi": 60.0, "psi": 45.0, "std": 15.0, "weight": 0.30},
         ],
     },
-    'PRO': {
+    "PRO": {
         # Proline is restricted (cyclic structure)
-        'favored': [
-            {'name': 'ppii', 'phi': -75.0, 'psi': 145.0, 'std': 10.0, 'weight': 0.70},
-            {'name': 'alpha', 'phi': -60.0, 'psi': -30.0, 'std': 8.0, 'weight': 0.30},
+        "favored": [
+            {"name": "ppii", "phi": -75.0, "psi": 145.0, "std": 10.0, "weight": 0.70},
+            {"name": "alpha", "phi": -60.0, "psi": -30.0, "std": 8.0, "weight": 0.30},
         ],
     },
-    'PRE_PRO': {
+    "PRE_PRO": {
         # Residue immediately preceding Proline.
         # Steric clash with Pro CD limits Alpha region.
         # Beta/Extended is heavily favored.
-        'favored': [
-            {'name': 'beta', 'phi': -135.0, 'psi': 135.0, 'std': 10.0, 'weight': 0.75}, # Majority Beta
-            {'name': 'alpha', 'phi': -60.0, 'psi': -45.0, 'std': 10.0, 'weight': 0.20}, # Minor Alpha
-            {'name': 'left', 'phi': 60.0, 'psi': 45.0, 'std': 10.0, 'weight': 0.05},  # Very minor Left
+        "favored": [
+            {
+                "name": "beta",
+                "phi": -135.0,
+                "psi": 135.0,
+                "std": 10.0,
+                "weight": 0.75,
+            },  # Majority Beta
+            {
+                "name": "alpha",
+                "phi": -60.0,
+                "psi": -45.0,
+                "std": 10.0,
+                "weight": 0.20,
+            },  # Minor Alpha
+            {
+                "name": "left",
+                "phi": 60.0,
+                "psi": 45.0,
+                "std": 10.0,
+                "weight": 0.05,
+            },  # Very minor Left
         ],
     },
 }
@@ -246,7 +279,16 @@ RAMACHANDRAN_POLYGONS: Dict[str, Dict[str, List[List[Tuple[float, float]]]]] = {
     "General": {
         "Favored": [
             # Alpha-Helical Region (Core)
-            [(-90, -70), (-70, -80), (-50, -60), (-40, -50), (-30, -30), (-50, -10), (-70, -10), (-90, -30)],
+            [
+                (-90, -70),
+                (-70, -80),
+                (-50, -60),
+                (-40, -50),
+                (-30, -30),
+                (-50, -10),
+                (-70, -10),
+                (-90, -30),
+            ],
             # Beta-Sheet Region (Broad top-left)
             [(-180, 180), (-180, 90), (-110, 90), (-70, 120), (-50, 150), (-50, 180)],
             # Polyproline II / Extended (Connecting to Beta)
@@ -258,7 +300,7 @@ RAMACHANDRAN_POLYGONS: Dict[str, Dict[str, List[List[Tuple[float, float]]]]] = {
             # Beta Allowed (Generous surround)
             [(-180, 180), (-180, 60), (-50, 60), (-30, 140), (-30, 180)],
             [(-180, -180), (-180, -120), (-120, -120), (-120, -180)],
-        ]
+        ],
     },
     "GLY": {
         "Favored": [
@@ -274,9 +316,9 @@ RAMACHANDRAN_POLYGONS: Dict[str, Dict[str, List[List[Tuple[float, float]]]]] = {
             [(60, -180), (60, -100), (180, -100), (180, -180)],
         ],
         "Allowed": [
-             # Practically everywhere except steric limit (Phi=0, Psi=0)
-             [(-180, 180), (-180, -180), (180, -180), (180, 180)]
-        ]
+            # Practically everywhere except steric limit (Phi=0, Psi=0)
+            [(-180, 180), (-180, -180), (180, -180), (180, 180)]
+        ],
     },
     "PRO": {
         "Favored": [
@@ -289,39 +331,39 @@ RAMACHANDRAN_POLYGONS: Dict[str, Dict[str, List[List[Tuple[float, float]]]]] = {
         "Allowed": [
             # Slightly wider strip
             [(-100, -180), (-40, -180), (-40, 180), (-100, 180)]
-        ]
+        ],
     },
     "Pre-Pro": {
-         "Favored": [
-             # Beta region is similar
-             [(-180, 180), (-180, 90), (-60, 120), (-60, 180)],
-             # Alpha region is strictly restricted (steric clash with Pro CD)
-             [(-70, -30), (-50, -20), (-40, -50), (-60, -70)],
-         ],
-         "Allowed": [
-             [(-180, 180), (-180, -180), (-30, -180), (-30, 180)],
-         ]
-    }
+        "Favored": [
+            # Beta region is similar
+            [(-180, 180), (-180, 90), (-60, 120), (-60, 180)],
+            # Alpha region is strictly restricted (steric clash with Pro CD)
+            [(-70, -30), (-50, -20), (-40, -50), (-60, -70)],
+        ],
+        "Allowed": [
+            [(-180, 180), (-180, -180), (-30, -180), (-30, 180)],
+        ],
+    },
 }
 
 # --- Standard Bond Lengths and Angles (Approximations) ---
 
 # Values are in Angstroms for bond lengths and degrees for angles
-# 
+#
 # EDUCATIONAL NOTE - Engh & Huber Parameters (The Gold Standard):
 # -------------------------------------------------------------
-# These bond lengths and angles are not just "good guesses." They are the 
-# "Engh & Huber Parameters," derived in 1991 from a statistical survey of 
+# These bond lengths and angles are not just "good guesses." They are the
+# "Engh & Huber Parameters," derived in 1991 from a statistical survey of
 # small-molecule crystal structures in the Cambridge Structural Database (CSD).
-# 
+#
 # Significance:
-# 1. Foundation of Crystallography: Almost all protein structure refinement 
-#    software (like Phenix or CCP4) uses these targets as "restraints." If a 
+# 1. Foundation of Crystallography: Almost all protein structure refinement
+#    software (like Phenix or CCP4) uses these targets as "restraints." If a
 #    structure deviates too far from 1.458Ą for an N-CA bond, it's flagged.
-# 2. Physics-Informed: By assuming these bond lengths are fixed (rigid), we 
-#    reduce the complexity of protein simulation from thousands of variables 
+# 2. Physics-Informed: By assuming these bond lengths are fixed (rigid), we
+#    reduce the complexity of protein simulation from thousands of variables
 #    down to just a few torsion angles (Phi, Psi, Chi).
-# 
+#
 # Source: Engh, R. A., & Huber, R. (1991). Acta Crystallographica Section A.
 
 # Peptide bond geometry
@@ -363,7 +405,7 @@ VAN_DER_WAALS_RADII: Dict[str, float] = {
     "N": 1.55,  # Nitrogen
     "O": 1.52,  # Oxygen
     "S": 1.80,  # Sulfur
-    "ZN": 1.40, # Zinc
+    "ZN": 1.40,  # Zinc
 }
 
 # Amino acid properties for sequence improbability checks
@@ -557,93 +599,89 @@ AMINO_ACID_ATOMS: Dict[str, List[Dict[str, Any]]] = {
 
 ROTAMER_LIBRARY: Dict[str, List[Dict[str, Any]]] = {
     # Aliphatic amino acids
-    'ALA': [],  # No side-chain dihedrals
-    'VAL': [
-        {'chi1': [-60.0], 'prob': 0.70},  # Gauche- (most common)
-        {'chi1': [180.0], 'prob': 0.20},  # Trans
-        {'chi1': [60.0],  'prob': 0.10},  # Gauche+
+    "ALA": [],  # No side-chain dihedrals
+    "VAL": [
+        {"chi1": [-60.0], "prob": 0.70},  # Gauche- (most common)
+        {"chi1": [180.0], "prob": 0.20},  # Trans
+        {"chi1": [60.0], "prob": 0.10},  # Gauche+
     ],
-    'LEU': [
-        {'chi1': [-60.0], 'chi2': [65.0], 'prob': 0.60},   # g-, g+
-        {'chi1': [-60.0], 'chi2': [180.0], 'prob': 0.25},  # g-, t
-        {'chi1': [180.0], 'chi2': [65.0], 'prob': 0.10},   # t, g+
+    "LEU": [
+        {"chi1": [-60.0], "chi2": [65.0], "prob": 0.60},  # g-, g+
+        {"chi1": [-60.0], "chi2": [180.0], "prob": 0.25},  # g-, t
+        {"chi1": [180.0], "chi2": [65.0], "prob": 0.10},  # t, g+
     ],
-    'ILE': [
-        {'chi1': [-60.0], 'chi2': [170.0], 'prob': 0.60},  # g-, t
-        {'chi1': [-60.0], 'chi2': [-60.0], 'prob': 0.25},  # g-, g-
-        {'chi1': [180.0], 'chi2': [170.0], 'prob': 0.10},  # t, t
+    "ILE": [
+        {"chi1": [-60.0], "chi2": [170.0], "prob": 0.60},  # g-, t
+        {"chi1": [-60.0], "chi2": [-60.0], "prob": 0.25},  # g-, g-
+        {"chi1": [180.0], "chi2": [170.0], "prob": 0.10},  # t, t
     ],
-    'MET': [
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [70.0], 'prob': 0.40},
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0],'prob': 0.30},
+    "MET": [
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [70.0], "prob": 0.40},
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "prob": 0.30},
     ],
-    
     # Aromatic amino acids
-    'PHE': [
-        {'chi1': [-60.0], 'chi2': [90.0], 'prob': 0.50},   # g-, g+ (perp)
-        {'chi1': [180.0], 'chi2': [90.0], 'prob': 0.30},   # t, g+
-        {'chi1': [-60.0], 'chi2': [0.0],  'prob': 0.10},   # g-, planar (rare)
+    "PHE": [
+        {"chi1": [-60.0], "chi2": [90.0], "prob": 0.50},  # g-, g+ (perp)
+        {"chi1": [180.0], "chi2": [90.0], "prob": 0.30},  # t, g+
+        {"chi1": [-60.0], "chi2": [0.0], "prob": 0.10},  # g-, planar (rare)
     ],
-    'TYR': [
-        {'chi1': [-60.0], 'chi2': [90.0], 'prob': 0.50},
-        {'chi1': [180.0], 'chi2': [90.0], 'prob': 0.30},
+    "TYR": [
+        {"chi1": [-60.0], "chi2": [90.0], "prob": 0.50},
+        {"chi1": [180.0], "chi2": [90.0], "prob": 0.30},
     ],
-    'TRP': [
-        {'chi1': [-60.0], 'chi2': [-90.0], 'prob': 0.50},
-        {'chi1': [180.0], 'chi2': [-90.0], 'prob': 0.30},
+    "TRP": [
+        {"chi1": [-60.0], "chi2": [-90.0], "prob": 0.50},
+        {"chi1": [180.0], "chi2": [-90.0], "prob": 0.30},
     ],
-    
     # Polar uncharged
-    'SER': [
-        {'chi1': [60.0], 'prob': 0.45},   # g+
-        {'chi1': [-60.0], 'prob': 0.35},  # g-
-        {'chi1': [180.0], 'prob': 0.20},  # t
+    "SER": [
+        {"chi1": [60.0], "prob": 0.45},  # g+
+        {"chi1": [-60.0], "prob": 0.35},  # g-
+        {"chi1": [180.0], "prob": 0.20},  # t
     ],
-    'THR': [
-        {'chi1': [60.0], 'prob': 0.45},   # g+
-        {'chi1': [-60.0], 'prob': 0.45},  # g-
-        {'chi1': [180.0], 'prob': 0.10},  # t
+    "THR": [
+        {"chi1": [60.0], "prob": 0.45},  # g+
+        {"chi1": [-60.0], "prob": 0.45},  # g-
+        {"chi1": [180.0], "prob": 0.10},  # t
     ],
-    'CYS': [
-        {'chi1': [-60.0], 'prob': 0.50},
-        {'chi1': [180.0], 'prob': 0.30},
-        {'chi1': [60.0], 'prob': 0.20},
+    "CYS": [
+        {"chi1": [-60.0], "prob": 0.50},
+        {"chi1": [180.0], "prob": 0.30},
+        {"chi1": [60.0], "prob": 0.20},
     ],
-    'ASN': [
-        {'chi1': [-60.0], 'chi2': [-20.0], 'prob': 0.40},
-        {'chi1': [180.0], 'chi2': [-20.0], 'prob': 0.30},
-        {'chi1': [-60.0], 'chi2': [180.0], 'prob': 0.15}, # Flip
+    "ASN": [
+        {"chi1": [-60.0], "chi2": [-20.0], "prob": 0.40},
+        {"chi1": [180.0], "chi2": [-20.0], "prob": 0.30},
+        {"chi1": [-60.0], "chi2": [180.0], "prob": 0.15},  # Flip
     ],
-    'GLN': [
-        {'chi1': [-60.0], 'chi2': [60.0], 'chi3': [0.0], 'prob': 0.40},
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [0.0],'prob': 0.30},
+    "GLN": [
+        {"chi1": [-60.0], "chi2": [60.0], "chi3": [0.0], "prob": 0.40},
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.30},
     ],
-    
     # Charged
-    'ASP': [
-        {'chi1': [-60.0], 'chi2': [0.0], 'prob': 0.45},
-        {'chi1': [180.0], 'chi2': [0.0], 'prob': 0.35},
+    "ASP": [
+        {"chi1": [-60.0], "chi2": [0.0], "prob": 0.45},
+        {"chi1": [180.0], "chi2": [0.0], "prob": 0.35},
     ],
-    'GLU': [
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [0.0], 'prob': 0.40},
-        {'chi1': [180.0], 'chi2': [180.0], 'chi3': [0.0], 'prob': 0.30},
+    "GLU": [
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.40},
+        {"chi1": [180.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.30},
     ],
-    'LYS': [
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.40},
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [60.0],  'prob': 0.20},
+    "LYS": [
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [180.0], "prob": 0.40},
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [60.0], "prob": 0.20},
     ],
-    'ARG': [
-        {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.35},
-        {'chi1': [180.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.25},
+    "ARG": [
+        {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [-85.0], "prob": 0.35},
+        {"chi1": [180.0], "chi2": [180.0], "chi3": [180.0], "chi4": [-85.0], "prob": 0.25},
     ],
-    'HIS': [
-        {'chi1': [-60.0], 'chi2': [-75.0], 'prob': 0.40},
-        {'chi1': [180.0], 'chi2': [-75.0], 'prob': 0.30},
+    "HIS": [
+        {"chi1": [-60.0], "chi2": [-75.0], "prob": 0.40},
+        {"chi1": [180.0], "chi2": [-75.0], "prob": 0.30},
     ],
-    
     # Special cases
-    'GLY': [],
-    'PRO': [],
+    "GLY": [],
+    "PRO": [],
 }
 
 # --- Backbone-Dependent Rotamer Library (Simplified) ---
@@ -652,55 +690,55 @@ ROTAMER_LIBRARY: Dict[str, List[Dict[str, Any]]] = {
 # This is due to steric hindrance between side-chain atoms and the backbone.
 #
 # Key Biophysical Principles (Dunbrack, 2002):
-# 1. Alpha-Helix (-60, -45): 
-#    - The "trans" (t, 180 deg) rotamer for Chi1 is often strongly disfavored for 
+# 1. Alpha-Helix (-60, -45):
+#    - The "trans" (t, 180 deg) rotamer for Chi1 is often strongly disfavored for
 #      branched residues (Val, Ile, Thr) due to clashes with the backbone i-3 or i-4.
 #    - "g-" (-60 deg) is typically the dominant rotamer.
 #
 # 2. Beta-Sheet (-135, 135):
-#    - The extended backbone allows more freedom. "trans" rotamers become much more 
+#    - The extended backbone allows more freedom. "trans" rotamers become much more
 #      favorable compared to helices.
 #
 # This simplified library maps secondary structure types ('alpha', 'beta', etc.)
 # to specific rotamer probability distributions.
 BACKBONE_DEPENDENT_ROTAMER_LIBRARY: Dict[str, Dict[str, List[Dict[str, Any]]]] = {
-    'VAL': {
-        'alpha': [
+    "VAL": {
+        "alpha": [
             # In Helix: g- is dominant, trans is rare
-            {'chi1': [-60.0], 'prob': 0.90},  # g-
-            {'chi1': [180.0], 'prob': 0.05},  # t (rare)
-            {'chi1': [60.0],  'prob': 0.05},  # g+ (rare)
+            {"chi1": [-60.0], "prob": 0.90},  # g-
+            {"chi1": [180.0], "prob": 0.05},  # t (rare)
+            {"chi1": [60.0], "prob": 0.05},  # g+ (rare)
         ],
-        'beta': [
+        "beta": [
             # In Sheet: trans is very common
-            {'chi1': [-60.0], 'prob': 0.55},  # g-
-            {'chi1': [180.0], 'prob': 0.40},  # t (uniquely favored in sheets)
-            {'chi1': [60.0],  'prob': 0.05},  # g+
+            {"chi1": [-60.0], "prob": 0.55},  # g-
+            {"chi1": [180.0], "prob": 0.40},  # t (uniquely favored in sheets)
+            {"chi1": [60.0], "prob": 0.05},  # g+
         ],
     },
-    'ILE': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [170.0], 'prob': 0.85},
-            {'chi1': [-60.0], 'chi2': [-60.0], 'prob': 0.10},
-            {'chi1': [180.0], 'chi2': [170.0], 'prob': 0.05}, # t disallowed
+    "ILE": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [170.0], "prob": 0.85},
+            {"chi1": [-60.0], "chi2": [-60.0], "prob": 0.10},
+            {"chi1": [180.0], "chi2": [170.0], "prob": 0.05},  # t disallowed
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [170.0], 'prob': 0.50},
-            {'chi1': [-60.0], 'chi2': [-60.0], 'prob': 0.20},
-            {'chi1': [180.0], 'chi2': [170.0], 'prob': 0.30}, # t allowed
-        ]
+        "beta": [
+            {"chi1": [-60.0], "chi2": [170.0], "prob": 0.50},
+            {"chi1": [-60.0], "chi2": [-60.0], "prob": 0.20},
+            {"chi1": [180.0], "chi2": [170.0], "prob": 0.30},  # t allowed
+        ],
     },
-    'THR': {
-        'alpha': [
-            {'chi1': [60.0], 'prob': 0.40},
-            {'chi1': [-60.0], 'prob': 0.55}, # g- 
-            {'chi1': [180.0], 'prob': 0.05},
+    "THR": {
+        "alpha": [
+            {"chi1": [60.0], "prob": 0.40},
+            {"chi1": [-60.0], "prob": 0.55},  # g-
+            {"chi1": [180.0], "prob": 0.05},
         ],
-        'beta': [
-            {'chi1': [60.0], 'prob': 0.30},
-            {'chi1': [-60.0], 'prob': 0.40},
-            {'chi1': [180.0], 'prob': 0.30}, # t allowed
-        ]
+        "beta": [
+            {"chi1": [60.0], "prob": 0.30},
+            {"chi1": [-60.0], "prob": 0.40},
+            {"chi1": [180.0], "prob": 0.30},  # t allowed
+        ],
     },
     # --- Expanded Library (LEU, LYS, Aromatics) ---
     # EDUCATIONAL NOTE - Rotamers for Non-Branched Residues:
@@ -708,165 +746,189 @@ BACKBONE_DEPENDENT_ROTAMER_LIBRARY: Dict[str, Dict[str, List[Dict[str, Any]]]] =
     # However, secondary structure still dictates Chi1 preferences.
     # In Helices, side chains project outwards and must avoid i-3/i-4 backbone atoms.
     # 'trans' (180 deg) at Chi1 is generally disfavored in helices compared to sheets.
-    'LEU': {
-        'alpha': [
+    "LEU": {
+        "alpha": [
             # In alpha-helices, g- (mt) is strongly preferred (~90%)
             # Reference: Lovell et al., Proteins 2000.
-            {'chi1': [-60.0], 'chi2': [180.0], 'prob': 0.65},  # mt
-            {'chi1': [-60.0], 'chi2': [60.0],  'prob': 0.25},  # mp (trans is gauche to C-gamma)
-            {'chi1': [180.0], 'chi2': [60.0],  'prob': 0.05},  # tp
-            {'chi1': [180.0], 'chi2': [180.0], 'prob': 0.05},  # tt
+            {"chi1": [-60.0], "chi2": [180.0], "prob": 0.65},  # mt
+            {"chi1": [-60.0], "chi2": [60.0], "prob": 0.25},  # mp (trans is gauche to C-gamma)
+            {"chi1": [180.0], "chi2": [60.0], "prob": 0.05},  # tp
+            {"chi1": [180.0], "chi2": [180.0], "prob": 0.05},  # tt
         ],
-        'beta': [
+        "beta": [
             # In beta-sheets, the backbone is extended, allowing trans rotamers more easily.
             # tp (trans, plus) becomes a major conformer.
-            {'chi1': [-60.0], 'chi2': [180.0], 'prob': 0.40},  # mt
-            {'chi1': [180.0], 'chi2': [60.0],  'prob': 0.40},  # tp (Distinctive for Beta)
-            {'chi1': [-60.0], 'chi2': [60.0],  'prob': 0.15}, 
-            {'chi1': [180.0], 'chi2': [180.0], 'prob': 0.05}, 
-        ]
-    },
-    'LYS': {
-        'alpha': [
-             # Helices favor g- at Chi1 to avoid backbone clashes.
-             {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.70},
-             {'chi1': [180.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.20},
-             {'chi1': [60.0],  'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.10},
+            {"chi1": [-60.0], "chi2": [180.0], "prob": 0.40},  # mt
+            {"chi1": [180.0], "chi2": [60.0], "prob": 0.40},  # tp (Distinctive for Beta)
+            {"chi1": [-60.0], "chi2": [60.0], "prob": 0.15},
+            {"chi1": [180.0], "chi2": [180.0], "prob": 0.05},
         ],
-        'beta': [
-             # Sheets allow extended (all-trans) conformations much more readily.
-             {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.40},
-             {'chi1': [180.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.50}, # All-trans favored
-             {'chi1': [60.0],  'chi2': [180.0], 'chi3': [180.0], 'chi4': [180.0], 'prob': 0.10},
-        ]
+    },
+    "LYS": {
+        "alpha": [
+            # Helices favor g- at Chi1 to avoid backbone clashes.
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [180.0], "prob": 0.70},
+            {"chi1": [180.0], "chi2": [180.0], "chi3": [180.0], "chi4": [180.0], "prob": 0.20},
+            {"chi1": [60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [180.0], "prob": 0.10},
+        ],
+        "beta": [
+            # Sheets allow extended (all-trans) conformations much more readily.
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [180.0], "prob": 0.40},
+            {
+                "chi1": [180.0],
+                "chi2": [180.0],
+                "chi3": [180.0],
+                "chi4": [180.0],
+                "prob": 0.50,
+            },  # All-trans favored
+            {"chi1": [60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [180.0], "prob": 0.10},
+        ],
     },
     # EDUCATIONAL NOTE - Aromatic Residues (PHE, TYR, TRP):
     # These bulky side chains are highly restricted by steric clashes.
     # In alpha-helices, Chi1=180 (trans) causes the ring to clash with the i-3 residue.
     # Thus, g- is overwhelmingly dominant in helices.
-    'PHE': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [90.0], 'prob': 0.90},  # g- (Dominant)
-            {'chi1': [180.0], 'chi2': [90.0], 'prob': 0.05},  # t (Rare/Disfavored)
-            {'chi1': [-60.0], 'chi2': [0.0],  'prob': 0.05}
+    "PHE": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [90.0], "prob": 0.90},  # g- (Dominant)
+            {"chi1": [180.0], "chi2": [90.0], "prob": 0.05},  # t (Rare/Disfavored)
+            {"chi1": [-60.0], "chi2": [0.0], "prob": 0.05},
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [90.0], 'prob': 0.50},
-            {'chi1': [180.0], 'chi2': [90.0], 'prob': 0.45},  # t (Common in sheets)
-            {'chi1': [-60.0], 'chi2': [0.0],  'prob': 0.05}
-        ]
-    },
-    'TYR': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [90.0], 'prob': 0.90},
-            {'chi1': [180.0], 'chi2': [90.0], 'prob': 0.05},
+        "beta": [
+            {"chi1": [-60.0], "chi2": [90.0], "prob": 0.50},
+            {"chi1": [180.0], "chi2": [90.0], "prob": 0.45},  # t (Common in sheets)
+            {"chi1": [-60.0], "chi2": [0.0], "prob": 0.05},
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [90.0], 'prob': 0.50},
-            {'chi1': [180.0], 'chi2': [90.0], 'prob': 0.45},
-        ]
     },
-    'TRP': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [-90.0], 'prob': 0.90}, # g-
-            {'chi1': [180.0], 'chi2': [-90.0], 'prob': 0.05}, # t
+    "TYR": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [90.0], "prob": 0.90},
+            {"chi1": [180.0], "chi2": [90.0], "prob": 0.05},
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [-90.0], 'prob': 0.50},
-            {'chi1': [180.0], 'chi2': [-90.0], 'prob': 0.45}, # t
-        ]
+        "beta": [
+            {"chi1": [-60.0], "chi2": [90.0], "prob": 0.50},
+            {"chi1": [180.0], "chi2": [90.0], "prob": 0.45},
+        ],
     },
-    
+    "TRP": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [-90.0], "prob": 0.90},  # g-
+            {"chi1": [180.0], "chi2": [-90.0], "prob": 0.05},  # t
+        ],
+        "beta": [
+            {"chi1": [-60.0], "chi2": [-90.0], "prob": 0.50},
+            {"chi1": [180.0], "chi2": [-90.0], "prob": 0.45},  # t
+        ],
+    },
     # --- Charged Residues (ARG, ASP, GLU) & Polar (GLN, HIS, MET) ---
     # EDUCATIONAL NOTE - Electrostatics vs Sterics:
     # While charged residues form salt bridges on the surface, their Chi1 preference
     # is still dominated by backbone sterics.
     # - Long chains (ARG, GLU, GLN, MET) behave like Lysine: g- in Helix, Trans in Sheet.
     # - Short chains (ASP, ASN) have specific "g-" preferences to avoid O...C-backbone clashes.
-    
-    'ARG': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.70}, # g-
-            {'chi1': [180.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.20}, # t
-            {'chi1': [60.0],  'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.10},
+    "ARG": {
+        "alpha": [
+            {
+                "chi1": [-60.0],
+                "chi2": [180.0],
+                "chi3": [180.0],
+                "chi4": [-85.0],
+                "prob": 0.70,
+            },  # g-
+            {"chi1": [180.0], "chi2": [180.0], "chi3": [180.0], "chi4": [-85.0], "prob": 0.20},  # t
+            {"chi1": [60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [-85.0], "prob": 0.10},
         ],
-        'beta': [
-            {'chi1': [180.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.50}, # t (Favored in sheet)
-            {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.40},
-            {'chi1': [60.0],  'chi2': [180.0], 'chi3': [180.0], 'chi4': [-85.0], 'prob': 0.10},
-        ]
-    },
-    'GLU': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [0.0], 'prob': 0.70},
-            {'chi1': [180.0], 'chi2': [180.0], 'chi3': [0.0], 'prob': 0.20},
-            {'chi1': [60.0],  'chi2': [180.0], 'chi3': [0.0], 'prob': 0.10},
+        "beta": [
+            {
+                "chi1": [180.0],
+                "chi2": [180.0],
+                "chi3": [180.0],
+                "chi4": [-85.0],
+                "prob": 0.50,
+            },  # t (Favored in sheet)
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [-85.0], "prob": 0.40},
+            {"chi1": [60.0], "chi2": [180.0], "chi3": [180.0], "chi4": [-85.0], "prob": 0.10},
         ],
-        'beta': [
-            {'chi1': [180.0], 'chi2': [180.0], 'chi3': [0.0], 'prob': 0.50}, # t
-            {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [0.0], 'prob': 0.40},
-            {'chi1': [60.0],  'chi2': [180.0], 'chi3': [0.0], 'prob': 0.10},
-        ]
     },
-    'GLN': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [60.0], 'chi3': [0.0], 'prob': 0.70},
-            {'chi1': [180.0], 'chi2': [60.0], 'chi3': [0.0], 'prob': 0.20},
+    "GLU": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.70},
+            {"chi1": [180.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.20},
+            {"chi1": [60.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.10},
         ],
-        'beta': [
-            {'chi1': [180.0], 'chi2': [60.0], 'chi3': [0.0], 'prob': 0.50},
-            {'chi1': [-60.0], 'chi2': [60.0], 'chi3': [0.0], 'prob': 0.40},
-        ]
-    },
-    'MET': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [70.0], 'prob': 0.75}, # g-
-            {'chi1': [180.0], 'chi2': [180.0], 'chi3': [70.0], 'prob': 0.15},
+        "beta": [
+            {"chi1": [180.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.50},  # t
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.40},
+            {"chi1": [60.0], "chi2": [180.0], "chi3": [0.0], "prob": 0.10},
         ],
-        'beta': [
-            {'chi1': [180.0], 'chi2': [180.0], 'chi3': [70.0], 'prob': 0.55}, # t
-            {'chi1': [-60.0], 'chi2': [180.0], 'chi3': [70.0], 'prob': 0.35},
-        ]
     },
-    'ASP': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [0.0], 'prob': 0.80},
-            {'chi1': [180.0], 'chi2': [0.0], 'prob': 0.15},
+    "GLN": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [60.0], "chi3": [0.0], "prob": 0.70},
+            {"chi1": [180.0], "chi2": [60.0], "chi3": [0.0], "prob": 0.20},
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [0.0], 'prob': 0.50},
-            {'chi1': [180.0], 'chi2': [0.0], 'prob': 0.45}, # t allowed
-        ]
-    },
-    'ASN': {
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [-20.0], 'prob': 0.80},
-            {'chi1': [180.0], 'chi2': [-20.0], 'prob': 0.15},
+        "beta": [
+            {"chi1": [180.0], "chi2": [60.0], "chi3": [0.0], "prob": 0.50},
+            {"chi1": [-60.0], "chi2": [60.0], "chi3": [0.0], "prob": 0.40},
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [-20.0], 'prob': 0.50},
-            {'chi1': [180.0], 'chi2': [-20.0], 'prob': 0.45},
-        ]
     },
-    'HIS': {
+    "MET": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [70.0], "prob": 0.75},  # g-
+            {"chi1": [180.0], "chi2": [180.0], "chi3": [70.0], "prob": 0.15},
+        ],
+        "beta": [
+            {"chi1": [180.0], "chi2": [180.0], "chi3": [70.0], "prob": 0.55},  # t
+            {"chi1": [-60.0], "chi2": [180.0], "chi3": [70.0], "prob": 0.35},
+        ],
+    },
+    "ASP": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [0.0], "prob": 0.80},
+            {"chi1": [180.0], "chi2": [0.0], "prob": 0.15},
+        ],
+        "beta": [
+            {"chi1": [-60.0], "chi2": [0.0], "prob": 0.50},
+            {"chi1": [180.0], "chi2": [0.0], "prob": 0.45},  # t allowed
+        ],
+    },
+    "ASN": {
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [-20.0], "prob": 0.80},
+            {"chi1": [180.0], "chi2": [-20.0], "prob": 0.15},
+        ],
+        "beta": [
+            {"chi1": [-60.0], "chi2": [-20.0], "prob": 0.50},
+            {"chi1": [180.0], "chi2": [-20.0], "prob": 0.45},
+        ],
+    },
+    "HIS": {
         # Similar to Aromatics
-        'alpha': [
-            {'chi1': [-60.0], 'chi2': [-75.0], 'prob': 0.90}, # g-
-            {'chi1': [180.0], 'chi2': [-75.0], 'prob': 0.05}, # t disallowed
+        "alpha": [
+            {"chi1": [-60.0], "chi2": [-75.0], "prob": 0.90},  # g-
+            {"chi1": [180.0], "chi2": [-75.0], "prob": 0.05},  # t disallowed
         ],
-        'beta': [
-            {'chi1': [-60.0], 'chi2': [-75.0], 'prob': 0.50},
-            {'chi1': [180.0], 'chi2': [-75.0], 'prob': 0.45}, # t allowed
-        ]
+        "beta": [
+            {"chi1": [-60.0], "chi2": [-75.0], "prob": 0.50},
+            {"chi1": [180.0], "chi2": [-75.0], "prob": 0.45},  # t allowed
+        ],
     },
-    'CYS': {
-         'alpha': [{'chi1': [-60.0], 'prob': 0.90}, {'chi1': [180.0], 'prob': 0.10}],
-         'beta':  [{'chi1': [-60.0], 'prob': 0.50}, {'chi1': [180.0], 'prob': 0.50}],
+    "CYS": {
+        "alpha": [{"chi1": [-60.0], "prob": 0.90}, {"chi1": [180.0], "prob": 0.10}],
+        "beta": [{"chi1": [-60.0], "prob": 0.50}, {"chi1": [180.0], "prob": 0.50}],
     },
-    'SER': {
-         'alpha': [{'chi1': [-60.0], 'prob': 0.45}, {'chi1': [60.0], 'prob': 0.45}, {'chi1': [180.0], 'prob': 0.10}],
-         'beta':  [{'chi1': [-60.0], 'prob': 0.30}, {'chi1': [60.0], 'prob': 0.40}, {'chi1': [180.0], 'prob': 0.30}],
-    }
+    "SER": {
+        "alpha": [
+            {"chi1": [-60.0], "prob": 0.45},
+            {"chi1": [60.0], "prob": 0.45},
+            {"chi1": [180.0], "prob": 0.10},
+        ],
+        "beta": [
+            {"chi1": [-60.0], "prob": 0.30},
+            {"chi1": [60.0], "prob": 0.40},
+            {"chi1": [180.0], "prob": 0.30},
+        ],
+    },
 }
 
 # --- Beta-Turn Definitions ---
@@ -880,10 +942,10 @@ BACKBONE_DEPENDENT_ROTAMER_LIBRARY: Dict[str, Dict[str, List[Dict[str, Any]]]] =
 # Format: "Type": [(Phi_i+1, Psi_i+1), (Phi_i+2, Psi_i+2)]
 # Values in degrees.
 BETA_TURN_TYPES: Dict[str, List[Tuple[float, float]]] = {
-    "typeI":  [(-60.0, -30.0), (-90.0, 0.0)],
-    "typeII": [(-60.0, 120.0), (80.0, 0.0)],   # Classic Type II (Res 3 often Gly)
-    "typeI'": [(60.0, 30.0), (90.0, 0.0)],     # Inverse Type I (Goldenberg)
-    "typeII'": [(60.0, -120.0), (-80.0, 0.0)], # Inverse Type II
+    "typeI": [(-60.0, -30.0), (-90.0, 0.0)],
+    "typeII": [(-60.0, 120.0), (80.0, 0.0)],  # Classic Type II (Res 3 often Gly)
+    "typeI'": [(60.0, 30.0), (90.0, 0.0)],  # Inverse Type I (Goldenberg)
+    "typeII'": [(60.0, -120.0), (-80.0, 0.0)],  # Inverse Type II
     # Type VIII is also common
     "typeVIII": [(-60.0, -30.0), (-120.0, 120.0)],
 }
@@ -895,68 +957,68 @@ BETA_TURN_TYPES: Dict[str, List[Tuple[float, float]]] = {
 # CB-G-D-E   (Chi3)
 # G-D-E-Z    (Chi4)
 AMINO_ACID_CHI_DEFINITIONS: Dict[str, List[Dict[str, Any]]] = {
-    'VAL': [{'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG1']}],
-    'THR': [{'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'OG1']}],
-    'ILE': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG1']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG1', 'CD1']}
+    "VAL": [{"name": "chi1", "atoms": ["N", "CA", "CB", "CG1"]}],
+    "THR": [{"name": "chi1", "atoms": ["N", "CA", "CB", "OG1"]}],
+    "ILE": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG1"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG1", "CD1"]},
     ],
-    'LEU': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD1']}
+    "LEU": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD1"]},
     ],
-    'MET': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'SD']},
-        {'name': 'chi3', 'atoms': ['CB', 'CG', 'SD', 'CE']}
+    "MET": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "SD"]},
+        {"name": "chi3", "atoms": ["CB", "CG", "SD", "CE"]},
     ],
-    'ARG': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD']},
-        {'name': 'chi3', 'atoms': ['CB', 'CG', 'CD', 'NE']},
-        {'name': 'chi4', 'atoms': ['CG', 'CD', 'NE', 'CZ']}
+    "ARG": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD"]},
+        {"name": "chi3", "atoms": ["CB", "CG", "CD", "NE"]},
+        {"name": "chi4", "atoms": ["CG", "CD", "NE", "CZ"]},
     ],
-    'LYS': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD']},
-        {'name': 'chi3', 'atoms': ['CB', 'CG', 'CD', 'CE']},
-        {'name': 'chi4', 'atoms': ['CG', 'CD', 'CE', 'NZ']}
+    "LYS": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD"]},
+        {"name": "chi3", "atoms": ["CB", "CG", "CD", "CE"]},
+        {"name": "chi4", "atoms": ["CG", "CD", "CE", "NZ"]},
     ],
-    'ASP': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'OD1']}
+    "ASP": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "OD1"]},
     ],
-    'ASN': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'OD1']}
+    "ASN": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "OD1"]},
     ],
-    'GLU': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD']},
-        {'name': 'chi3', 'atoms': ['CB', 'CG', 'CD', 'OE1']}
+    "GLU": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD"]},
+        {"name": "chi3", "atoms": ["CB", "CG", "CD", "OE1"]},
     ],
-    'GLN': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD']},
-        {'name': 'chi3', 'atoms': ['CB', 'CG', 'CD', 'OE1']}
+    "GLN": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD"]},
+        {"name": "chi3", "atoms": ["CB", "CG", "CD", "OE1"]},
     ],
-    'HIS': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'ND1']}
+    "HIS": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "ND1"]},
     ],
-    'PHE': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD1']}
+    "PHE": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD1"]},
     ],
-    'TYR': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD1']}
+    "TYR": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD1"]},
     ],
-    'TRP': [
-        {'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'CG']},
-        {'name': 'chi2', 'atoms': ['CA', 'CB', 'CG', 'CD1']}
+    "TRP": [
+        {"name": "chi1", "atoms": ["N", "CA", "CB", "CG"]},
+        {"name": "chi2", "atoms": ["CA", "CB", "CG", "CD1"]},
     ],
-    'CYS': [{'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'SG']}],
-    'SER': [{'name': 'chi1', 'atoms': ['N', 'CA', 'CB', 'OG']}],
+    "CYS": [{"name": "chi1", "atoms": ["N", "CA", "CB", "SG"]}],
+    "SER": [{"name": "chi1", "atoms": ["N", "CA", "CB", "OG"]}],
     # PRO, GLY, ALA have no standard Chi1 or special definitions handled specially
 }

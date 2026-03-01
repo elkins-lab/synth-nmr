@@ -1,23 +1,23 @@
-
 import numpy as np
 import biotite.structure as struc
-from typing import Dict, List, Tuple, Any
+from typing import Dict, Any
 import logging
 import subprocess
 import os
 import tempfile
 import biotite.structure.io.pdb as pdb
+from synth_nmr.structure_utils import get_secondary_structure
 
 logger = logging.getLogger(__name__)
-
-# --- Optional Numba JIT Support ---
 try:
     from numba import njit
 except ImportError:
+
     def njit(func: Any = None, **kwargs: Any) -> Any:
         if func is None:
             return lambda f: f
         return func
+
 
 # --- Random Coil Chemical Shifts (Wishart et al.) ---
 # EDUCATIONAL NOTE - Random Coil Shifts:
@@ -43,7 +43,7 @@ RANDOM_COIL_SHIFTS: Dict[str, Dict[str, float]] = {
     "CYX": {"HA": 4.69, "CA": 58.2, "CB": 28.0, "C": 174.6, "N": 118.8, "H": 8.32},
     "GLN": {"HA": 4.32, "CA": 56.0, "CB": 29.4, "C": 176.0, "N": 120.4, "H": 8.25},
     "GLU": {"HA": 4.29, "CA": 56.6, "CB": 29.9, "C": 176.6, "N": 120.2, "H": 8.35},
-    "GLY": {"HA": 3.96, "CA": 45.1, "CB": 0.0,  "C": 174.9, "N": 108.8, "H": 8.33},
+    "GLY": {"HA": 3.96, "CA": 45.1, "CB": 0.0, "C": 174.9, "N": 108.8, "H": 8.33},
     "HIS": {"HA": 4.63, "CA": 55.0, "CB": 29.0, "C": 174.1, "N": 118.2, "H": 8.42},
     "HID": {"HA": 4.63, "CA": 55.0, "CB": 29.0, "C": 174.1, "N": 118.2, "H": 8.42},
     "HIE": {"HA": 4.63, "CA": 55.0, "CB": 29.0, "C": 174.1, "N": 118.2, "H": 8.42},
@@ -53,7 +53,7 @@ RANDOM_COIL_SHIFTS: Dict[str, Dict[str, float]] = {
     "LYS": {"HA": 4.32, "CA": 56.2, "CB": 33.1, "C": 176.6, "N": 120.4, "H": 8.29},
     "MET": {"HA": 4.48, "CA": 55.4, "CB": 32.6, "C": 176.3, "N": 119.6, "H": 8.28},
     "PHE": {"HA": 4.62, "CA": 57.7, "CB": 39.6, "C": 175.8, "N": 120.3, "H": 8.12},
-    "PRO": {"HA": 4.42, "CA": 63.3, "CB": 32.1, "C": 177.3, "N": 0.0,   "H": 0.0},  # No Amide N/H
+    "PRO": {"HA": 4.42, "CA": 63.3, "CB": 32.1, "C": 177.3, "N": 0.0, "H": 0.0},  # No Amide N/H
     "SER": {"HA": 4.47, "CA": 58.3, "CB": 63.8, "C": 174.6, "N": 115.7, "H": 8.31},
     "THR": {"HA": 4.35, "CA": 61.8, "CB": 69.8, "C": 174.7, "N": 113.6, "H": 8.15},
     "TRP": {"HA": 4.66, "CA": 57.5, "CB": 29.6, "C": 176.1, "N": 121.3, "H": 8.25},
@@ -86,16 +86,16 @@ _NOISE_SCALE = 0.15
 # Format: {metric: {Helix: val, Sheet: val}}
 SECONDARY_SHIFTS: Dict[str, Dict[str, float]] = {
     # C-alpha: Shifted downfield (positive) in Helix, upfield (negative) in Sheet
-    "CA": {"alpha": 3.1,  "beta": -1.5},
+    "CA": {"alpha": 3.1, "beta": -1.5},
     # C-beta: Opposite trend to C-alpha
     "CB": {"alpha": -0.5, "beta": 2.2},
     # Carbonyl Carbon: Follows C-alpha trend
-    "C":  {"alpha": 2.2,  "beta": -1.6},
+    "C": {"alpha": 2.2, "beta": -1.6},
     # H-alpha: Shifted upfield (negative) in Helix, downfield (positive) in Sheet
     "HA": {"alpha": -0.4, "beta": 0.5},
     # Amide N: Complex, but generally upfield in Helix
-    "N":  {"alpha": -1.5, "beta": 1.2},
-    "H":  {"alpha": -0.2, "beta": 0.3},
+    "N": {"alpha": -1.5, "beta": 1.2},
+    "H": {"alpha": -0.2, "beta": 0.3},
 }
 
 # --- Ring Current Intensity Factors ---
@@ -111,11 +111,11 @@ SECONDARY_SHIFTS: Dict[str, Dict[str, float]] = {
 # Shift = Intensity * (1 - 3*cos^2(theta)) / r^3
 #
 # References for further reading:
-# 1. Haigh, C. W., & Mallion, R. B. (1980). "Ring current theories in nuclear magnetic resonance". 
+# 1. Haigh, C. W., & Mallion, R. B. (1980). "Ring current theories in nuclear magnetic resonance".
 #    Progress in Nuclear Magnetic Resonance Spectroscopy, 13(4), 303-344.
-# 2. Pople, J. A. (1956). "Proton magnetic shielding in aromatic compounds". 
+# 2. Pople, J. A. (1956). "Proton magnetic shielding in aromatic compounds".
 #    The Journal of Chemical Physics, 24(5), 1111.
-# 3. Case, D. A. (1995). "Chemical shifts in proteins". 
+# 3. Case, D. A. (1995). "Chemical shifts in proteins".
 #    Current Opinion in Structural Biology, 5(2), 272-276.
 #
 # Intensities are relative to Benzene.
@@ -130,22 +130,20 @@ RING_INTENSITIES = {
 }
 
 
-from synth_nmr.structure_utils import get_secondary_structure
-
 def _get_random_coil_shifts(res_name: str) -> Dict[str, float]:
     """
     Extract baseline Random Coil shifts for a given residue.
-    
+
     EDUCATIONAL NOTE - Random Coil Shifts:
     ======================================
     "Random Coil" refers to a protein state with no fixed secondary structure (a flexible chain).
     The chemical shift of an atom in a random coil depends primarily on its amino acid type.
-    
+
     These values serve as the "baseline" or "zero point" for structure prediction.
     Any deviation from these values (Secondary Shift) indicates structural formation:
     - Alpha Helix formation moves C-alpha downfield (higher ppm) and N upfield (lower ppm).
     - Beta Sheet formation moves C-alpha upfield (lower ppm) and N downfield (higher ppm).
-    
+
     Reference: Wishart, D.S. et al. (1995) J. Biomol. NMR.
     Referenced to DSS at 25C.
     Values for: HA, CA, CB, C, N, HN (Amide H)
@@ -153,30 +151,32 @@ def _get_random_coil_shifts(res_name: str) -> Dict[str, float]:
     """
     return RANDOM_COIL_SHIFTS.get(res_name, {})
 
+
 def _apply_secondary_structure_offsets(atom_type: str, ss_state: str, base_val: float) -> float:
     """
     Apply SPARTA+ style statistical offsets based on helical or sheet geometries.
-    
+
     EDUCATIONAL NOTE - Secondary Chemical Shifts:
     =============================================
     The local magnetic field experienced by a nucleus is heavily influenced by the
     geometry of the protein backbone (Phi/Psi angles).
-    
+
     SPARTA+ (Shift Prediction from Analogy in Residue-type and Torsion Angle):
     It predicts chemical shifts by finding homologous structures with similar geometry.
-    
+
     Our implementation uses simple statistical offsets instead of database mining,
     but follows the same principle: Geometry determines Shift.
-    
+
     Reference State: DSS (4,4-dimethyl-4-silapentane-1-sulfonic acid)
     This is the "Zero" for proton/carbon NMR, much like sea level for altitude.
     Using a standard reference ensures shifts are comparable across different labs.
-    
+
     Approximate mean offsets for Helical and Sheet conformations relative to random coil
     Based on general statistics (e.g. Spera & Bax 1991)
     """
     offset = SECONDARY_SHIFTS.get(atom_type, {}).get(ss_state, 0.0)
     return base_val + offset
+
 
 def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
     """
@@ -200,9 +200,13 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, D
                 logger.info("Successfully predicted chemical shifts using SHIFTX2.")
                 return shifts
             else:
-                logger.warning("SHIFTX2 returned empty predictions. Falling back to empirical SPARTA+ model.")
+                logger.warning(
+                    "SHIFTX2 returned empty predictions. Falling back to empirical SPARTA+ model."
+                )
         except Exception as e:
-            logger.warning(f"SHIFTX2 prediction failed: {e}. Falling back to empirical SPARTA+ model.")
+            logger.warning(
+                f"SHIFTX2 prediction failed: {e}. Falling back to empirical SPARTA+ model."
+            )
     else:
         logger.warning(
             "SHIFTX2 executable not found in PATH or not executable. "
@@ -215,7 +219,7 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, D
 def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
     """
     Predict chemical shifts based on secondary structure and ring currents.
-    
+
     This function combines random coil shifts, secondary structure-based offsets (SPARTA+-like),
     and ring current effects from aromatic residues to predict protein chemical shifts.
 
@@ -228,7 +232,7 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
        - Coil:  Everything else
     3. Calculate Shift:
        Shift = Random_Coil + Structure_Offset + Noise
-       
+
     LIMITATIONS:
     - Ring Current Effects (for protons): While an O(N^2) geometry check was previously
       a concern, these effects are now included for protons near aromatic rings
@@ -237,13 +241,13 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
       included for ring current effects.
     - H-Bonding: Hydrogen bonds affect Amide H shifts significantly. We omit this for simplicity.
     - Sequence History: Real shifts depend on (i-1) and (i+1) neighbor types. We omit this for simplicity.
-    
+
     Args:
         structure: A biotite.structure.AtomArray containing the protein. Must not be empty.
-        
+
     Returns:
         A nested dictionary of predicted shifts: {chain_id: {res_id: {atom_name: value}}}
-        
+
     Raises:
         TypeError: If the input is not a biotite.structure.AtomArray.
         ValueError: If the input structure is empty.
@@ -267,9 +271,13 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
         # 3. Iterate through residues and calculate shifts
         results: Dict[str, Dict[int, Dict[str, float]]] = {}
         for i, start_idx in enumerate(struc.get_residue_starts(structure)):
-            end_idx = struc.get_residue_starts(structure)[i+1] if i + 1 < len(struc.get_residue_starts(structure)) else None
+            end_idx = (
+                struc.get_residue_starts(structure)[i + 1]
+                if i + 1 < len(struc.get_residue_starts(structure))
+                else None
+            )
             res_atoms = structure[start_idx:end_idx]
-            
+
             res_id = res_atoms.res_id[0]
             res_name = res_atoms.res_name[0]
             chain_id = res_atoms.chain_id[0]
@@ -290,16 +298,18 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
 
                 # Add secondary structure offset to the random coil baseline
                 val = _apply_secondary_structure_offsets(atom_type, ss_state, base_val)
-                
+
                 # Add ring current shift for protons
-                if rings.size > 0 and atom_type.startswith('H'):
+                if rings.size > 0 and atom_type.startswith("H"):
                     try:
                         target_atom = res_atoms[res_atoms.atom_name == atom_type][0]
                         rc_shift = _calculate_ring_current_shift(target_atom.coord, rings)
                         val += rc_shift
                     except IndexError:
                         # Atom not found in this specific residue, skip ring current
-                        logger.debug(f"Atom {atom_type} not found in residue {res_id} for ring current calculation.")
+                        logger.debug(
+                            f"Atom {atom_type} not found in residue {res_id} for ring current calculation."
+                        )
                         pass
 
                 # Add small random noise for "realism" (0.1 - 0.3 ppm)
@@ -312,33 +322,37 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
             if chain_id not in results:
                 results[chain_id] = {}
             results[chain_id][res_id] = atom_shifts
-            
-        logger.info(f"Successfully predicted chemical shifts for {struc.get_residue_count(structure)} residues.")
+
+        logger.info(
+            f"Successfully predicted chemical shifts for {struc.get_residue_count(structure)} residues."
+        )
         return results
 
     except Exception as e:
-        logger.error(f"An unexpected error occurred during chemical shift prediction: {e}", exc_info=True)
+        logger.error(
+            f"An unexpected error occurred during chemical shift prediction: {e}", exc_info=True
+        )
         raise
 
+
 def calculate_csi(
-    shifts: Dict[str, Dict[int, Dict[str, float]]], 
-    structure: struc.AtomArray
+    shifts: Dict[str, Dict[int, Dict[str, float]]], structure: struc.AtomArray
 ) -> Dict[str, Dict[int, float]]:
     """
     Calculate the Chemical Shift Index (CSI) for C-alpha atoms.
-    
+
     The CSI is the deviation of an observed chemical shift from its random coil value.
     It is a reliable indicator of secondary structure.
     - Positive Delta(CA) > 0.7 ppm suggests a Helical conformation.
     - Negative Delta(CA) < -0.7 ppm suggests a Sheet conformation.
-    
+
     Args:
         shifts: A dictionary of chemical shifts, as produced by `predict_chemical_shifts`.
         structure: A biotite.structure.AtomArray, required for mapping residue IDs to names.
-        
+
     Returns:
         A dictionary containing the C-alpha CSI for each residue: {chain_id: {res_id: delta_ppm}}
-        
+
     Raises:
         TypeError: If inputs are not of the correct type.
         ValueError: If inputs are empty.
@@ -370,28 +384,36 @@ def calculate_csi(
         # 3. Calculate CSI
         csi_data: Dict[str, Dict[int, float]] = {}
         for chain_id, chain_shifts in shifts.items():
-            if not isinstance(chain_shifts, dict): continue
+            if not isinstance(chain_shifts, dict):
+                continue
             csi_data[chain_id] = {}
-            
+
             for res_id, atom_shifts in chain_shifts.items():
-                if not isinstance(atom_shifts, dict): continue
+                if not isinstance(atom_shifts, dict):
+                    continue
 
                 res_name = res_names.get(res_id)
                 if not res_name:
-                    logger.debug(f"Residue ID {res_id} from shifts not found in structure. Skipping.")
+                    logger.debug(
+                        f"Residue ID {res_id} from shifts not found in structure. Skipping."
+                    )
                     continue
 
                 if "CA" in atom_shifts and res_name in RANDOM_COIL_SHIFTS:
                     measured = atom_shifts["CA"]
                     random_coil_val = RANDOM_COIL_SHIFTS[res_name].get("CA")
-                    
+
                     if random_coil_val is not None:
                         delta = measured - random_coil_val
                         csi_data[chain_id][res_id] = round(delta, 3)
-                        logger.debug(f"CSI for {res_name} {res_id}: Measured={measured}, RC={random_coil_val}, Delta={delta}")
+                        logger.debug(
+                            f"CSI for {res_name} {res_id}: Measured={measured}, RC={random_coil_val}, Delta={delta}"
+                        )
                     else:
-                        logger.debug(f"No random coil 'CA' value for {res_name}. Skipping CSI calculation for this residue.")
-        
+                        logger.debug(
+                            f"No random coil 'CA' value for {res_name}. Skipping CSI calculation for this residue."
+                        )
+
         logger.info("CSI calculation complete.")
         return csi_data
 
@@ -399,26 +421,29 @@ def calculate_csi(
         logger.error(f"An unexpected error occurred during CSI calculation: {e}", exc_info=True)
         raise
 
+
 def _get_aromatic_rings(structure: struc.AtomArray) -> np.ndarray:
     """
     Identify aromatic rings and calculate their centers and normal vectors.
     """
     rings = []
-    
+
     # Iterate residues
     res_starts = struc.get_residue_starts(structure)
     for idx in res_starts:
         res = structure[idx]
         res_name = res.res_name
-        
+
         if res_name in RING_INTENSITIES:
             # Extract ring atoms to calculate geometry
             # Simplified definition of ring atoms
             res_slice = structure[structure.res_id == res.res_id]
-            
+
             if res_name in ["PHE", "TYR"]:
                 # 6-membered ring: CG, CD1, CD2, CE1, CE2, CZ
-                ring_atoms = res_slice[np.isin(res_slice.atom_name, ["CG", "CD1", "CD2", "CE1", "CE2", "CZ"])]
+                ring_atoms = res_slice[
+                    np.isin(res_slice.atom_name, ["CG", "CD1", "CD2", "CE1", "CE2", "CZ"])
+                ]
             elif res_name == "TRP":
                 # Indole is 9 atoms, effective center near CD2/CE2 bond.
                 # Simplified: averaging all ring atoms
@@ -426,14 +451,16 @@ def _get_aromatic_rings(structure: struc.AtomArray) -> np.ndarray:
                 ring_atoms = res_slice[np.isin(res_slice.atom_name, ring_names)]
             elif res_name in ["HIS", "HID", "HIE", "HIP"]:
                 # 5-membered ring: CG, ND1, CD2, CE1, NE2
-                ring_atoms = res_slice[np.isin(res_slice.atom_name, ["CG", "ND1", "CD2", "CE1", "NE2"])]
+                ring_atoms = res_slice[
+                    np.isin(res_slice.atom_name, ["CG", "ND1", "CD2", "CE1", "NE2"])
+                ]
             else:
                 continue
-                
+
             if len(ring_atoms) >= 3:
                 # Geometric Center
                 center = np.mean(ring_atoms.coord, axis=0)
-                
+
                 # Normal Vector (Cross product of two vectors in the ring)
                 # v1: Center -> Atom 0
                 # v2: Center -> Atom 1
@@ -446,18 +473,19 @@ def _get_aromatic_rings(structure: struc.AtomArray) -> np.ndarray:
                     normal = normal / norm
                     intensity = RING_INTENSITIES[res_name]
                     rings.append((center, normal, intensity))
-                    
+
     if not rings:
         return np.empty((0, 7), dtype=np.float64)
-        
+
     # Convert list of tuples (center, normal, intensity) to (N, 7) array
     ring_array = np.zeros((len(rings), 7), dtype=np.float64)
     for i, (c, n, intensity) in enumerate(rings):
         ring_array[i, 0:3] = c
         ring_array[i, 3:6] = n
         ring_array[i, 6] = intensity
-        
+
     return ring_array
+
 
 @njit
 def _calculate_ring_current_shift(proton_coord: np.ndarray, rings: np.ndarray) -> float:
@@ -471,80 +499,85 @@ def _calculate_ring_current_shift(proton_coord: np.ndarray, rings: np.ndarray) -
     # experimental data or theoretical calculations for a reference aromatic system.
     # It converts the dimensionless geometric factor and intensity into ppm.
     # Typical values range from 8 to 15 ppm*A^3.
-    B_FACTOR = 11.0 # Empirical scaling factor (ppm * A^3)
-    
+    B_FACTOR = 11.0  # Empirical scaling factor (ppm * A^3)
+
     for j in range(rings.shape[0]):
         center = rings[j, 0:3]
         normal = rings[j, 3:6]
         intensity = rings[j, 6]
-        
+
         # Vector from ring center to proton
         v = (proton_coord - center).astype(np.float64)
         r = np.sqrt(np.sum(v**2))
-        
-        if r < 1.0: 
-            continue # Too close/clashing, ignore singularity
-            
+
+        if r < 1.0:
+            continue  # Too close/clashing, ignore singularity
+
         # Cos(theta) = dot(v, n) / (|v|*|n|) -> |n|=1
         costheta = np.sum(v * normal) / r
-        
+
         # Geometric Factor G(r, theta) = (1 - 3*cos^2(theta)) / r^3
         # If theta = 0 (above ring), cos=1 -> (1-3)/r^3 = -2/r^3 (Shielding)
         # If theta = 90 (in plane), cos=0 -> (1-0)/r^3 =  1/r^3 (Deshielding)
         geom_factor = (1.0 - 3.0 * costheta**2) / (r**3)
-        
+
         shift = intensity * B_FACTOR * geom_factor
-        
+
         total_shift += shift
-        
+
     return total_shift
+
 
 class ShiftX2Predictor:
     """
     Wrapper for the external ShiftX2 predictor.
-    
+
     Requires the 'shiftx2.py' (or 'shiftx2') executable to be in the system PATH.
     ShiftX2 can be installed via SBGrid: 'sbgrid-cli install shiftx2'
     It can also be downloaded from here: http://www.shiftx2.ca/download.html
     """
-    
+
     def __init__(self, executable: str = "shiftx2.py"):
         self.executable = executable
 
     def is_available(self) -> bool:
         """Check if ShiftX2 executable is available in PATH."""
         from shutil import which
+
         return which(self.executable) is not None
 
     def predict(self, structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
         """
         Run ShiftX2 on a Biotite AtomArray.
-        
+
         Args:
             structure: Biotite AtomArray.
-            
+
         Returns:
             Predicted shifts in the standard dictionary format.
         """
         if not self.is_available():
-            raise RuntimeError(f"ShiftX2 executable '{self.executable}' not found. "
-                               "Please install it (e.g., via SBGrid) and add it to your PATH.")
+            raise RuntimeError(
+                f"ShiftX2 executable '{self.executable}' not found. "
+                "Please install it (e.g., via SBGrid) and add it to your PATH."
+            )
 
         with tempfile.TemporaryDirectory() as tmpdir:
             pdb_path = os.path.join(tmpdir, "input.pdb")
             # Some versions of shiftx2 ignore -o and append .cs to the input file
             expected_out_path = pdb_path + ".cs"
-            
+
             # 1. Write structure to temporary PDB
             pdb_file = pdb.PDBFile()
             pdb_file.set_structure(structure)
             pdb_file.write(pdb_path)
-            
+
             # 2. Execute ShiftX2
             # Command: shiftx2.py -i <input.pdb>
             try:
-                subprocess.run([self.executable, "-i", pdb_path], 
-                               check=True, capture_output=True, text=True)
+                subprocess.run(
+                    [self.executable, "-i", pdb_path], check=True, capture_output=True, text=True
+                )
             except subprocess.CalledProcessError as e:
                 logger.error(f"ShiftX2 failed: {e.stderr}")
                 raise RuntimeError(f"ShiftX2 execution failed: {e.stderr}")
@@ -560,38 +593,41 @@ class ShiftX2Predictor:
         Parse ShiftX2's default output format.
         Expects a tabular format with columns like: NUM, RES, ATOMNAME, SHIFT
         """
-        shifts: Dict[str, Dict[int, Dict[str, float]]] = {"A": {}} # Assuming single chain for simplicity
-        
+        shifts: Dict[str, Dict[int, Dict[str, float]]] = {
+            "A": {}
+        }  # Assuming single chain for simplicity
+
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"ShiftX2 output file not found: {file_path}")
 
         with open(file_path, "r") as f:
             lines = f.readlines()
-            
+
         # Skip header lines (usually starts with 'NUM' or similar)
         header_found = False
         for line in lines:
             line = line.strip()
-            if not line: continue
-            
+            if not line:
+                continue
+
             if "NUM" in line and "RES" in line:
                 header_found = True
                 continue
             if not header_found:
                 continue
-                
-            parts = [p.strip() for p in line.split(',')]
+
+            parts = [p.strip() for p in line.split(",")]
             if len(parts) >= 4:
                 try:
                     res_id = int(parts[0])
                     # res_name = parts[1]
                     atom_name = parts[2]
                     val = float(parts[3])
-                    
+
                     if res_id not in shifts["A"]:
                         shifts["A"][res_id] = {}
                     shifts["A"][res_id][atom_name] = val
                 except ValueError:
                     continue
-                    
+
         return shifts

@@ -17,12 +17,12 @@ import numpy as np
 # Helpers — minimal synthetic biotite structure
 # ---------------------------------------------------------------------------
 
+
 def _make_test_structure(n_residues: int = 10, conformation: str = "alpha"):
     """Build a minimal biotite AtomArray for testing (backbone-only helix)."""
     import biotite.structure as struc
 
-    AA_SEQUENCE = ["ALA", "GLY", "LEU", "VAL", "ILE",
-                   "SER", "THR", "ASP", "GLU", "LYS"]
+    AA_SEQUENCE = ["ALA", "GLY", "LEU", "VAL", "ILE", "SER", "THR", "ASP", "GLU", "LYS"]
 
     atoms = []
     atom_idx = 0
@@ -39,10 +39,12 @@ def _make_test_structure(n_residues: int = 10, conformation: str = "alpha"):
         ca_y = radius * np.sin(angle)
         ca_z = i * 1.5  # ~1.5 Å rise per residue
 
-        for atom_name, offset in [("N", [-1.2, 0.0, -0.4]),
-                                   ("CA", [0.0, 0.0, 0.0]),
-                                   ("C", [1.2, 0.0, 0.4]),
-                                   ("O", [1.5, 0.0, 1.5])]:
+        for atom_name, offset in [
+            ("N", [-1.2, 0.0, -0.4]),
+            ("CA", [0.0, 0.0, 0.0]),
+            ("C", [1.2, 0.0, 0.4]),
+            ("O", [1.5, 0.0, 1.5]),
+        ]:
             a = struc.Atom(
                 coord=[ca_x + offset[0], ca_y + offset[1], ca_z + offset[2]],
                 chain_id="A",
@@ -61,6 +63,7 @@ def _make_test_structure(n_residues: int = 10, conformation: str = "alpha"):
 # Feature extraction tests
 # ---------------------------------------------------------------------------
 
+
 class TestFeatureExtraction(unittest.TestCase):
     """Tests for build_residue_features() — the feature-engineering layer."""
 
@@ -68,18 +71,19 @@ class TestFeatureExtraction(unittest.TestCase):
         self.structure = _make_test_structure(n_residues=10)
         # Import lazily so tests can run even without torch installed
         from synth_nmr.neural_shifts import build_residue_features
+
         self.build_residue_features = build_residue_features
 
     def test_feature_vector_length(self):
         """Each residue should be represented by a 74-dimensional vector."""
         X = self.build_residue_features(self.structure)
-        self.assertEqual(X.shape[1], 74,
-                         f"Expected 74 features per residue, got {X.shape[1]}")
+        self.assertEqual(X.shape[1], 74, f"Expected 74 features per residue, got {X.shape[1]}")
 
     def test_feature_row_count(self):
         """One feature row per residue."""
         X = self.build_residue_features(self.structure)
         import biotite.structure as struc
+
         n_res = struc.get_residue_count(self.structure)
         self.assertEqual(X.shape[0], n_res)
 
@@ -88,8 +92,7 @@ class TestFeatureExtraction(unittest.TestCase):
         X = self.build_residue_features(self.structure)
         aa_onehot = X[:, :20]
         row_sums = aa_onehot.sum(axis=1)
-        np.testing.assert_allclose(row_sums, 1.0,
-                                   err_msg="AA one-hot rows must sum to 1")
+        np.testing.assert_allclose(row_sums, 1.0, err_msg="AA one-hot rows must sum to 1")
 
     def test_sin_cos_features_bounded(self):
         """sin/cos dihedral features must be in [−1, 1]."""
@@ -104,8 +107,7 @@ class TestFeatureExtraction(unittest.TestCase):
         X = self.build_residue_features(self.structure)
         ss_onehot = X[:, 24:27]
         row_sums = ss_onehot.sum(axis=1)
-        np.testing.assert_allclose(row_sums, 1.0,
-                                   err_msg="SS one-hot rows must sum to 1")
+        np.testing.assert_allclose(row_sums, 1.0, err_msg="SS one-hot rows must sum to 1")
 
     def test_sequence_position_bounded(self):
         """Sequence position feature must be in [0, 1]."""
@@ -132,17 +134,20 @@ class TestFeatureExtraction(unittest.TestCase):
         X = self.build_residue_features(self.structure)
         # i-1 block for first residue (index 0) — starts at col 34
         prev_first = X[0, 34:54]
-        np.testing.assert_array_equal(prev_first, np.zeros(20),
-                                      err_msg="N-terminal i-1 one-hot should be all zeros")
+        np.testing.assert_array_equal(
+            prev_first, np.zeros(20), err_msg="N-terminal i-1 one-hot should be all zeros"
+        )
         # i+1 block for last residue — starts at col 54
         next_last = X[-1, 54:74]
-        np.testing.assert_array_equal(next_last, np.zeros(20),
-                                      err_msg="C-terminal i+1 one-hot should be all zeros")
+        np.testing.assert_array_equal(
+            next_last, np.zeros(20), err_msg="C-terminal i+1 one-hot should be all zeros"
+        )
 
 
 # ---------------------------------------------------------------------------
 # Model forward-pass tests
 # ---------------------------------------------------------------------------
+
 
 class TestNeuralShiftModel(unittest.TestCase):
     """Tests for the underlying nn.Module returned by NeuralShiftPredictor."""
@@ -153,37 +158,41 @@ class TestNeuralShiftModel(unittest.TestCase):
         except ImportError:
             self.skipTest("torch not installed")
         from synth_nmr.neural_shifts import NeuralShiftPredictor
-        self.predictor = NeuralShiftPredictor()   # random-weight model
+
+        self.predictor = NeuralShiftPredictor()  # random-weight model
         self.structure = _make_test_structure(n_residues=10)
 
     def test_forward_pass_output_shape(self):
         """Model output must be [N_residues, 6]."""
         import torch
         from synth_nmr.neural_shifts import build_residue_features
+
         X = build_residue_features(self.structure)
         x = torch.tensor(X, dtype=torch.float32)
         self.predictor.model.eval()
         with torch.no_grad():
             out = self.predictor.model(x)
-        self.assertEqual(out.shape, (X.shape[0], 6),
-                         f"Expected [{X.shape[0]}, 6], got {tuple(out.shape)}")
+        self.assertEqual(
+            out.shape, (X.shape[0], 6), f"Expected [{X.shape[0]}, 6], got {tuple(out.shape)}"
+        )
 
     def test_forward_pass_produces_finite_values(self):
         """Model output must not contain NaN or Inf."""
         import torch
         from synth_nmr.neural_shifts import build_residue_features
+
         X = build_residue_features(self.structure)
         x = torch.tensor(X, dtype=torch.float32)
         self.predictor.model.eval()
         with torch.no_grad():
             out = self.predictor.model(x)
-        self.assertTrue(torch.isfinite(out).all(),
-                        "Model output contains NaN or Inf")
+        self.assertTrue(torch.isfinite(out).all(), "Model output contains NaN or Inf")
 
 
 # ---------------------------------------------------------------------------
 # Classifier API tests
 # ---------------------------------------------------------------------------
+
 
 class TestNeuralShiftPredictorAPI(unittest.TestCase):
     """Tests for NeuralShiftPredictor.predict() return contract."""
@@ -194,6 +203,7 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
         except ImportError:
             self.skipTest("torch not installed")
         from synth_nmr.neural_shifts import NeuralShiftPredictor
+
         self.predictor = NeuralShiftPredictor()
         self.structure = _make_test_structure(n_residues=10)
 
@@ -214,8 +224,9 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
         for chain, chain_data in result.items():
             for res_id, atom_shifts in chain_data.items():
                 for key in atom_shifts:
-                    self.assertIn(key, valid_keys,
-                                  f"Unexpected nucleus key '{key}' in residue {res_id}")
+                    self.assertIn(
+                        key, valid_keys, f"Unexpected nucleus key '{key}' in residue {res_id}"
+                    )
 
     def test_predict_values_are_floats_in_plausible_range(self):
         """Predicted shifts must be in a physically plausible range (0–220 ppm)."""
@@ -224,25 +235,34 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
             for res_id, atom_shifts in chain_data.items():
                 for atom, val in atom_shifts.items():
                     self.assertIsInstance(val, float)
-                    self.assertTrue(0.0 <= val <= 220.0,
-                                    f"{atom} shift {val:.2f} ppm out of expected range")
+                    self.assertTrue(
+                        0.0 <= val <= 220.0, f"{atom} shift {val:.2f} ppm out of expected range"
+                    )
 
     def test_predict_same_format_as_empirical(self):
         """Neural and empirical predictors must return the same dict schema."""
         from synth_nmr.chemical_shifts import predict_chemical_shifts
+
         empirical = predict_chemical_shifts(self.structure)
         neural = self.predictor.predict(self.structure)
 
-        self.assertEqual(set(empirical.keys()), set(neural.keys()),
-                         "Chain keys differ between empirical and neural predictors")
+        self.assertEqual(
+            set(empirical.keys()),
+            set(neural.keys()),
+            "Chain keys differ between empirical and neural predictors",
+        )
         for chain in empirical:
-            self.assertEqual(set(empirical[chain].keys()), set(neural[chain].keys()),
-                             f"Residue IDs differ in chain {chain}")
+            self.assertEqual(
+                set(empirical[chain].keys()),
+                set(neural[chain].keys()),
+                f"Residue IDs differ in chain {chain}",
+            )
 
 
 # ---------------------------------------------------------------------------
 # Checkpoint save/load test
 # ---------------------------------------------------------------------------
+
 
 class TestNeuralShiftCheckpoint(unittest.TestCase):
 
@@ -252,6 +272,7 @@ class TestNeuralShiftCheckpoint(unittest.TestCase):
         except ImportError:
             self.skipTest("torch not installed")
         from synth_nmr.neural_shifts import NeuralShiftPredictor
+
         self.predictor = NeuralShiftPredictor()
         self.structure = _make_test_structure(n_residues=10)
 
@@ -281,7 +302,10 @@ class TestNeuralShiftCheckpoint(unittest.TestCase):
                 delta_after = loaded.model(x).numpy()
 
         np.testing.assert_allclose(
-            delta_before, delta_after, rtol=0, atol=1e-5,
+            delta_before,
+            delta_after,
+            rtol=0,
+            atol=1e-5,
             err_msg="Neural ΔCS corrections differ after save/load roundtrip",
         )
 
@@ -290,6 +314,7 @@ class TestNeuralShiftCheckpoint(unittest.TestCase):
 # Import-safety test (no torch required at module level)
 # ---------------------------------------------------------------------------
 
+
 class TestImportSafety(unittest.TestCase):
 
     def test_module_imports_without_torch(self):
@@ -297,7 +322,6 @@ class TestImportSafety(unittest.TestCase):
         `synth_nmr.neural_shifts` must be importable even when torch is absent.
         We test this by reimporting the module with sys.modules manipulation.
         """
-        import importlib
         saved = sys.modules.pop("synth_nmr.neural_shifts", None)
         saved_torch = sys.modules.pop("torch", None)
 

@@ -5,6 +5,7 @@ import pytest
 # This import will fail until the rdc module is created
 from synth_nmr.rdc import calculate_rdcs
 
+
 def test_calculate_rdcs_single_vector_aligned_z():
     """
     Test RDC calculation for a single N-H vector perfectly aligned
@@ -12,20 +13,15 @@ def test_calculate_rdcs_single_vector_aligned_z():
     """
     # Create a simple structure with one residue and two atoms (N and H)
     n_atom = struc.Atom(
-        coord=[0.0, 0.0, 0.0],
-        atom_name="N",
-        element="N",
-        res_id=1,
-        res_name="GLY",
-        chain_id="A"
+        coord=[0.0, 0.0, 0.0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A"
     )
     h_atom = struc.Atom(
-        coord=[0.0, 0.0, 1.02], # Standard N-H bond length
+        coord=[0.0, 0.0, 1.02],  # Standard N-H bond length
         atom_name="H",
         element="H",
         res_id=1,
         res_name="GLY",
-        chain_id="A"
+        chain_id="A",
     )
     structure = struc.array([n_atom, h_atom])
     # Add a bond between N and H for completeness (not strictly required by the function)
@@ -49,7 +45,7 @@ def test_calculate_rdcs_single_vector_aligned_z():
     # sin(theta) = 0
     # The rhombicity term (containing sin^2(theta)) becomes zero.
     # RDC = Da * (3 * 1^2 - 1) = Da * (3 - 1) = 2 * Da
-    expected_rdc = 2 * Da # 2 * 10.0 = 20.0
+    expected_rdc = 2 * Da  # 2 * 10.0 = 20.0
 
     # Calculate RDCs using the function to be implemented
     rdcs = calculate_rdcs(structure, Da=Da, R=R)
@@ -69,8 +65,12 @@ def test_calculate_rdcs_single_vector_aligned_x():
     Test RDC calculation for a single N-H vector perfectly aligned
     with the X-axis of the PAS.
     """
-    n_atom = struc.Atom([0,0,0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A")
-    h_atom = struc.Atom([1.02,0,0], atom_name="H", element="H", res_id=1, res_name="GLY", chain_id="A")
+    n_atom = struc.Atom(
+        [0, 0, 0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A"
+    )
+    h_atom = struc.Atom(
+        [1.02, 0, 0], atom_name="H", element="H", res_id=1, res_name="GLY", chain_id="A"
+    )
     structure = struc.array([n_atom, h_atom])
     Da = 10.0
     R = 0.5
@@ -80,7 +80,7 @@ def test_calculate_rdcs_single_vector_aligned_x():
     # Vector is on the X axis, so phi = 0 degrees. cos(2*phi) = 1.
     # RDC = Da * [ (3*0^2 - 1) + 1.5 * R * sin^2(90) * cos(0) ]
     # RDC = Da * [ -1 + 1.5 * R * 1 * 1 ] = Da * (-1 + 1.5 * R)
-    expected_rdc = Da * (-1 + 1.5 * R) # 10 * (-1 + 1.5*0.5) = -2.5
+    expected_rdc = Da * (-1 + 1.5 * R)  # 10 * (-1 + 1.5*0.5) = -2.5
 
     rdcs = calculate_rdcs(structure, Da=Da, R=R)
     assert rdcs[1] == pytest.approx(expected_rdc, abs=1e-4)
@@ -91,8 +91,12 @@ def test_calculate_rdcs_single_vector_aligned_y():
     Test RDC calculation for a single N-H vector perfectly aligned
     with the Y-axis of the PAS.
     """
-    n_atom = struc.Atom([0,0,0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A")
-    h_atom = struc.Atom([0,1.02,0], atom_name="H", element="H", res_id=1, res_name="GLY", chain_id="A")
+    n_atom = struc.Atom(
+        [0, 0, 0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A"
+    )
+    h_atom = struc.Atom(
+        [0, 1.02, 0], atom_name="H", element="H", res_id=1, res_name="GLY", chain_id="A"
+    )
     structure = struc.array([n_atom, h_atom])
     Da = 10.0
     R = 0.5
@@ -102,7 +106,7 @@ def test_calculate_rdcs_single_vector_aligned_y():
     # Vector is on the Y axis, so phi = 90 degrees. cos(2*phi) = -1.
     # RDC = Da * [ (3*0^2 - 1) + 1.5 * R * sin^2(90) * cos(180) ]
     # RDC = Da * [ -1 + 1.5 * R * 1 * -1 ] = Da * (-1 - 1.5 * R)
-    expected_rdc = Da * (-1 - 1.5 * R) # 10 * (-1 - 1.5*0.5) = -17.5
+    expected_rdc = Da * (-1 - 1.5 * R)  # 10 * (-1 - 1.5*0.5) = -17.5
 
     rdcs = calculate_rdcs(structure, Da=Da, R=R)
     assert rdcs[1] == pytest.approx(expected_rdc, abs=1e-4)
@@ -114,17 +118,25 @@ def test_calculate_rdcs_proline_and_missing_h():
     amide H is missing are handled correctly (i.e., skipped).
     """
     # Residue 1: GLY with N and H
-    atom1 = struc.Atom([0,0,0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A")
-    atom2 = struc.Atom([0,0,1], atom_name="H", element="H", res_id=1, res_name="GLY", chain_id="A")
+    atom1 = struc.Atom(
+        [0, 0, 0], atom_name="N", element="N", res_id=1, res_name="GLY", chain_id="A"
+    )
+    atom2 = struc.Atom(
+        [0, 0, 1], atom_name="H", element="H", res_id=1, res_name="GLY", chain_id="A"
+    )
     # Residue 2: PRO with just N
-    atom3 = struc.Atom([1,0,0], atom_name="N", element="N", res_id=2, res_name="PRO", chain_id="A")
+    atom3 = struc.Atom(
+        [1, 0, 0], atom_name="N", element="N", res_id=2, res_name="PRO", chain_id="A"
+    )
     # Residue 3: ALA with just N (missing H)
-    atom4 = struc.Atom([2,0,0], atom_name="N", element="N", res_id=3, res_name="ALA", chain_id="A")
-    
+    atom4 = struc.Atom(
+        [2, 0, 0], atom_name="N", element="N", res_id=3, res_name="ALA", chain_id="A"
+    )
+
     structure = struc.array([atom1, atom2, atom3, atom4])
     Da = 10.0
     R = 0.5
-    
+
     rdcs = calculate_rdcs(structure, Da=Da, R=R)
 
     # RDC should be calculated for residue 1
@@ -134,4 +146,3 @@ def test_calculate_rdcs_proline_and_missing_h():
     assert 3 not in rdcs
     # The final dictionary should contain exactly one entry
     assert len(rdcs) == 1
-

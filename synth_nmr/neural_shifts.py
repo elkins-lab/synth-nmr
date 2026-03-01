@@ -136,10 +136,26 @@ logger = logging.getLogger(__name__)
 
 # Canonical amino acid ordering (deterministic one-hot encoding)
 _AA_ORDER = [
-    "ALA", "ARG", "ASN", "ASP", "CYS",
-    "GLN", "GLU", "GLY", "HIS", "ILE",
-    "LEU", "LYS", "MET", "PHE", "PRO",
-    "SER", "THR", "TRP", "TYR", "VAL",
+    "ALA",
+    "ARG",
+    "ASN",
+    "ASP",
+    "CYS",
+    "GLN",
+    "GLU",
+    "GLY",
+    "HIS",
+    "ILE",
+    "LEU",
+    "LYS",
+    "MET",
+    "PHE",
+    "PRO",
+    "SER",
+    "THR",
+    "TRP",
+    "TYR",
+    "VAL",
 ]
 _AA_INDEX = {aa: i for i, aa in enumerate(_AA_ORDER)}
 
@@ -150,15 +166,14 @@ _AA_ALIASES = {"HID": "HIS", "HIE": "HIS", "HIP": "HIS", "CYX": "CYS"}
 NUCLEUS_ORDER = ["HA", "CA", "CB", "C", "N", "H"]
 
 # Input feature dimensionality
-N_FEATURES = 74   # 20 + 2 + 2 + 3 + 1 + 6 + 20 + 20
+N_FEATURES = 74  # 20 + 2 + 2 + 3 + 1 + 6 + 20 + 20
 
 # Default checkpoint bundled inside the package
-_DEFAULT_CHECKPOINT = os.path.join(
-    os.path.dirname(__file__), "models", "neural_shifts_v1.pt"
-)
+_DEFAULT_CHECKPOINT = os.path.join(os.path.dirname(__file__), "models", "neural_shifts_v1.pt")
 
 
 # ── Feature engineering ──────────────────────────────────────────────────────
+
 
 def build_residue_features(structure: Any) -> np.ndarray:
     """
@@ -176,9 +191,7 @@ def build_residue_features(structure: Any) -> np.ndarray:
     """
     import biotite.structure as struc
     import math
-    from synth_nmr.chemical_shifts import (
-        RANDOM_COIL_SHIFTS, SECONDARY_SHIFTS
-    )
+    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
     from synth_nmr.structure_utils import get_secondary_structure
 
     # ── Collect per-residue data ──────────────────────────────────────────
@@ -213,7 +226,7 @@ def build_residue_features(structure: Any) -> np.ndarray:
         if len(arr) == length:
             return arr
         out = np.zeros(length, dtype=np.float32)
-        out[:min(len(arr), length)] = arr[:min(len(arr), length)]
+        out[: min(len(arr), length)] = arr[: min(len(arr), length)]
         return out
 
     phi_angles = _pad(phi_angles, n_res)
@@ -302,10 +315,13 @@ def build_residue_features(structure: Any) -> np.ndarray:
 
 # ── Model factory ────────────────────────────────────────────────────────────
 
-def _make_mlp(hidden_dims: Tuple[int, ...] = (128, 64, 32),
-              n_features: int = N_FEATURES,
-              n_outputs: int = 6,
-              dropout: float = 0.2) -> Any:
+
+def _make_mlp(
+    hidden_dims: Tuple[int, ...] = (128, 64, 32),
+    n_features: int = N_FEATURES,
+    n_outputs: int = 6,
+    dropout: float = 0.2,
+) -> Any:
     """
     Construct the MLP nn.Module.
 
@@ -324,8 +340,7 @@ def _make_mlp(hidden_dims: Tuple[int, ...] = (128, 64, 32),
         import torch.nn as nn
     except ImportError as exc:
         raise ImportError(
-            "torch is required for NeuralShiftPredictor. "
-            "Install with: pip install synth-nmr[ml]"
+            "torch is required for NeuralShiftPredictor. " "Install with: pip install synth-nmr[ml]"
         ) from exc
 
     layers = []
@@ -347,6 +362,7 @@ def _make_mlp(hidden_dims: Tuple[int, ...] = (128, 64, 32),
 
 
 # ── Predictor class ──────────────────────────────────────────────────────────
+
 
 class NeuralShiftPredictor:
     """
@@ -405,8 +421,9 @@ class NeuralShiftPredictor:
       • Less interpretable (black box vs. explicit table)
     """
 
-    def __init__(self, model_path: Optional[str] = None,
-                 hidden_dims: Tuple[int, ...] = (128, 64, 32)) -> None:
+    def __init__(
+        self, model_path: Optional[str] = None, hidden_dims: Tuple[int, ...] = (128, 64, 32)
+    ) -> None:
         self.hidden_dims = hidden_dims
         self.model: Any = None
         self._model_path: Optional[str] = None
