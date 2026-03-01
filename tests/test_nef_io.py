@@ -114,3 +114,67 @@ def test_write_nef_chemical_shifts(tmp_path):
     assert "A 1 MET CA 55.000" in content
     # Res 2 Ala pair
     assert "A 2 ALA N 122.000" in content
+
+def test_write_nef_relaxation_out_of_bounds(tmp_path):
+    from synth_nmr.nef_io import write_nef_relaxation
+    output_file = tmp_path / "relax_out.nef"
+    sequence = "GA"
+    # rid 3 is out of bounds, missing metric R2 handles val is None (line 188)
+    relaxation_data = {
+        1: {"R1": 0.9, "NOE": 0.8}, # missing R2
+        3: {"R1": 1.5, "R2": 40.0, "NOE": 0.5}, # out of bounds rid 3
+    }
+    write_nef_relaxation(str(output_file), sequence, relaxation_data, field_freq_mhz=600.0)
+    content = output_file.read_text()
+    assert "A 3 UNK N 1.5000" in content
+
+def test_write_nef_chemical_shifts_out_of_bounds(tmp_path):
+    from synth_nmr.nef_io import write_nef_chemical_shifts
+    output_file = tmp_path / "shifts_out.nef"
+    sequence = "G"
+    shifts = {
+        "A": {
+            2: {"CA": 55.0} # out of bounds
+        }
+    }
+    write_nef_chemical_shifts(str(output_file), sequence, shifts)
+    content = output_file.read_text()
+    assert "A 2 UNK CA 55.000" in content
+
+def test_read_nef_restraints_save_close(tmp_path):
+    from synth_nmr.nef_io import read_nef_restraints
+    nef_content = """
+save_nef_distance_restraint_list
+   loop_
+      _nef_distance_restraint.index
+      _nef_distance_restraint.restraint_id
+      _nef_distance_restraint.chain_code_1
+      _nef_distance_restraint.sequence_code_1
+      _nef_distance_restraint.residue_name_1
+      _nef_distance_restraint.atom_name_1
+      _nef_distance_restraint.chain_code_2
+      _nef_distance_restraint.sequence_code_2
+      _nef_distance_restraint.residue_name_2
+      _nef_distance_restraint.atom_name_2
+      _nef_distance_restraint.target_value
+      _nef_distance_restraint.target_value_uncertainty
+      _nef_distance_restraint.lower_limit
+      _nef_distance_restraint.upper_limit
+      _nef_distance_restraint.weight
+      1 1 A 1 GLY H A 2 ALA HA 5.0 0.0 1.8 5.5 1.0
+      2 2 A 1 GLY H A 2 ALA HA 5.0 0.0 1.8 5.5
+      3 3 A 1 GLY H A 2 ALA HA nope 0.0 1.8 5.5 1.0
+   stop_
+save_
+"""
+    f = tmp_path / "test.nef"
+    f.write_text(nef_content)
+    r = read_nef_restraints(str(f))
+    assert len(r) == 1
+
+def test_read_nef_restraints_file_not_found(tmp_path):
+    from synth_nmr.nef_io import read_nef_restraints
+    f = tmp_path / "non_existent.nef"
+    r = read_nef_restraints(str(f))
+    assert r == []
+

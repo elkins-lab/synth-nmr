@@ -71,6 +71,17 @@ def test_calculate_dipolar_constant():
     assert isinstance(d_sq, float)
 
 
+def test_calculate_spectral_density_tau_f():
+    from synth_nmr.relaxation import spectral_density
+    import numpy as np
+    omega = 600e6 * 2 * np.pi
+    tau_m = 10e-9
+    s2 = 0.85
+    tau_f = 2e-9
+    j = spectral_density(omega, tau_m, s2, tau_f=tau_f)
+    assert isinstance(j, float)
+
+
 def test_calculate_csa_constant():
     """
     Test the isolated calculation of the squared CSA constant (c^2).

@@ -348,3 +348,129 @@ class TestImportSafety(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+import pytest
+import numpy as np
+import biotite.structure as struc
+from synth_nmr.neural_shifts import build_residue_features, NeuralShiftPredictor, _make_mlp
+
+def test_build_residue_features_no_phi_psi(mocker):
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    
+    # Force dihedral backbone calculation to fail but gracefully as handled in get_secondary_structure which requires catching BadStructureError to not throw early
+    mocker.patch("biotite.structure.dihedral_backbone", side_effect=struc.BadStructureError("No dihedral"))
+    X = build_residue_features(structure)
+    
+    # 74 N_FEATURES
+    assert X.shape == (1, 74)
+    # Phi and Psi index at Col 20-23 should be based on 0 radians -> sin 0 = 0, cos 0 = 1
+    assert X[0, 20] == 0.0 # sin(0)
+    assert X[0, 21] == 1.0 # cos(0)
+    assert X[0, 22] == 0.0 # sin(0)
+    assert X[0, 23] == 1.0 # cos(0)
+
+def test_build_residue_features_empty_phi_psi(mocker):
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    
+    mocker.patch("biotite.structure.dihedral_backbone", return_value=(np.array([]), np.array([]), np.array([])))
+    X = build_residue_features(structure)
+    
+    assert X.shape == (1, 74)
+    assert X[0, 20] == 0.0
+    assert X[0, 21] == 1.0
+
+def test_make_mlp_no_torch(mocker):
+    mocker.patch.dict("sys.modules", {"torch.nn": None})
+    with pytest.raises(ImportError, match="torch is required"):
+        _make_mlp()
+
+def test_predict_no_torch(mocker):
+    predictor = NeuralShiftPredictor()
+    mocker.patch.dict("sys.modules", {"torch": None})
+    structure = struc.AtomArray(1)
+    with pytest.raises(ImportError, match="torch is required"):
+        predictor.predict(structure)
+
+def test_predict_empty_structure():
+    predictor = NeuralShiftPredictor()
+    empty_arr = struc.AtomArray(0)
+    assert predictor.predict(empty_arr) == {}
+
+def test_save_no_torch(mocker, tmp_path):
+    predictor = NeuralShiftPredictor()
+    mocker.patch.dict("sys.modules", {"torch": None})
+    with pytest.raises(ImportError, match="torch is required"):
+        predictor.save(str(tmp_path / "model.pt"))
+
+def test_load_no_torch(mocker, tmp_path):
+    predictor = NeuralShiftPredictor()
+    mocker.patch.dict("sys.modules", {"torch": None})
+    with pytest.raises(ImportError, match="torch is required"):
+        predictor.load("fake.pt")
+
+def test_load_corrupted_file(tmp_path):
+    predictor = NeuralShiftPredictor()
+    fake_pt = tmp_path / "corrupted.pt"
+    fake_pt.write_text("Not a real torch file")
+    
+    with pytest.raises(Exception):
+        predictor.load(str(fake_pt))
+
+def test_predict_clip_branch(mocker):
+    predictor = NeuralShiftPredictor()
+    
+    # Mock empirical to return ALA
+    structure = struc.AtomArray(1)
+    structure.chain_id = np.array(["A"])
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    
+    # Force negative delta for all 6 NUCLEUS_ORDER to trigger clipping to 0.0
+    # The actual result is random coil baseline + delta clamped. Since CA baseline is ~50+, we need delta to be -1000 so it clamps.
+    # The current CA for ALA is 52.5. So 52.5 - 1000.0 clamped at 0 = 0.0
+    import torch
+    mocker.patch("synth_nmr.neural_shifts.build_residue_features", return_value=np.zeros((1, 74)))
+    
+    # The __call__ needs to return a valid output tensor shape [1, 6] to represent NUCLEUS_ORDER outputs
+    mock_model = mocker.MagicMock()
+    mock_model.return_value = torch.tensor([[-1000.0] * 6])
+    predictor.model = mock_model
+    
+    res = predictor.predict(structure)
+    # The output should be clamped to 0.0
+    assert res["A"][1]["CA"] == 0.0
+
+def test_neural_shifts_init_random_weights(mocker):
+    from synth_nmr.neural_shifts import NeuralShiftPredictor
+    
+    # Mock os.path.exists to simulate missing default checkpoint
+    mocker.patch("os.path.exists", return_value=False)
+    
+    # This should trigger `logger.info` and `_init_fresh_model()`
+    predictor = NeuralShiftPredictor(model_path=None)
+    assert predictor.model is not None
+    # We don't strictly need to assert anything else, just reaching those lines is enough
+
+def test_build_residue_features_padding(mocker):
+    from synth_nmr.neural_shifts import build_residue_features
+    import biotite.structure as struc
+    
+    structure = struc.AtomArray(3)
+    structure.res_id = np.array([1, 2, 3])
+    structure.res_name = np.array(["ALA", "GLY", "VAL"])
+    structure.chain_id = np.array(["A", "A", "A"])
+    structure.atom_name = np.array(["CA", "CA", "CA"])
+    
+    # Mock dihedral_backbone to return an array of size 2 instead of 3
+    # This will trigger the _pad() function when length != len(arr)
+    # The return is (phi, psi, omega)
+    phi = np.array([1.0, -1.0])
+    psi = np.array([-1.0, 1.0])
+    omega = np.array([3.14, 3.14])
+    mocker.patch("biotite.structure.dihedral_backbone", return_value=(phi, psi, omega))
+    
+    features = build_residue_features(structure)
+    assert features.shape[0] == 3

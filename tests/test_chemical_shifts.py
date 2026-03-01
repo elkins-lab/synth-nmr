@@ -494,3 +494,250 @@ def test_predict_chemical_shifts_fallback(mocker):
     assert "A" in shifts
     assert 1 in shifts["A"]
     spy_empirical.assert_called_once()
+
+
+def test_shiftx2_is_available_mocked(mocker):
+    """Test ShiftX2 `is_available` true and false branches."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    predictor = ShiftX2Predictor()
+
+    mocker.patch("shutil.which", return_value="/fake/path/to/shiftx2")
+    assert predictor.is_available() is True
+
+    mocker.patch("shutil.which", return_value=None)
+    assert predictor.is_available() is False
+
+
+def test_shiftx2_predict_not_available(mocker):
+    """Test ShiftX2 predict raises error when executable is missing."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    predictor = ShiftX2Predictor()
+    mocker.patch.object(predictor, "is_available", return_value=False)
+
+    structure = struc.AtomArray(1)
+    with pytest.raises(RuntimeError, match="ShiftX2 executable.*not found"):
+        predictor.predict(structure)
+
+
+def test_shiftx2_predict_subprocess_error(mocker, tmp_path):
+    """Test ShiftX2 predict raises error when subprocess fails."""
+    import subprocess
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    
+    predictor = ShiftX2Predictor()
+    mocker.patch.object(predictor, "is_available", return_value=True)
+    mocker.patch('tempfile.TemporaryDirectory', return_value=tmp_path)
+    
+    # Fully mock PDBFile to bypass all biotite.structure.io.pdb logic
+    mock_pdb_file = mocker.patch("synth_nmr.chemical_shifts.pdb.PDBFile")
+    mock_instance = mock_pdb_file.return_value
+    mock_instance.set_structure.return_value = None
+    mock_instance.write.return_value = None
+
+    mocker.patch(
+        "subprocess.run",
+        side_effect=subprocess.CalledProcessError(1, "shiftx2", stderr="Fake Error")
+    )
+
+    structure = struc.AtomArray(1)  # Invalid structure is fine now because PDBFile is mocked
+    with pytest.raises(RuntimeError, match="ShiftX2 execution failed: Fake Error"):
+        predictor.predict(structure)
+
+
+def test_shiftx2_parse_output_missing_file():
+    """Test _parse_output with non-existent file."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    predictor = ShiftX2Predictor()
+    
+    with pytest.raises(FileNotFoundError, match="ShiftX2 output file not found: missing.file"):
+        predictor._parse_output("missing.file")
+
+
+def test_shiftx2_parse_output_bad_format(tmp_path):
+    """Test _parse_output gracefully ignores poorly formatted lines."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    predictor = ShiftX2Predictor()
+    
+    fake_csv = tmp_path / "fake_output.cs"
+    fake_csv.write_text("NUM, RES, ATOMNAME, SHIFT\n1, ALA, CA, NOT_A_FLOAT\n2, GLY, N")
+    
+    # Should catch ValueError and `continue`, resulting in empty dict
+    shifts = predictor._parse_output(str(fake_csv))
+    assert shifts == {"A": {}}
+
+import pytest
+import numpy as np
+import biotite.structure as struc
+from synth_nmr.chemical_shifts import predict_empirical_shifts, calculate_csi
+
+def test_predict_empirical_shifts_wrong_type():
+    with pytest.raises(TypeError, match="must be a biotite.structure.AtomArray"):
+        predict_empirical_shifts("not an array")
+
+def test_predict_empirical_shifts_empty_array():
+    empty_arr = struc.AtomArray(0)
+    assert predict_empirical_shifts(empty_arr) == {}
+
+def test_calculate_csi_wrong_shifts_type():
+    structure = struc.AtomArray(1)
+    with pytest.raises(TypeError, match="Input 'shifts' must be a dictionary."):
+        calculate_csi("not a dict", structure)
+
+def test_calculate_csi_empty_shifts():
+    structure = struc.AtomArray(1)
+    assert calculate_csi({}, structure) == {}
+
+def test_calculate_csi_wrong_structure_type():
+    with pytest.raises(TypeError, match="must be a biotite.structure.AtomArray"):
+        calculate_csi({"A": {1: {"CA": 50.0}}}, "not an array")
+
+def test_calculate_csi_empty_structure():
+    empty_arr = struc.AtomArray(0)
+    assert calculate_csi({"A": {1: {"CA": 50.0}}}, empty_arr) == {}
+    
+def test_calculate_csi_chain_not_dict():
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    
+    # "A" maps to a string instead of dict
+    shifts = {"A": "not a dict"}
+    assert calculate_csi(shifts, structure) == {}
+
+def test_calculate_csi_atom_not_dict():
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    
+    # Residue 1 maps to string instead of dict
+    shifts = {"A": {1: "not a dict"}}
+    assert calculate_csi(shifts, structure) == {"A": {}}
+
+def test_calculate_csi_exception_raising(mocker):
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    shifts = {"A": {1: {"CA": 50.0}}}
+    
+    mocker.patch("biotite.structure.get_residue_starts", side_effect=Exception("Mock CSI Error"))
+    with pytest.raises(Exception, match="Mock CSI Error"):
+        calculate_csi(shifts, structure)
+
+def test_predict_empirical_shifts_exception_raising(mocker):
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.res_name = np.array(["ALA"])
+    
+    mocker.patch("biotite.structure.get_residue_starts", side_effect=Exception("Mock Prediction Error"))
+    with pytest.raises(Exception, match="Mock Prediction Error"):
+        predict_empirical_shifts(structure)
+
+def test_predict_chemical_shifts_shiftx2_empty(mocker):
+    from synth_nmr.chemical_shifts import predict_chemical_shifts
+    
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.is_available", return_value=True)
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.predict", return_value={})
+    
+    spy_empirical = mocker.patch("synth_nmr.chemical_shifts.predict_empirical_shifts", return_value={"mock": "fallback"})
+    
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["ALA"])
+    
+    res = predict_chemical_shifts(structure)
+    assert res == {"mock": "fallback"}
+    spy_empirical.assert_called_once()
+
+def test_predict_chemical_shifts_shiftx2_exception(mocker):
+    from synth_nmr.chemical_shifts import predict_chemical_shifts
+    
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.is_available", return_value=True)
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.predict", side_effect=Exception("Crash"))
+    
+    spy_empirical = mocker.patch("synth_nmr.chemical_shifts.predict_empirical_shifts", return_value={"mock": "fallback_crash"})
+    
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["ALA"])
+    
+    res = predict_chemical_shifts(structure)
+    assert res == {"mock": "fallback_crash"}
+    spy_empirical.assert_called_once()
+    
+def test_predict_chemical_shifts_shiftx2_success(mocker):
+    from synth_nmr.chemical_shifts import predict_chemical_shifts
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["ALA"])
+    structure.res_id = np.array([1])
+    
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.is_available", return_value=True)
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.predict", return_value={"A": {1: {"CA": 50.0}}})
+    
+    shifts = predict_chemical_shifts(structure)
+    assert shifts == {"A": {1: {"CA": 50.0}}}
+
+def test_calculate_csi_empty_structure(mocker):
+    from synth_nmr.chemical_shifts import calculate_csi
+    structure = struc.AtomArray(1)  # Length 1 is truthy!
+    shifts = {"A": {1: {"CA": 55.0}}}
+    mocker.patch("biotite.structure.get_residue_starts", return_value=np.array([]))
+    csi = calculate_csi(shifts, structure)
+    assert csi == {}
+
+def test_calculate_csi_missing_random_coil(mocker):
+    from synth_nmr.chemical_shifts import calculate_csi, RANDOM_COIL_SHIFTS
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["ALA"])
+    structure.res_id = np.array([1])
+    structure.chain_id = np.array(["A"])
+    shifts = {"A": {1: {"CA": 55.0}}}
+    
+    # Mock RANDOM_COIL_SHIFTS so "ALA" has NO "CA" shift, but is in the dict.
+    mocker.patch.dict(RANDOM_COIL_SHIFTS, {"ALA": {"CB": 19.3}})
+    csi = calculate_csi(shifts, structure)
+    assert csi == {"A": {}}
+
+def test_get_aromatic_rings_unsupported(mocker):
+    from synth_nmr.chemical_shifts import _get_aromatic_rings, RING_INTENSITIES
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["XYZ"])
+    structure.res_id = np.array([1])
+    structure.atom_name = np.array(["CA"])
+    
+    # Temporarily add XYZ to RING_INTENSITIES but skip specific structural handling
+    mocker.patch.dict(RING_INTENSITIES, {"XYZ": 1.0})
+    rings = _get_aromatic_rings(structure)
+    assert len(rings) == 0
+
+def test_shiftx2_predictor_predict_success(mocker):
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    
+    structure = struc.AtomArray(1)
+    structure.coord = np.array([[0,0,0]])
+    predictor = ShiftX2Predictor()
+    
+    # Mock subprocess run to simulate successful SHIFTX2 call
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor.is_available", return_value=True)
+    mocker.patch("biotite.structure.io.pdb.PDBFile.set_structure")
+    mocker.patch("subprocess.run")
+    mocker.patch("os.path.exists", return_value=True)
+    mocker.patch("synth_nmr.chemical_shifts.ShiftX2Predictor._parse_output", return_value={"A": {1: {"CA": 50.0}}})
+    mocker.patch("os.listdir", return_value=["test.cs"])
+    
+    shifts = predictor.predict(structure)
+    assert shifts == {"A": {1: {"CA": 50.0}}}
+
+def test_shiftx2_parse_output(tmp_path):
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+    csv_file = tmp_path / "output.csv"
+    csv_file.write_text(
+        "Random gibberish before header\n"
+        "\n"
+        "NUM, RES, ATOMNAME, SHIFT\n"
+        "1, ALA, CA, 50.5\n"
+        "1, ALA, CB, error\n"
+        "2, GLY, CA, 45.0\n"
+    )
+    predictor = ShiftX2Predictor()
+    shifts = predictor._parse_output(str(csv_file))
+    assert shifts["A"][1]["CA"] == 50.5
+    assert "CB" not in shifts["A"][1]
+    assert shifts["A"][2]["CA"] == 45.0

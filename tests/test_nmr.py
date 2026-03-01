@@ -230,3 +230,38 @@ def test_logging_for_empty_structure(caplog):
     empty_structure = struc.AtomArray(0)
     calculate_synthetic_noes(empty_structure)
     assert "Input 'structure' is empty" in caplog.text
+
+
+def test_calculate_synthetic_noes_dist_under_1():
+    from synth_nmr.nmr import calculate_synthetic_noes
+    import biotite.structure as struc
+    import numpy as np
+    
+    structure = struc.AtomArray(2)
+    structure.res_id = np.array([1, 1])
+    structure.res_name = np.array(["ALA", "ALA"])
+    structure.atom_name = np.array(["H", "HA"])
+    structure.element = np.array(["H", "H"])
+    structure.chain_id = np.array(["A", "A"])
+    # Put them extremely close so dist < 1.0
+    structure.coord = np.array([[0, 0, 0], [0.5, 0, 0]])
+    
+    restraints = calculate_synthetic_noes(structure, cutoff=5.0)
+    # The dist < 1.0 branch should hit and filter it out
+    assert len(restraints) == 0
+
+def test_calculate_synthetic_noes_exception(mocker):
+    from synth_nmr.nmr import calculate_synthetic_noes
+    import biotite.structure as struc
+    import numpy as np
+    import pytest
+    
+    structure = struc.AtomArray(1)
+    structure.res_id = np.array([1])
+    structure.element = np.array(["H"])
+    
+    mocker.patch("biotite.structure.CellList", side_effect=Exception("Mock Unexpected Error"))
+    
+    with pytest.raises(Exception, match="Mock Unexpected Error"):
+        calculate_synthetic_noes(structure)
+

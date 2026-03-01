@@ -368,7 +368,7 @@ def read_nef_restraints(filename: str) -> List[Dict]:
 
             # Detect saveframe start
             # We relax the check to enter any saveframe, then validation happens by column headers
-            if line.startswith("save_"):
+            if line.startswith("save_") and line != "save_":
                 in_restraint_saveframe = True
                 continue
 

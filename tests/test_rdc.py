@@ -146,3 +146,39 @@ def test_calculate_rdcs_proline_and_missing_h():
     assert 3 not in rdcs
     # The final dictionary should contain exactly one entry
     assert len(rdcs) == 1
+
+def test_calculate_rdcs_zero_da(caplog):
+    n_atom = struc.Atom([0, 0, 0], atom_name="N", element="N", res_id=1, chain_id="A")
+    h_atom = struc.Atom([0, 0, 1], atom_name="H", element="H", res_id=1, chain_id="A")
+    structure = struc.array([n_atom, h_atom])
+    with caplog.at_level("WARNING"):
+        rdcs = calculate_rdcs(structure, Da=0.0, R=0.5)
+    assert "Parameter 'Da' is zero" in caplog.text
+
+def test_calculate_rdcs_zero_length_vector(caplog):
+    n_atom = struc.Atom([0, 0, 0], atom_name="N", element="N", res_id=1, chain_id="A")
+    # Same coordinate as N to produce zero-length vector
+    h_atom = struc.Atom([0, 0, 0], atom_name="H", element="H", res_id=1, chain_id="A")
+    structure = struc.array([n_atom, h_atom])
+    with caplog.at_level("WARNING"):
+        rdcs = calculate_rdcs(structure, Da=10.0, R=0.5)
+    assert "has a zero-length N-H vector" in caplog.text
+    assert 1 not in rdcs
+
+def test_calculate_rdcs_empty_h(caplog):
+    n_atom = struc.Atom([0, 0, 0], atom_name="N", element="N", res_id=1, chain_id="A")
+    h_atom = struc.Atom([0, 0, 1], atom_name="H", element="H", res_id=2, chain_id="A") # Diff res_id
+    structure = struc.array([n_atom, h_atom])
+    with caplog.at_level("WARNING"):
+        rdcs = calculate_rdcs(structure, Da=10.0, R=0.5)
+    assert "No RDCs were calculated" in caplog.text
+
+def test_calculate_rdcs_exception(mocker):
+    structure = struc.AtomArray(1)
+    
+    # Mocking something that causes an unexpected exception in calculate_rdcs
+    mocker.patch("biotite.structure.AtomArray.__getitem__", side_effect=Exception("Mock Unexpected Error"))
+    
+    with pytest.raises(Exception, match="Mock Unexpected Error"):
+        calculate_rdcs(structure, Da=10.0, R=0.5)
+
