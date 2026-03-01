@@ -74,6 +74,7 @@ def test_calculate_dipolar_constant():
 def test_calculate_spectral_density_tau_f():
     from synth_nmr.relaxation import spectral_density
     import numpy as np
+
     omega = 600e6 * 2 * np.pi
     tau_m = 10e-9
     s2 = 0.85

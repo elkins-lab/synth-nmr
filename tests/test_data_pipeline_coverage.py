@@ -159,18 +159,18 @@ def test_load_matched_dataset_parse_fail(mock_download_bmrb, mock_download_pdb, 
     mock_download_pdb.return_value = "dummy.pdb"
     mock_download_bmrb.return_value = "dummy.str"
 
-
     # exception on pdB read
     with patch("biotite.structure.io.pdb.PDBFile.read", side_effect=Exception("Read Error")):
         dataset = load_matched_dataset(str(tmp_path))
 
     assert len(dataset) == 0
 
+
 def test_parse_bmrb_shifts_invalid_data(tmp_path):
     from synth_nmr.data_pipeline import parse_bmrb_shifts
-    
+
     csv_path = tmp_path / "test.csv"
-    
+
     # Create a mock CSV that has the columns but bad data that triggers the ValueError exception block inside the data parser
     csv_path.write_text(
         """loop_
@@ -188,9 +188,9 @@ _Atom_chem_shift.Value_err
 stop_
 """
     )
-    
+
     shifts = parse_bmrb_shifts(str(csv_path))
-    
+
     # Verify the shifts map successfully grabbed the CA, CB, and C and skipped the invalid H
     assert 1 in shifts
     assert "CA" in shifts[1]

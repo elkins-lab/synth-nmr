@@ -193,292 +193,315 @@ class TestRelaxation(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
 def test_spectral_density_tau_f():
     # Test path where tau_f > 0
     from synth_nmr.relaxation import spectral_density
+
     j1 = spectral_density(600e6, 10e-9, 0.8, tau_f=0.0)
     j2 = spectral_density(600e6, 10e-9, 0.8, tau_f=1e-12)
     assert j2 != j1
     assert j2 > 0.0
 
+
 def test_njit_fallback(mocker):
     # Test the exception branch where numba is not installed
     import sys
     import importlib
-    
+
     # Force reload of relaxation module with numba missing
     mocker.patch.dict(sys.modules, {"numba": None})
     import synth_nmr.relaxation
+
     importlib.reload(synth_nmr.relaxation)
-    
+
     # Use the mocked njit decorator
     njit_func = synth_nmr.relaxation.njit
-    
+
     @njit_func
     def dummy_func():
         return 1
-        
+
     assert dummy_func() == 1
-    
+
     # Also test `njit` with no args
     assert njit_func()("foo") == "foo"
-    
+
     # Restore the module to working order so subsequent tests aren't using the mock
     sys.modules.pop("numba", None)
     importlib.reload(synth_nmr.relaxation)
 
+
 def test_calculate_internal_correlation_time_zero_s2():
     # Placeholder for test removed since _calculate_internal_correlation_time doesn't exist
     pass
+
 
 def test_calculate_relaxation_rates_zero_s2():
     # Test when calculate_relaxation_rates is given s2=0
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
     structure.res_name = np.array(["ALA", "ALA"])
     structure.atom_name = np.array(["N", "H"])
-    
+
     rates = calculate_relaxation_rates(structure, 600.0, 10e-9, s2_map={1: 0.0})
     assert 1 in rates
     assert "R1" in rates[1]
     assert "R2" in rates[1]
     assert "NOE" in rates[1]
 
+
 def test_predict_order_parameters_no_res_ids(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
     mocker.patch("numpy.unique", return_value=np.array([]))
-    
+
     res = predict_order_parameters(structure)
     assert res == {}
+
 
 def test_predict_order_parameters_typeerror():
     from synth_nmr.relaxation import predict_order_parameters
     import pytest
+
     with pytest.raises(TypeError):
         predict_order_parameters("Not an AtomArray")
+
 
 def test_predict_order_parameters_alpha(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 2])
     structure.coord = np.random.rand(2, 3)
     structure.res_name = np.array(["ALA", "GLY"])
     structure.atom_name = np.array(["CA", "CA"])
     structure.element = np.array(["C", "C"])
-    
+
     mocker.patch("synth_nmr.relaxation.get_secondary_structure", return_value=["alpha", "coil"])
     mocker.patch("biotite.structure.get_residue_starts", return_value=np.array([0, 1]))
     # Mock SASA to return fully buried so S2 goes UP
     mocker.patch("synth_nmr.relaxation.struc.sasa", return_value=np.array([0.0, 0.0]))
-    mocker.patch("synth_nmr.relaxation._apply_termini_effects", side_effect=lambda a,b,c,x: x)
-    
+    mocker.patch("synth_nmr.relaxation._apply_termini_effects", side_effect=lambda a, b, c, x: x)
+
     res = predict_order_parameters(structure)
     # the alpha base is 0.85, fully buried gets +0.05 -> 0.90
     assert res[1] >= 0.85
 
-def test_spectral_density_tau_f():
-    from synth_nmr.relaxation import spectral_density
-    import numpy as np
-    omega = 600e6 * 2 * np.pi
-    j = spectral_density(omega, 10e-9, 0.85, tau_f=2e-9)
-    assert isinstance(j, float)
-    assert j > 0
+
 
 def test_calculate_relaxation_rates_pro():
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
     structure.res_name = np.array(["PRO", "PRO"])
     structure.atom_name = np.array(["N", "H"])
-    
+
     res = calculate_relaxation_rates(structure, s2_map={1: 0.85})
     assert 1 not in res
+
 
 def test_predict_relaxation_from_structure_no_sasa_fallback(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(3)
     structure.res_id = np.array([1, 1, 1])
     structure.res_name = np.array(["ALA", "ALA", "ALA"])
     structure.atom_name = np.array(["N", "CA", "C"])
-    structure.coord = np.array([[0,0,0], [1,1,1], [2,2,2]])
+    structure.coord = np.array([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
     structure.element = np.array(["N", "C", "C"])
-    
+
     mocker.patch("biotite.structure.sasa", side_effect=Exception("Mock SASA Error"))
-    
+
     predictions = predict_order_parameters(structure)
     assert 1 in predictions
-    
+
+
 def test_predict_s2_from_sasa_invalid_value():
     from synth_nmr.relaxation import _predict_s2_from_sasa
+
     # Though it doesn't throw, we're ensuring the math handles bounds
     s2 = _predict_s2_from_sasa(2.0, 0.8)
     assert s2 != 0.8
-    
+
+
 def test_predict_relaxation_multichain(mocker):
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(4)
     structure.res_id = np.array([1, 1, 2, 2])
     structure.res_name = np.array(["ALA", "ALA", "GLY", "GLY"])
     structure.atom_name = np.array(["N", "H", "N", "H"])
     structure.chain_id = np.array(["A", "A", "B", "B"])
-    structure.coord = np.array([[0,0,0], [1,1,1], [2,2,2], [3,3,3]])
-    
+    structure.coord = np.array([[0, 0, 0], [1, 1, 1], [2, 2, 2], [3, 3, 3]])
+
     predictions = calculate_relaxation_rates(structure)
     assert 1 in predictions
     assert 2 in predictions
 
-def test_print_relaxation_report_single_chain(capsys):
-    pass # No print function exists for relaxation
 
-    
+def test_print_relaxation_report_single_chain(capsys):
+    pass  # No print function exists for relaxation
+
+
 def test_predict_relaxation_from_structure_model_rigid():
     # No predict_relaxation_from_structure exists, so removing
     pass
-    
+
+
 def test_predict_relaxation_from_structure_model_invalid():
     pass
 
 
 def test_spectral_density_tau_f_branch():
     from synth_nmr.relaxation import spectral_density
+
     j = spectral_density(600e6, 10e-9, 0.8, tau_f=1e-12)
     assert j > 0.0
+
 
 def test_predict_order_parameters_empty_structure():
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
+
     structure = struc.AtomArray(0)
     assert predict_order_parameters(structure) == {}
+
 
 def test_calculate_relaxation_rates_type_errors():
     from synth_nmr.relaxation import calculate_relaxation_rates
     import pytest
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
     structure.res_name = np.array(["ALA"])
-    
+
     with pytest.raises(TypeError, match="must be a biotite.structure.AtomArray"):
         calculate_relaxation_rates("not_a_structure")
-        
+
     with pytest.raises(ValueError, match="must be a positive numeric value"):
         calculate_relaxation_rates(structure, field_mhz=-10.0)
-        
+
     with pytest.raises(ValueError, match="must be a positive numeric value"):
         calculate_relaxation_rates(structure, tau_m_ns=0.0)
-        
+
     with pytest.raises(TypeError, match="must be a dictionary or None"):
         calculate_relaxation_rates(structure, s2_map="not_a_dict")
+
 
 def test_calculate_relaxation_rates_empty_structure(caplog):
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
+
     structure = struc.AtomArray(0)
     rates = calculate_relaxation_rates(structure)
     assert rates == {}
     assert "is empty. Returning no relaxation rates" in caplog.text
 
+
 def test_calculate_relaxation_rates_divide_by_zero_r1(mocker, caplog):
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
     structure.res_name = np.array(["ALA", "ALA"])
     structure.atom_name = np.array(["N", "H"])
-    
+
     # Mock spectral density to force r1_val to be exactly 0
     mocker.patch("synth_nmr.relaxation.spectral_density", return_value=0.0)
-    
+
     rates = calculate_relaxation_rates(structure)
     assert 1 in rates
     assert np.isnan(rates[1]["NOE"])
     assert "R1 value for residue 1 is zero" in caplog.text
+
 
 def test_calculate_relaxation_rates_exception(mocker):
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
     import pytest
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
     structure.res_name = np.array(["ALA", "ALA"])
     structure.atom_name = np.array(["N", "H"])
-    
-    mocker.patch("synth_nmr.relaxation.predict_order_parameters", side_effect=Exception("Mock Exception"))
-    
+
+    mocker.patch(
+        "synth_nmr.relaxation.predict_order_parameters", side_effect=Exception("Mock Exception")
+    )
+
     with pytest.raises(Exception, match="Mock Exception"):
         calculate_relaxation_rates(structure)
+
 
 def test_predict_order_parameters_exception(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
     import pytest
-    
+
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
     structure.res_name = np.array(["ALA"])
     structure.atom_name = np.array(["CA"])
-    
+
     mocker.patch("biotite.structure.get_residue_starts", side_effect=Exception("Mock Exception"))
-    
+
     with pytest.raises(Exception, match="Mock Exception"):
         predict_order_parameters(structure)
+
 
 def test_predict_order_parameters_proline():
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 2])
     structure.res_name = np.array(["ALA", "PRO"])
     structure.atom_name = np.array(["CA", "N"])
-    
+
     s2_map = predict_order_parameters(structure)
-    
+
     # Check that residue 2 (PRO) still gets an S2 prediction for order parameters
     assert 2 in s2_map
+
 
 def test_calculate_relaxation_rates_proline():
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(3)
     structure.res_id = np.array([1, 1, 2])
     structure.res_name = np.array(["ALA", "ALA", "PRO"])
     structure.atom_name = np.array(["N", "H", "N"])
-    
+
     # Proline lacks HN so relax rates shouldn't be calculated
     rates = calculate_relaxation_rates(structure)
-    
+
     assert 1 in rates
     assert 2 not in rates
 
@@ -487,66 +510,73 @@ def test_sasa_fallback_nan(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
     structure.res_name = np.array(["ALA"])
     structure.atom_name = np.array(["CA"])
-    structure.coord = np.array([[0,0,0]])
-    
+    structure.coord = np.array([[0, 0, 0]])
+
     mocker.patch("biotite.structure.sasa", return_value=np.array([np.nan]))
-    
+
     # Should fallback the NaN to 50.0 and process successfully
     s2_map = predict_order_parameters(structure)
     assert 1 in s2_map
-    
+
+
 def test_sasa_fallback_ion(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 2])
     structure.res_name = np.array(["ALA", "ZN"])
     structure.atom_name = np.array(["CA", "ZN"])
-    structure.coord = np.array([[0,0,0], [1,1,1]])
-    
+    structure.coord = np.array([[0, 0, 0], [1, 1, 1]])
+
     # Should exclude ZN from SASA math but process the main chain correctly
     s2_map = predict_order_parameters(structure)
     assert 1 in s2_map
     assert 2 in s2_map
 
+
 def test_sasa_fallback_ptm(mocker):
     from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
-    
+
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
     # TPO is a handled phosphothreonine
     structure.res_name = np.array(["TPO", "TPO"])
     structure.atom_name = np.array(["CA", "P"])
-    structure.coord = np.array([[0,0,0], [1,1,1]])
-    
+    structure.coord = np.array([[0, 0, 0], [1, 1, 1]])
+
     # Needs to strip P during SASA math
     s2_map = predict_order_parameters(structure)
     assert 1 in s2_map
 
+
 def test_termini_effects():
     from synth_nmr.relaxation import _apply_termini_effects
+
     # Middle of sequence, shouldn't change
     assert _apply_termini_effects(10, 1, 20, 0.85) == 0.85
     # Very end of sequence
     assert _apply_termini_effects(1, 1, 20, 0.85) < 0.85
 
+
 def test_termini_effects_out_of_bounds():
     from synth_nmr.relaxation import _apply_termini_effects
+
     # Ensure it works when pos somehow negative distance from end
     assert _apply_termini_effects(21, 1, 20, 0.85) < 0.85
     assert _apply_termini_effects(0, 1, 20, 0.85) < 0.85
 
+
 def test_spectral_density_tau_f_internal():
     from synth_nmr.relaxation import spectral_density
+
     j = spectral_density(600e6, 10e-9, 0.8, tau_f=1.0)
     assert j > 0.0
-

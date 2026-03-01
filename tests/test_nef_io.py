@@ -115,34 +115,36 @@ def test_write_nef_chemical_shifts(tmp_path):
     # Res 2 Ala pair
     assert "A 2 ALA N 122.000" in content
 
+
 def test_write_nef_relaxation_out_of_bounds(tmp_path):
     from synth_nmr.nef_io import write_nef_relaxation
+
     output_file = tmp_path / "relax_out.nef"
     sequence = "GA"
     # rid 3 is out of bounds, missing metric R2 handles val is None (line 188)
     relaxation_data = {
-        1: {"R1": 0.9, "NOE": 0.8}, # missing R2
-        3: {"R1": 1.5, "R2": 40.0, "NOE": 0.5}, # out of bounds rid 3
+        1: {"R1": 0.9, "NOE": 0.8},  # missing R2
+        3: {"R1": 1.5, "R2": 40.0, "NOE": 0.5},  # out of bounds rid 3
     }
     write_nef_relaxation(str(output_file), sequence, relaxation_data, field_freq_mhz=600.0)
     content = output_file.read_text()
     assert "A 3 UNK N 1.5000" in content
 
+
 def test_write_nef_chemical_shifts_out_of_bounds(tmp_path):
     from synth_nmr.nef_io import write_nef_chemical_shifts
+
     output_file = tmp_path / "shifts_out.nef"
     sequence = "G"
-    shifts = {
-        "A": {
-            2: {"CA": 55.0} # out of bounds
-        }
-    }
+    shifts = {"A": {2: {"CA": 55.0}}}  # out of bounds
     write_nef_chemical_shifts(str(output_file), sequence, shifts)
     content = output_file.read_text()
     assert "A 2 UNK CA 55.000" in content
 
+
 def test_read_nef_restraints_save_close(tmp_path):
     from synth_nmr.nef_io import read_nef_restraints
+
     nef_content = """
 save_nef_distance_restraint_list
    loop_
@@ -172,9 +174,10 @@ save_
     r = read_nef_restraints(str(f))
     assert len(r) == 1
 
+
 def test_read_nef_restraints_file_not_found(tmp_path):
     from synth_nmr.nef_io import read_nef_restraints
+
     f = tmp_path / "non_existent.nef"
     r = read_nef_restraints(str(f))
     assert r == []
-
