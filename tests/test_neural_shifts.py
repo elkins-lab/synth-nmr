@@ -25,7 +25,6 @@ def _make_test_structure(n_residues: int = 10, conformation: str = "alpha"):
     AA_SEQUENCE = ["ALA", "GLY", "LEU", "VAL", "ILE", "SER", "THR", "ASP", "GLU", "LYS"]
 
     atoms = []
-    atom_idx = 0
 
     # Backbone geometry for an ideal alpha helix
     # Using simplified geometry: 3.8 Å rise per residue, 100° rotation
@@ -153,9 +152,9 @@ class TestNeuralShiftModel(unittest.TestCase):
     """Tests for the underlying nn.Module returned by NeuralShiftPredictor."""
 
     def setUp(self):
-        try:
-            import torch
-        except ImportError:
+        import importlib.util
+
+        if importlib.util.find_spec("torch") is None:
             self.skipTest("torch not installed")
         from synth_nmr.neural_shifts import NeuralShiftPredictor
 
@@ -198,9 +197,9 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
     """Tests for NeuralShiftPredictor.predict() return contract."""
 
     def setUp(self):
-        try:
-            import torch
-        except ImportError:
+        import importlib.util
+
+        if importlib.util.find_spec("torch") is None:
             self.skipTest("torch not installed")
         from synth_nmr.neural_shifts import NeuralShiftPredictor
 
@@ -267,9 +266,9 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
 class TestNeuralShiftCheckpoint(unittest.TestCase):
 
     def setUp(self):
-        try:
-            import torch
-        except ImportError:
+        import importlib.util
+
+        if importlib.util.find_spec("torch") is None:
             self.skipTest("torch not installed")
         from synth_nmr.neural_shifts import NeuralShiftPredictor
 

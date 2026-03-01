@@ -2,6 +2,7 @@ import numpy as np
 import biotite.structure as struc
 import logging
 from typing import Dict, Any, Optional
+from synth_nmr.structure_utils import get_secondary_structure
 
 logger = logging.getLogger(__name__)
 
@@ -81,9 +82,6 @@ def spectral_density(omega: float, tau_m: float, s2: float, tau_f: float = 0.0) 
         j_fast = ((1 - s2) * tau_e) / (1 + (omega * tau_e) ** 2)
 
     return 0.4 * (j_global + j_fast)
-
-
-from synth_nmr.structure_utils import get_secondary_structure
 
 
 def _predict_s2_from_sasa(rel_sasa: float, base_s2: float) -> float:

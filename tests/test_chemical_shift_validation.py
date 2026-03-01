@@ -39,7 +39,6 @@ def ubiquitin_structure():
         atom = structure[i]
         # Only add H to backbone N atoms, and exclude Proline
         if atom.atom_name == "N" and atom.res_name != "PRO":
-            h_atom_coord = None
             # Find C-alpha of current residue
             ca_curr = structure[(structure.res_id == atom.res_id) & (structure.atom_name == "CA")]
             # Find C of previous residue

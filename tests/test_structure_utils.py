@@ -120,7 +120,7 @@ class TestStructureUtils(unittest.TestCase):
         with unittest.mock.patch(
             "biotite.structure.dihedral_backbone", return_value=(coil_phi, coil_psi, coil_omega)
         ):
-            ss_coil = get_secondary_structure(coil_structure)
+            get_secondary_structure(coil_structure)
             # Depending on the phi_deg ranges in get_secondary_structure, these might be "coil"
             # The current ranges are -80 < phi_deg < -40 for alpha, -160 < phi_deg < -80 for beta
             # So, -75 should be alpha, 20 should be coil, -10 should be coil.

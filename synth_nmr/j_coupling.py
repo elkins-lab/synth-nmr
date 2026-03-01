@@ -69,7 +69,6 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
         res_atoms = structure[start_idx : res_starts[i + 1] if i + 1 < len(res_starts) else None]
         chain_id = res_atoms.chain_id[0]
         res_id = res_atoms.res_id[0]
-        res_name = res_atoms.res_name[0]
 
         if chain_id not in results:
             results[chain_id] = {}

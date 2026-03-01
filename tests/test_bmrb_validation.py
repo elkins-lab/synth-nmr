@@ -2,6 +2,8 @@
 Validation tests for comparing predicted chemical shifts against BMRB experimental results.
 """
 
+import os
+import urllib.request
 import pytest
 import numpy as np
 import biotite.structure as struc
@@ -20,7 +22,6 @@ def parse_bmrb_nmr_star_file(filepath):
     Parses an NMR-STAR file (BMRB format) and extracts chemical shift data.
     Focuses on the _Atom_chem_shift loop.
     """
-    experimental_shifts = {}
     with open(filepath, "r") as f:
         lines = f.readlines()
 
@@ -103,11 +104,7 @@ def parse_bmrb_nmr_star_file(filepath):
 
 # Populate the experimental shifts by parsing the downloaded file
 # This will be done once when the module is loaded
-import os
-
 if not os.path.exists("tests/data/bmr17769.str"):
-    import urllib.request
-
     url = "https://bmrb.io/rest/bmrb/17769/nmr-star3"
     if not os.path.exists("tests/data"):
         os.makedirs("tests/data")

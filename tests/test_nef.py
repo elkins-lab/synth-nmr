@@ -76,7 +76,6 @@ def test_write_nef_structure(tmp_path):
 
     # Restraint check
     # 1 1 A 1 ALA H A 2 GLY H 3.000 3.500 1.800 1.0
-    expected_line = "1 1 A 1 ALA H A 2 GLY H 3.000 3.500 1.800 1.0"
     # Whitespace might vary, check fragments
     assert "3.000 3.500" in content
     assert "ALA H" in content
