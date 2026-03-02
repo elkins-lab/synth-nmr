@@ -323,8 +323,7 @@ def build_graph_data(structure: Any) -> Any:
         from torch_geometric.data import Data
     except ImportError as exc:
         raise ImportError(
-            "torch and torch_geometric are required. "
-            "Install with: pip install synth-nmr[ml]"
+            "torch and torch_geometric are required. " "Install with: pip install synth-nmr[ml]"
         ) from exc
 
     import biotite.structure as struc
@@ -335,14 +334,14 @@ def build_graph_data(structure: Any) -> Any:
 
     res_starts = struc.get_residue_starts(structure)
     n_res = len(res_starts)
-    
+
     if n_res == 0:
         edge_index = torch.empty((2, 0), dtype=torch.long)
         return Data(x=x, edge_index=edge_index)
 
     coords = np.zeros((n_res, 3), dtype=np.float32)
     for i, start in enumerate(res_starts):
-        end = res_starts[i+1] if i+1 < len(res_starts) else len(structure)
+        end = res_starts[i + 1] if i + 1 < len(res_starts) else len(structure)
         res_atoms = structure[start:end]
         ca_mask = res_atoms.atom_name == "CA"
         if np.any(ca_mask):
@@ -363,7 +362,7 @@ def build_graph_data(structure: Any) -> Any:
 
     # Convert to standard torch tensor
     edge_index = torch.tensor([src, dst], dtype=torch.long)
-        
+
     return Data(x=x, edge_index=edge_index)
 
 
@@ -436,16 +435,16 @@ def _make_gnn(
             super().__init__()
             self.layers = nn.ModuleList()
             self.norms = nn.ModuleList()
-            
+
             in_dim = n_features
             for h in hidden_dims:
                 self.layers.append(GATConv(in_dim, h, heads=1, concat=False))
                 self.norms.append(LayerNorm(h))
                 in_dim = h
-                
+
             self.out = nn.Linear(in_dim, n_outputs)
             self.dropout = nn.Dropout(p=dropout)
-            
+
         def forward(self, x, edge_index):
             for conv, norm in zip(self.layers, self.norms):
                 x = conv(x, edge_index)
@@ -454,7 +453,7 @@ def _make_gnn(
                 x = self.dropout(x)
             x = self.out(x)
             return x
-            
+
     return GNNModel()
 
 
@@ -519,10 +518,10 @@ class NeuralShiftPredictor:
     """
 
     def __init__(
-        self, 
-        model_path: Optional[str] = None, 
+        self,
+        model_path: Optional[str] = None,
         hidden_dims: Tuple[int, ...] = (128, 64, 32),
-        model_type: str = "gnn"
+        model_type: str = "gnn",
     ) -> None:
         self.hidden_dims = hidden_dims
         self.model_type = model_type
@@ -674,7 +673,7 @@ class NeuralShiftPredictor:
             ckpt = torch.load(path, map_location="cpu", weights_only=False)
             self.hidden_dims = tuple(ckpt["hidden_dims"])
             self.model_type = ckpt.get("model_type", "mlp")
-            
+
             if self.model_type == "gnn":
                 self.model = _make_gnn(
                     hidden_dims=self.hidden_dims,
