@@ -431,7 +431,7 @@ def _make_gnn(
         ) from exc
 
     class GNNModel(nn.Module):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
             self.layers = nn.ModuleList()
             self.norms = nn.ModuleList()
@@ -445,7 +445,7 @@ def _make_gnn(
             self.out = nn.Linear(in_dim, n_outputs)
             self.dropout = nn.Dropout(p=dropout)
 
-        def forward(self, x, edge_index):
+        def forward(self, x: Any, edge_index: Any) -> Any:
             for conv, norm in zip(self.layers, self.norms):
                 x = conv(x, edge_index)
                 x = norm(x)

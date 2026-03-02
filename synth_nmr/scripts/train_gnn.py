@@ -7,6 +7,7 @@ import argparse
 import sys
 import numpy as np
 import os
+from typing import Any, List
 
 try:
     import torch
@@ -28,7 +29,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 
-def prepare_dataset(data_dir="data"):
+def prepare_dataset(data_dir: str = "data") -> List[Any]:
     logger.info("Preparing dataset...")
     raw_data = load_matched_dataset(data_dir=data_dir)
 
@@ -70,12 +71,12 @@ def prepare_dataset(data_dir="data"):
 
 
 def train(
-    epochs=10,
-    batch_size=4,
-    lr=1e-3,
-    data_dir="data",
-    save_path="synth_nmr/models/neural_shifts_v1.pt",
-):
+    epochs: int = 10,
+    batch_size: int = 4,
+    lr: float = 1e-3,
+    data_dir: str = "data",
+    save_path: str = "synth_nmr/models/neural_shifts_v1.pt",
+) -> None:
     dataset = prepare_dataset(data_dir)
     if not dataset:
         logger.error("Empty dataset. Aborting training.")

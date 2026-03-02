@@ -82,6 +82,7 @@ module = [
     "biotite.*",
     "numba.*",
     "torch.*",
+    "torch_geometric.*",
     "sklearn.*",
     "scipy.*"
 ]
