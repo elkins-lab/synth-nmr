@@ -31,7 +31,6 @@ def test_process_commands_read(mock_stdout, mock_pdb_file):
     assert cli_module.structure is not None
 
 
-
 @patch("sys.stdout", new_callable=io.StringIO)
 def test_process_commands_calculate_rdc(mock_stdout, mock_pdb_file):
     cli_module.structure = None
@@ -161,8 +160,6 @@ def test_interactive_mode_no_structure(mock_stdin, mock_stdout):
     interactive_mode()
     output = mock_stdout.getvalue()
     assert "Error: No PDB file loaded" in output
-
-
 
 
 def test_interactive_mode_exit(capsys, mocker):

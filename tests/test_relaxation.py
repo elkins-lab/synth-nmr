@@ -299,7 +299,6 @@ def test_predict_order_parameters_alpha(mocker):
     assert res[1] >= 0.85
 
 
-
 def test_calculate_relaxation_rates_pro():
     from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc

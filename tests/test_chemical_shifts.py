@@ -1,7 +1,12 @@
 import pytest
 import numpy as np
 import biotite.structure as struc
-from synth_nmr.chemical_shifts import predict_chemical_shifts, calculate_csi, RANDOM_COIL_SHIFTS, predict_empirical_shifts
+from synth_nmr.chemical_shifts import (
+    predict_chemical_shifts,
+    calculate_csi,
+    RANDOM_COIL_SHIFTS,
+    predict_empirical_shifts,
+)
 
 # NOTE: generate_pdb_content is not part of synth_nmr, tests using it will be adapted
 # from synth_nmr.generator import generate_pdb_content
@@ -568,7 +573,6 @@ def test_shiftx2_parse_output_bad_format(tmp_path):
     # Should catch ValueError and `continue`, resulting in empty dict
     shifts = predictor._parse_output(str(fake_csv))
     assert shifts == {"A": {}}
-
 
 
 def test_predict_empirical_shifts_wrong_type():
