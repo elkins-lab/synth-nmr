@@ -313,6 +313,60 @@ def build_residue_features(structure: Any) -> np.ndarray:
     return X
 
 
+def build_graph_data(structure: Any) -> Any:
+    """
+    Builds a torch_geometric.data.Data object from an AtomArray.
+    Uses C-alpha distance (<= 8.0 A) to define edges.
+    """
+    try:
+        import torch
+        from torch_geometric.data import Data
+    except ImportError as exc:
+        raise ImportError(
+            "torch and torch_geometric are required. "
+            "Install with: pip install synth-nmr[ml]"
+        ) from exc
+
+    import biotite.structure as struc
+    from scipy.spatial import KDTree
+
+    X = build_residue_features(structure)
+    x = torch.tensor(X, dtype=torch.float32)
+
+    res_starts = struc.get_residue_starts(structure)
+    n_res = len(res_starts)
+    
+    if n_res == 0:
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        return Data(x=x, edge_index=edge_index)
+
+    coords = np.zeros((n_res, 3), dtype=np.float32)
+    for i, start in enumerate(res_starts):
+        end = res_starts[i+1] if i+1 < len(res_starts) else len(structure)
+        res_atoms = structure[start:end]
+        ca_mask = res_atoms.atom_name == "CA"
+        if np.any(ca_mask):
+            coords[i] = res_atoms.coord[ca_mask][0]
+        else:
+            coords[i] = res_atoms.coord[0]
+
+    tree = KDTree(coords)
+    pairs = tree.query_pairs(r=8.0)
+
+    src, dst = [], []
+    for i in range(n_res):
+        src.append(i)
+        dst.append(i)
+    for i, j in pairs:
+        src.extend([i, j])
+        dst.extend([j, i])
+
+    # Convert to standard torch tensor
+    edge_index = torch.tensor([src, dst], dtype=torch.long)
+        
+    return Data(x=x, edge_index=edge_index)
+
+
 # ── Model factory ────────────────────────────────────────────────────────────
 
 
@@ -359,6 +413,49 @@ def _make_mlp(
     layers.append(nn.Linear(in_dim, n_outputs))
 
     return nn.Sequential(*layers)
+
+
+def _make_gnn(
+    hidden_dims: Tuple[int, ...] = (128, 64, 32),
+    n_features: int = N_FEATURES,
+    n_outputs: int = 6,
+    dropout: float = 0.2,
+) -> Any:
+    """Construct a PyTorch Geometric GNN."""
+    try:
+        import torch
+        import torch.nn as nn
+        from torch_geometric.nn import GATConv, LayerNorm
+    except ImportError as exc:
+        raise ImportError(
+            "torch_geometric is required. Install with: pip install synth-nmr[ml]"
+        ) from exc
+
+    class GNNModel(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.layers = nn.ModuleList()
+            self.norms = nn.ModuleList()
+            
+            in_dim = n_features
+            for h in hidden_dims:
+                self.layers.append(GATConv(in_dim, h, heads=1, concat=False))
+                self.norms.append(LayerNorm(h))
+                in_dim = h
+                
+            self.out = nn.Linear(in_dim, n_outputs)
+            self.dropout = nn.Dropout(p=dropout)
+            
+        def forward(self, x, edge_index):
+            for conv, norm in zip(self.layers, self.norms):
+                x = conv(x, edge_index)
+                x = norm(x)
+                x = torch.relu(x)
+                x = self.dropout(x)
+            x = self.out(x)
+            return x
+            
+    return GNNModel()
 
 
 # ── Predictor class ──────────────────────────────────────────────────────────
@@ -422,9 +519,13 @@ class NeuralShiftPredictor:
     """
 
     def __init__(
-        self, model_path: Optional[str] = None, hidden_dims: Tuple[int, ...] = (128, 64, 32)
+        self, 
+        model_path: Optional[str] = None, 
+        hidden_dims: Tuple[int, ...] = (128, 64, 32),
+        model_type: str = "gnn"
     ) -> None:
         self.hidden_dims = hidden_dims
+        self.model_type = model_type
         self.model: Any = None
         self._model_path: Optional[str] = None
 
@@ -476,13 +577,18 @@ class NeuralShiftPredictor:
         empirical = predict_empirical_shifts(structure)
 
         # Step 2 — Build feature matrix and run the neural correction
-        X = build_residue_features(structure)
-        x = torch.tensor(X, dtype=torch.float32)
-
-        self.model.eval()
-        with torch.no_grad():
-            # delta: [N_residues, 6]  — ΔCS for each nucleus (Experimental - Random Coil)
-            delta = self.model(x).numpy()
+        if self.model_type == "gnn":
+            data = build_graph_data(structure)
+            self.model.eval()
+            with torch.no_grad():
+                delta = self.model(data.x, data.edge_index).numpy()
+        else:
+            X = build_residue_features(structure)
+            x = torch.tensor(X, dtype=torch.float32)
+            self.model.eval()
+            with torch.no_grad():
+                # delta: [N_residues, 6]  — ΔCS for each nucleus (Experimental - Random Coil)
+                delta = self.model(x).numpy()
 
         # Step 3 — Add corrections to Random Coil baseline
         # Map residue index → (chain_id, res_id) for merging
@@ -542,6 +648,7 @@ class NeuralShiftPredictor:
                 "hidden_dims": self.hidden_dims,
                 "n_features": N_FEATURES,
                 "n_outputs": len(NUCLEUS_ORDER),
+                "model_type": self.model_type,
             },
             path,
         )
@@ -566,11 +673,20 @@ class NeuralShiftPredictor:
         try:
             ckpt = torch.load(path, map_location="cpu", weights_only=False)
             self.hidden_dims = tuple(ckpt["hidden_dims"])
-            self.model = _make_mlp(
-                hidden_dims=self.hidden_dims,
-                n_features=ckpt["n_features"],
-                n_outputs=ckpt["n_outputs"],
-            )
+            self.model_type = ckpt.get("model_type", "mlp")
+            
+            if self.model_type == "gnn":
+                self.model = _make_gnn(
+                    hidden_dims=self.hidden_dims,
+                    n_features=ckpt["n_features"],
+                    n_outputs=ckpt["n_outputs"],
+                )
+            else:
+                self.model = _make_mlp(
+                    hidden_dims=self.hidden_dims,
+                    n_features=ckpt["n_features"],
+                    n_outputs=ckpt["n_outputs"],
+                )
             self.model.load_state_dict(ckpt["state_dict"])
             self.model.eval()
             self._model_path = path
@@ -585,12 +701,15 @@ class NeuralShiftPredictor:
 
     def _init_fresh_model(self) -> None:
         """
-        Initialise a randomly-weighted MLP.
+        Initialise a randomly-weighted model.
 
         With standard PyTorch weight initialisation (Kaiming uniform), each
         output neuron starts near zero.  This means the correction term ΔCS ≈ 0
         initially, so predictions ≈ empirical model + negligible noise.
         After training on labelled data, the corrections become meaningful.
         """
-        self.model = _make_mlp(hidden_dims=self.hidden_dims)
+        if self.model_type == "gnn":
+            self.model = _make_gnn(hidden_dims=self.hidden_dims)
+        else:
+            self.model = _make_mlp(hidden_dims=self.hidden_dims)
         self.model.eval()
