@@ -391,6 +391,7 @@ def test_make_mlp_no_torch(mocker):
 
 
 def test_predict_no_torch(mocker):
+    pytest.importorskip("torch")
     predictor = NeuralShiftPredictor()
     mocker.patch.dict("sys.modules", {"torch": None})
     structure = struc.AtomArray(1)
@@ -399,12 +400,14 @@ def test_predict_no_torch(mocker):
 
 
 def test_predict_empty_structure():
+    pytest.importorskip("torch")
     predictor = NeuralShiftPredictor()
     empty_arr = struc.AtomArray(0)
     assert predictor.predict(empty_arr) == {}
 
 
 def test_save_no_torch(mocker, tmp_path):
+    pytest.importorskip("torch")
     predictor = NeuralShiftPredictor()
     mocker.patch.dict("sys.modules", {"torch": None})
     with pytest.raises(ImportError, match="torch is required"):
@@ -412,6 +415,7 @@ def test_save_no_torch(mocker, tmp_path):
 
 
 def test_load_no_torch(mocker, tmp_path):
+    pytest.importorskip("torch")
     predictor = NeuralShiftPredictor()
     mocker.patch.dict("sys.modules", {"torch": None})
     with pytest.raises(ImportError, match="torch is required"):
@@ -419,6 +423,7 @@ def test_load_no_torch(mocker, tmp_path):
 
 
 def test_load_corrupted_file(tmp_path):
+    pytest.importorskip("torch")
     predictor = NeuralShiftPredictor()
     fake_pt = tmp_path / "corrupted.pt"
     fake_pt.write_text("Not a real torch file")
@@ -428,6 +433,7 @@ def test_load_corrupted_file(tmp_path):
 
 
 def test_predict_clip_branch(mocker):
+    pytest.importorskip("torch")
     predictor = NeuralShiftPredictor()
 
     # Mock empirical to return ALA
@@ -454,6 +460,7 @@ def test_predict_clip_branch(mocker):
 
 
 def test_neural_shifts_init_random_weights(mocker):
+    pytest.importorskip("torch")
     from synth_nmr.neural_shifts import NeuralShiftPredictor
 
     # Mock os.path.exists to simulate missing default checkpoint
