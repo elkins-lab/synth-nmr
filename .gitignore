@@ -26,6 +26,8 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+bioconda_recipe/
+scratch/
 
 # PyInstaller
 *.manifest
@@ -44,6 +46,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+evaluation_results/
 
 # Environments
 .env

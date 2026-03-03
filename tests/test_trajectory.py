@@ -39,15 +39,18 @@ from synth_nmr.trajectory import (
 # Helper fixtures
 # ══════════════════════════════════════════════════════════════════════════════
 
+
 def _make_nh_frame(n_coord, h_coord, res_id: int = 1, res_name: str = "GLY") -> struc.AtomArray:
     """
     Build a minimal one-residue AtomArray containing a backbone N and amide H.
     Useful for RDC and S² tests where only bond-vector orientation matters.
     """
-    n_atom = struc.Atom(n_coord, atom_name="N", element="N",
-                        res_id=res_id, res_name=res_name, chain_id="A")
-    h_atom = struc.Atom(h_coord, atom_name="H", element="H",
-                        res_id=res_id, res_name=res_name, chain_id="A")
+    n_atom = struc.Atom(
+        n_coord, atom_name="N", element="N", res_id=res_id, res_name=res_name, chain_id="A"
+    )
+    h_atom = struc.Atom(
+        h_coord, atom_name="H", element="H", res_id=res_id, res_name=res_name, chain_id="A"
+    )
     return struc.array([n_atom, h_atom])
 
 
@@ -89,6 +92,7 @@ def _make_multi_residue_frame(
 # ══════════════════════════════════════════════════════════════════════════════
 # 1.  TrajectoryEnsemble — construction
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 class TestTrajectoryEnsemble:
     """Tests for the TrajectoryEnsemble container class."""
@@ -132,6 +136,7 @@ class TestTrajectoryEnsemble:
 # 2.  load_trajectory
 # ══════════════════════════════════════════════════════════════════════════════
 
+
 class TestLoadTrajectory:
     """Tests for the load_trajectory() multi-format loader."""
 
@@ -162,6 +167,7 @@ class TestLoadTrajectory:
         load_trajectory.
         """
         import builtins
+
         real_import = builtins.__import__
 
         def mock_import(name, *args, **kwargs):
@@ -179,6 +185,7 @@ class TestLoadTrajectory:
 # 3.  ensemble_average_shifts
 # ══════════════════════════════════════════════════════════════════════════════
 
+
 class TestEnsembleAverageShifts:
     """
     Tests for ensemble_average_shifts().
@@ -193,9 +200,7 @@ class TestEnsembleAverageShifts:
     This is a simple arithmetic mean — the correct choice here.
     """
 
-    def _make_shift_dict(
-        self, res_shifts: dict
-    ) -> dict:
+    def _make_shift_dict(self, res_shifts: dict) -> dict:
         """
         Build a shift dictionary in the format returned by predict_chemical_shifts:
             {source_label: {res_id: {atom_name: float}}}
@@ -273,6 +278,7 @@ class TestEnsembleAverageShifts:
 # ══════════════════════════════════════════════════════════════════════════════
 # 4.  ensemble_average_noes
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 class TestEnsembleAverageNoes:
     """
@@ -353,6 +359,7 @@ class TestEnsembleAverageNoes:
 # 5.  ensemble_average_rdcs
 # ══════════════════════════════════════════════════════════════════════════════
 
+
 class TestEnsembleAverageRdcs:
     """
     Tests for ensemble_average_rdcs().
@@ -411,6 +418,7 @@ class TestEnsembleAverageRdcs:
 # ══════════════════════════════════════════════════════════════════════════════
 # 6.  compute_s2_from_trajectory
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 class TestComputeS2FromTrajectory:
     """
@@ -490,9 +498,7 @@ class TestComputeS2FromTrajectory:
         With a single frame the mean NH vector equals the frame's unit vector,
         so |<μ>|² = 1.0 regardless of orientation.
         """
-        ensemble = TrajectoryEnsemble(
-            frames=[_make_nh_frame([0.0, 0.0, 0.0], [0.5, 0.5, 0.5])]
-        )
+        ensemble = TrajectoryEnsemble(frames=[_make_nh_frame([0.0, 0.0, 0.0], [0.5, 0.5, 0.5])])
         s2_map = compute_s2_from_trajectory(ensemble)
         assert s2_map[1] == pytest.approx(1.0, abs=1e-6)
 
@@ -508,10 +514,12 @@ class TestComputeS2FromTrajectory:
         for _ in range(5):
             atoms = []
             for res_id in range(1, 4):
-                n = struc.Atom([0.0, 0.0, 0.0], atom_name="N", element="N",
-                               res_id=res_id, chain_id="A")
-                h = struc.Atom([0.0, 0.0, 1.02], atom_name="H", element="H",
-                               res_id=res_id, chain_id="A")
+                n = struc.Atom(
+                    [0.0, 0.0, 0.0], atom_name="N", element="N", res_id=res_id, chain_id="A"
+                )
+                h = struc.Atom(
+                    [0.0, 0.0, 1.02], atom_name="H", element="H", res_id=res_id, chain_id="A"
+                )
                 atoms.extend([n, h])
             frame_data.append(struc.array(atoms))
         ensemble = TrajectoryEnsemble(frames=frame_data)
@@ -528,8 +536,7 @@ class TestComputeS2FromTrajectory:
         If the structure contains no backbone N+H pairs (e.g. only CA atoms),
         the result should be an empty dict, not an exception.
         """
-        ca_only = struc.Atom([1.0, 0.0, 0.0], atom_name="CA", element="C",
-                             res_id=1, chain_id="A")
+        ca_only = struc.Atom([1.0, 0.0, 0.0], atom_name="CA", element="C", res_id=1, chain_id="A")
         frame = struc.array([ca_only])
         ensemble = TrajectoryEnsemble(frames=[frame])
         s2_map = compute_s2_from_trajectory(ensemble)
@@ -542,8 +549,9 @@ class TestComputeS2FromTrajectory:
         """
         frames = []
         for _ in range(5):
-            pro_n = struc.Atom([0.0, 0.0, 0.0], atom_name="N", element="N",
-                               res_id=1, res_name="PRO", chain_id="A")
+            pro_n = struc.Atom(
+                [0.0, 0.0, 0.0], atom_name="N", element="N", res_id=1, res_name="PRO", chain_id="A"
+            )
             frame = struc.array([pro_n])
             frames.append(frame)
         ensemble = TrajectoryEnsemble(frames=frames)
@@ -554,6 +562,7 @@ class TestComputeS2FromTrajectory:
 # ══════════════════════════════════════════════════════════════════════════════
 # 7.  Integration: full ensemble workflow
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 class TestIntegration:
     """
@@ -575,9 +584,9 @@ class TestIntegration:
 
         # Three distinct NH vectors
         nh_vectors = [
-            ([0.0, 0.0, 0.0], [0.0, 0.0, 1.02]),   # aligned with Z  → RDC = 2*Da = 20.0
-            ([0.0, 0.0, 0.0], [1.02, 0.0, 0.0]),   # aligned with X  → -2.5
-            ([0.0, 0.0, 0.0], [0.0, 1.02, 0.0]),   # aligned with Y  → -17.5
+            ([0.0, 0.0, 0.0], [0.0, 0.0, 1.02]),  # aligned with Z  → RDC = 2*Da = 20.0
+            ([0.0, 0.0, 0.0], [1.02, 0.0, 0.0]),  # aligned with X  → -2.5
+            ([0.0, 0.0, 0.0], [0.0, 1.02, 0.0]),  # aligned with Y  → -17.5
         ]
         frames = [_make_nh_frame(n, h) for n, h in nh_vectors]
         ensemble = load_trajectory(frames)
@@ -609,6 +618,7 @@ class TestIntegration:
 #     These tests specifically target lines that were uncovered in the initial
 #     test suite, identified via `pytest --cov-report=term-missing`.
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 class TestTrajectoryEnsembleRepr:
     """
@@ -669,8 +679,9 @@ class TestLoadTrajectoryEdgeCases:
         stride=2 on a 6-frame list should give 3 frames (frames 0, 2, 4).
         This validates that the slice is applied correctly.
         """
-        frames = [_make_nh_frame([0.0, 0.0, float(i)], [0.0, 0.0, float(i) + 1.02])
-                  for i in range(6)]
+        frames = [
+            _make_nh_frame([0.0, 0.0, float(i)], [0.0, 0.0, float(i) + 1.02]) for i in range(6)
+        ]
         ensemble = load_trajectory(frames, stride=2)
         assert len(ensemble) == 3
 
@@ -700,10 +711,12 @@ class TestComputeS2EdgeCases:
         structures where the H was not modelled.
         """
         # N at res_id=1, H at res_id=2 — deliberately mismatched
-        n_atom = struc.Atom([0.0, 0.0, 0.0], atom_name="N", element="N",
-                            res_id=1, res_name="ALA", chain_id="A")
-        h_atom = struc.Atom([0.0, 0.0, 1.02], atom_name="H", element="H",
-                            res_id=2, res_name="GLY", chain_id="A")  # different res_id!
+        n_atom = struc.Atom(
+            [0.0, 0.0, 0.0], atom_name="N", element="N", res_id=1, res_name="ALA", chain_id="A"
+        )
+        h_atom = struc.Atom(
+            [0.0, 0.0, 1.02], atom_name="H", element="H", res_id=2, res_name="GLY", chain_id="A"
+        )  # different res_id!
         frame = struc.array([n_atom, h_atom])
         ensemble = TrajectoryEnsemble(frames=[frame])
 
@@ -723,10 +736,12 @@ class TestComputeS2EdgeCases:
         collapse.  The guard here makes the function robust to such inputs.
         """
         # N and H at exactly the same position
-        n_atom = struc.Atom([1.0, 2.0, 3.0], atom_name="N", element="N",
-                            res_id=1, res_name="ALA", chain_id="A")
-        h_atom = struc.Atom([1.0, 2.0, 3.0], atom_name="H", element="H",
-                            res_id=1, res_name="ALA", chain_id="A")
+        n_atom = struc.Atom(
+            [1.0, 2.0, 3.0], atom_name="N", element="N", res_id=1, res_name="ALA", chain_id="A"
+        )
+        h_atom = struc.Atom(
+            [1.0, 2.0, 3.0], atom_name="H", element="H", res_id=1, res_name="ALA", chain_id="A"
+        )
         frame = struc.array([n_atom, h_atom])
         ensemble = TrajectoryEnsemble(frames=[frame])
 
@@ -741,6 +756,7 @@ class TestComputeS2EdgeCases:
 #     These tests exercise the new process_commands() code paths in
 #     synth_nmr_cli.py (lines 76–181), which were 0% covered.
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 class TestCLITrajectoryCommands:
     """
@@ -795,10 +811,16 @@ class TestCLITrajectoryCommands:
         self._write_minimal_pdb(f1, offset=0.0)
         self._write_minimal_pdb(f2, offset=0.5)
 
-        process_commands([
-            "load", "trajectory", str(f1), str(f2),
-            "ensemble", "s2",
-        ])
+        process_commands(
+            [
+                "load",
+                "trajectory",
+                str(f1),
+                str(f2),
+                "ensemble",
+                "s2",
+            ]
+        )
 
         out = capsys.readouterr().out
         assert "Loaded trajectory ensemble with 2 frames" in out
@@ -818,10 +840,16 @@ class TestCLITrajectoryCommands:
         self._write_minimal_pdb(f1, offset=0.0)
         self._write_minimal_pdb(f2, offset=0.3)
 
-        process_commands([
-            "load", "trajectory", str(f1), str(f2),
-            "ensemble", "rdcs",
-        ])
+        process_commands(
+            [
+                "load",
+                "trajectory",
+                str(f1),
+                str(f2),
+                "ensemble",
+                "rdcs",
+            ]
+        )
 
         out = capsys.readouterr().out
         assert "Loaded trajectory ensemble with 2 frames" in out
@@ -867,10 +895,15 @@ class TestCLITrajectoryCommands:
         f1 = tmp_path / "f1.pdb"
         self._write_minimal_pdb(f1, offset=0.0)
 
-        process_commands([
-            "load", "trajectory", str(f1),
-            "ensemble", "bogus",
-        ])
+        process_commands(
+            [
+                "load",
+                "trajectory",
+                str(f1),
+                "ensemble",
+                "bogus",
+            ]
+        )
 
         out = capsys.readouterr().out
         assert "Unknown ensemble subcommand" in out
@@ -888,10 +921,15 @@ class TestCLITrajectoryCommands:
         self._write_minimal_pdb(f1, offset=0.0)
 
         # Should run without exception; output may be empty (only 3 atoms)
-        process_commands([
-            "load", "trajectory", str(f1),
-            "ensemble", "noes", "6.0",
-        ])
+        process_commands(
+            [
+                "load",
+                "trajectory",
+                str(f1),
+                "ensemble",
+                "noes",
+                "6.0",
+            ]
+        )
         # If it reaches here without exception the code path is covered
         capsys.readouterr()
-

@@ -105,6 +105,7 @@ FrameRdcs = Dict[int, float]
 # TrajectoryEnsemble
 # ══════════════════════════════════════════════════════════════════════════════
 
+
 @dataclass
 class TrajectoryEnsemble:
     """
@@ -167,16 +168,13 @@ class TrajectoryEnsemble:
 
     def __repr__(self) -> str:
         n_atoms = self.frames[0].array_length() if self.frames else 0
-        return (
-            f"TrajectoryEnsemble("
-            f"n_frames={len(self)}, "
-            f"n_atoms_per_frame={n_atoms})"
-        )
+        return f"TrajectoryEnsemble(" f"n_frames={len(self)}, " f"n_atoms_per_frame={n_atoms})"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # load_trajectory
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 def load_trajectory(
     source: Union[List[struc.AtomArray], Any],
@@ -239,8 +237,7 @@ def load_trajectory(
     if isinstance(source, list):
         if len(source) == 0:
             raise ValueError(
-                "load_trajectory received an empty list.  "
-                "Provide at least one AtomArray frame."
+                "load_trajectory received an empty list.  " "Provide at least one AtomArray frame."
             )
         frames: List[struc.AtomArray] = list(source)[::stride]
         logger.info(
@@ -270,8 +267,7 @@ def load_trajectory(
         mdtraj_traj = mdtraj.load(source, top=topology, stride=stride)
         frames = _mdtraj_to_atomarrays(mdtraj_traj)
         logger.info(
-            f"load_trajectory: loaded {len(frames)} frames "
-            f"(stride={stride}) from '{source}'."
+            f"load_trajectory: loaded {len(frames)} frames " f"(stride={stride}) from '{source}'."
         )
         return TrajectoryEnsemble(frames=frames)
 
@@ -279,12 +275,12 @@ def load_trajectory(
     source_type_name = type(source).__module__ + "." + type(source).__qualname__
     if source_type_name.startswith("mdtraj"):
         raw_frames = _mdtraj_to_atomarrays(source)
-        frames: List[struc.AtomArray] = list(raw_frames)[::stride]
+        mdtraj_frames: List[struc.AtomArray] = list(raw_frames)[::stride]
         logger.info(
-            f"load_trajectory: loaded {len(frames)} frames "
+            f"load_trajectory: loaded {len(mdtraj_frames)} frames "
             f"from MDTraj Trajectory object."
         )
-        return TrajectoryEnsemble(frames=frames)
+        return TrajectoryEnsemble(frames=mdtraj_frames)
 
     raise TypeError(
         f"Unrecognised source type: {type(source).__name__}.  "
@@ -344,6 +340,7 @@ def _mdtraj_to_atomarrays(traj: Any) -> List[struc.AtomArray]:
 # ensemble_average_shifts
 # ══════════════════════════════════════════════════════════════════════════════
 
+
 def ensemble_average_shifts(
     per_frame_shifts: List[FrameShifts],
 ) -> FrameShifts:
@@ -401,9 +398,7 @@ def ensemble_average_shifts(
     >>> print(avg[1]["CA"])  # mean CA shift for residue 1
     """
     if not isinstance(per_frame_shifts, list):
-        raise TypeError(
-            f"per_frame_shifts must be a list, got {type(per_frame_shifts).__name__}."
-        )
+        raise TypeError(f"per_frame_shifts must be a list, got {type(per_frame_shifts).__name__}.")
     if len(per_frame_shifts) == 0:
         raise ValueError(
             "per_frame_shifts must contain at least one frame.  "
@@ -445,8 +440,7 @@ def ensemble_average_shifts(
 
     n_residues = len(result)
     logger.info(
-        f"ensemble_average_shifts: averaged {n_frames} frames, "
-        f"retained {n_residues} residues."
+        f"ensemble_average_shifts: averaged {n_frames} frames, " f"retained {n_residues} residues."
     )
     return result
 
@@ -454,6 +448,7 @@ def ensemble_average_shifts(
 # ══════════════════════════════════════════════════════════════════════════════
 # ensemble_average_noes
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 def ensemble_average_noes(
     per_frame_noes: List[FrameNoes],
@@ -534,7 +529,7 @@ def ensemble_average_noes(
             if pair not in accumulator:
                 accumulator[pair] = []
             # r⁻⁶ accumulation — this is the key physics step
-            accumulator[pair].append(dist ** -6)
+            accumulator[pair].append(dist**-6)
 
     # Compute r_eff = <r⁻⁶>^(-1/6) only for pairs observed in every frame
     result: FrameNoes = {}
@@ -550,8 +545,7 @@ def ensemble_average_noes(
             )
 
     logger.info(
-        f"ensemble_average_noes: averaged {n_frames} frames, "
-        f"retained {len(result)} NOE pairs."
+        f"ensemble_average_noes: averaged {n_frames} frames, " f"retained {len(result)} NOE pairs."
     )
     return result
 
@@ -559,6 +553,7 @@ def ensemble_average_noes(
 # ══════════════════════════════════════════════════════════════════════════════
 # ensemble_average_rdcs
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 def ensemble_average_rdcs(
     per_frame_rdcs: List[FrameRdcs],
@@ -644,8 +639,7 @@ def ensemble_average_rdcs(
             )
 
     logger.info(
-        f"ensemble_average_rdcs: averaged {n_frames} frames, "
-        f"retained {len(result)} residues."
+        f"ensemble_average_rdcs: averaged {n_frames} frames, " f"retained {len(result)} residues."
     )
     return result
 
@@ -653,6 +647,7 @@ def ensemble_average_rdcs(
 # ══════════════════════════════════════════════════════════════════════════════
 # compute_s2_from_trajectory
 # ══════════════════════════════════════════════════════════════════════════════
+
 
 def compute_s2_from_trajectory(
     ensemble: TrajectoryEnsemble,
@@ -751,9 +746,7 @@ def compute_s2_from_trajectory(
             continue
 
         # Build a lookup: res_id -> H coord (for amide proton matching)
-        h_coord_map: Dict[int, np.ndarray] = {
-            int(h.res_id): np.asarray(h.coord) for h in h_atoms
-        }
+        h_coord_map: Dict[int, np.ndarray] = {int(h.res_id): np.asarray(h.coord) for h in h_atoms}
 
         for n_atom in n_atoms:
             res_id = int(n_atom.res_id)

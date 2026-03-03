@@ -20,7 +20,7 @@
 
 """A command-line interface for synth-nmr."""
 import sys
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 from synth_nmr.rdc import calculate_rdcs
@@ -76,7 +76,11 @@ def process_commands(args: List[str]) -> None:
             frame_paths = []
             j = i + 2
             while j < len(args) and not args[j].lower() in (
-                "load", "ensemble", "read", "calculate", "predict"
+                "load",
+                "ensemble",
+                "read",
+                "calculate",
+                "predict",
             ):
                 frame_paths.append(args[j])
                 j += 1
@@ -109,11 +113,21 @@ def process_commands(args: List[str]) -> None:
                 continue
 
             if sub == "shifts":
-                # Ensemble-average chemical shifts across all frames
-                per_frame = []
+                # Ensemble-average chemical shifts across all frames.
+                # predict_chemical_shifts returns {method: {res_id: {atom: shift}}},
+                # so we merge the inner dicts to get the flat {res_id: {atom: shift}}
+                # format that ensemble_average_shifts expects.
+                per_frame: List[Dict[int, Dict[str, float]]] = []
                 for frame in ensemble:
                     try:
-                        per_frame.append(predict_chemical_shifts(frame))
+                        raw = predict_chemical_shifts(frame)
+                        merged: Dict[int, Dict[str, float]] = {}
+                        for method_dict in raw.values():
+                            for res_id, atoms in method_dict.items():
+                                if res_id not in merged:
+                                    merged[res_id] = {}
+                                merged[res_id].update(atoms)
+                        per_frame.append(merged)
                     except Exception as e:
                         print(f"Warning: shift prediction failed for a frame: {e}")
                 if per_frame:
@@ -131,13 +145,12 @@ def process_commands(args: List[str]) -> None:
                         i += 1
                     except ValueError:
                         pass
-                per_frame_n = []
+                per_frame_n: List[Dict[Tuple[int, int], float]] = []
                 for frame in ensemble:
                     try:
                         noe_dict = calculate_synthetic_noes(frame, cutoff=cutoff)
-                        # Flatten to {(res_i, res_j): distance}
-                        flat: dict = {}
-                        for ri, peers in noe_dict.items():
+                        flat: Dict[Tuple[int, int], float] = {}
+                        for ri, peers in noe_dict.items():  # type: ignore[attr-defined]
                             for rj, dist in peers.items():
                                 flat[(ri, rj)] = dist
                         per_frame_n.append(flat)
@@ -308,33 +321,40 @@ def interactive_mode() -> None:
                     continue
 
                 if sub == "shifts":
-                    per_frame = []
+                    per_frame2: List[Dict[int, Dict[str, float]]] = []
                     for frame in ensemble:
                         try:
-                            per_frame.append(predict_chemical_shifts(frame))
+                            raw = predict_chemical_shifts(frame)
+                            merged2: Dict[int, Dict[str, float]] = {}
+                            for method_dict in raw.values():
+                                for res_id, atoms in method_dict.items():
+                                    if res_id not in merged2:
+                                        merged2[res_id] = {}
+                                    merged2[res_id].update(atoms)
+                            per_frame2.append(merged2)
                         except Exception as e:
                             print(f"Warning: shift prediction failed for a frame: {e}")
-                    if per_frame:
-                        avg = ensemble_average_shifts(per_frame)
+                    if per_frame2:
+                        avg = ensemble_average_shifts(per_frame2)
                         for res_id, nucleus_dict in sorted(avg.items()):
                             for atom_name, shift in sorted(nucleus_dict.items()):
                                 print(f"ResID {res_id:4d}  {atom_name:<4s}  {shift:.3f} ppm")
 
                 elif sub == "noes":
                     cutoff = float(parts[2]) if len(parts) > 2 else 5.0
-                    per_frame_n = []
+                    per_frame_n2: List[Dict[Tuple[int, int], float]] = []
                     for frame in ensemble:
                         try:
                             noe_dict = calculate_synthetic_noes(frame, cutoff=cutoff)
-                            flat: dict = {}
-                            for ri, peers in noe_dict.items():
+                            flat2: Dict[Tuple[int, int], float] = {}
+                            for ri, peers in noe_dict.items():  # type: ignore[attr-defined]
                                 for rj, dist in peers.items():
-                                    flat[(ri, rj)] = dist
-                            per_frame_n.append(flat)
+                                    flat2[(ri, rj)] = dist
+                            per_frame_n2.append(flat2)
                         except Exception as e:
                             print(f"Warning: NOE calculation failed for a frame: {e}")
-                    if per_frame_n:
-                        avg_noes = ensemble_average_noes(per_frame_n)
+                    if per_frame_n2:
+                        avg_noes = ensemble_average_noes(per_frame_n2)
                         for (ri, rj), r_eff in sorted(avg_noes.items()):
                             print(f"Res {ri:4d} — Res {rj:4d}  r_eff = {r_eff:.3f} Å")
 
