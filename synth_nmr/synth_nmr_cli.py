@@ -20,14 +20,24 @@
 
 """A command-line interface for synth-nmr."""
 import sys
-from typing import List
+from typing import List, Optional
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 from synth_nmr.rdc import calculate_rdcs
 from synth_nmr.chemical_shifts import predict_chemical_shifts
 from synth_nmr.j_coupling import calculate_hn_ha_coupling
+from synth_nmr.trajectory import (
+    TrajectoryEnsemble,
+    load_trajectory,
+    ensemble_average_shifts,
+    ensemble_average_noes,
+    ensemble_average_rdcs,
+    compute_s2_from_trajectory,
+)
+from synth_nmr.nmr import calculate_synthetic_noes
 
-structure = None
+structure: Optional[struc.AtomArray] = None
+ensemble: Optional[TrajectoryEnsemble] = None
 
 
 def main() -> None:
@@ -42,7 +52,7 @@ def main() -> None:
 
 def process_commands(args: List[str]) -> None:
     """Process a list of commands."""
-    global structure
+    global structure, ensemble
     i = 0
     while i < len(args):
         command = args[i].lower()
@@ -59,6 +69,117 @@ def process_commands(args: List[str]) -> None:
             except Exception as e:
                 print(f"Error: Failed to read PDB file: {e}")
             i += 3
+
+        elif command == "load" and i + 1 < len(args) and args[i + 1].lower() == "trajectory":
+            # Collect all PDB file paths that follow the 'load trajectory' keyword
+            # Usage: load trajectory frame1.pdb frame2.pdb [...]
+            frame_paths = []
+            j = i + 2
+            while j < len(args) and not args[j].lower() in (
+                "load", "ensemble", "read", "calculate", "predict"
+            ):
+                frame_paths.append(args[j])
+                j += 1
+            if not frame_paths:
+                print("Error: Provide at least one PDB file path after 'load trajectory'.")
+                i = j
+                continue
+            frames: List[struc.AtomArray] = []
+            for path in frame_paths:
+                try:
+                    pdb_file = pdb.PDBFile.read(path)
+                    frame = pdb_file.get_structure()
+                    if isinstance(frame, struc.AtomArrayStack):
+                        frame = frame[0]
+                    frames.append(frame)
+                except Exception as e:
+                    print(f"Warning: Could not read '{path}': {e}")
+            if frames:
+                ensemble = load_trajectory(frames)
+                print(f"Loaded trajectory ensemble with {len(ensemble)} frames.")
+            else:
+                print("Error: No frames could be loaded.")
+            i = j
+
+        elif command == "ensemble" and i + 1 < len(args):
+            sub = args[i + 1].lower()
+            if ensemble is None:
+                print("Error: No trajectory loaded. Use 'load trajectory <pdb1> ...' first.")
+                i += 2
+                continue
+
+            if sub == "shifts":
+                # Ensemble-average chemical shifts across all frames
+                per_frame = []
+                for frame in ensemble:
+                    try:
+                        per_frame.append(predict_chemical_shifts(frame))
+                    except Exception as e:
+                        print(f"Warning: shift prediction failed for a frame: {e}")
+                if per_frame:
+                    avg = ensemble_average_shifts(per_frame)
+                    for res_id, nucleus_dict in sorted(avg.items()):
+                        for atom_name, shift in sorted(nucleus_dict.items()):
+                            print(f"ResID {res_id:4d}  {atom_name:<4s}  {shift:.3f} ppm")
+                i += 2
+
+            elif sub == "noes":
+                cutoff = 5.0
+                if i + 2 < len(args):
+                    try:
+                        cutoff = float(args[i + 2])
+                        i += 1
+                    except ValueError:
+                        pass
+                per_frame_n = []
+                for frame in ensemble:
+                    try:
+                        noe_dict = calculate_synthetic_noes(frame, cutoff=cutoff)
+                        # Flatten to {(res_i, res_j): distance}
+                        flat: dict = {}
+                        for ri, peers in noe_dict.items():
+                            for rj, dist in peers.items():
+                                flat[(ri, rj)] = dist
+                        per_frame_n.append(flat)
+                    except Exception as e:
+                        print(f"Warning: NOE calculation failed for a frame: {e}")
+                if per_frame_n:
+                    avg_noes = ensemble_average_noes(per_frame_n)
+                    for (ri, rj), r_eff in sorted(avg_noes.items()):
+                        print(f"Res {ri:4d} — Res {rj:4d}  r_eff = {r_eff:.3f} Å")
+                i += 2
+
+            elif sub == "rdcs":
+                Da = 10.0
+                R = 0.5
+                if i + 2 < len(args):
+                    try:
+                        Da = float(args[i + 2])
+                        i += 1
+                    except ValueError:
+                        pass
+                if i + 2 < len(args):
+                    try:
+                        R = float(args[i + 2])
+                        i += 1
+                    except ValueError:
+                        pass
+                per_frame_r = [calculate_rdcs(f, Da=Da, R=R) for f in ensemble]
+                avg_rdcs = ensemble_average_rdcs(per_frame_r)
+                for res_id, rdc in sorted(avg_rdcs.items()):
+                    print(f"ResID {res_id:4d}  D_NH = {rdc:.3f} Hz")
+                i += 2
+
+            elif sub == "s2":
+                s2_map = compute_s2_from_trajectory(ensemble)
+                for res_id, s2_val in sorted(s2_map.items()):
+                    print(f"ResID {res_id:4d}  S² = {s2_val:.4f}")
+                i += 2
+
+            else:
+                print(f"Error: Unknown ensemble subcommand: {sub}")
+                i += 2
+
         elif command == "calculate" and i + 1 < len(args) and args[i + 1].lower() == "rdc":
             if structure is None:
                 print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
@@ -115,7 +236,7 @@ def process_commands(args: List[str]) -> None:
 
 def interactive_mode() -> None:
     """Run the CLI in interactive mode."""
-    global structure
+    global structure, ensemble
     print("Welcome to the synth-nmr CLI!")
     print("Enter 'help' for a list of commands.")
     while True:
@@ -134,6 +255,11 @@ def interactive_mode() -> None:
             elif command == "help":
                 print("Commands:")
                 print("  read pdb <filename>")
+                print("  load trajectory <pdb1> [pdb2 ...]")
+                print("  ensemble shifts")
+                print("  ensemble noes [cutoff_angstrom]")
+                print("  ensemble rdcs [Da] [R]")
+                print("  ensemble s2")
                 print("  calculate rdc [Da] [R]")
                 print("  predict shifts")
                 print("  calculate j-coupling")
@@ -153,6 +279,80 @@ def interactive_mode() -> None:
                     print(f"Error: File not found: {filename}")
                 except Exception as e:
                     print(f"Error: Failed to read PDB file: {e}")
+
+            elif command == "load" and len(parts) > 1 and parts[1].lower() == "trajectory":
+                frame_paths = parts[2:]
+                if not frame_paths:
+                    print("Usage: load trajectory <pdb1> [pdb2 ...]")
+                    continue
+                frames: List[struc.AtomArray] = []
+                for path in frame_paths:
+                    try:
+                        pdb_file = pdb.PDBFile.read(path)
+                        frame = pdb_file.get_structure()
+                        if isinstance(frame, struc.AtomArrayStack):
+                            frame = frame[0]
+                        frames.append(frame)
+                    except Exception as e:
+                        print(f"Warning: Could not read '{path}': {e}")
+                if frames:
+                    ensemble = load_trajectory(frames)
+                    print(f"Loaded trajectory ensemble with {len(ensemble)} frames.")
+                else:
+                    print("Error: No frames could be loaded.")
+
+            elif command == "ensemble" and len(parts) > 1:
+                sub = parts[1].lower()
+                if ensemble is None:
+                    print("Error: No trajectory loaded. Use 'load trajectory <pdb1> ...' first.")
+                    continue
+
+                if sub == "shifts":
+                    per_frame = []
+                    for frame in ensemble:
+                        try:
+                            per_frame.append(predict_chemical_shifts(frame))
+                        except Exception as e:
+                            print(f"Warning: shift prediction failed for a frame: {e}")
+                    if per_frame:
+                        avg = ensemble_average_shifts(per_frame)
+                        for res_id, nucleus_dict in sorted(avg.items()):
+                            for atom_name, shift in sorted(nucleus_dict.items()):
+                                print(f"ResID {res_id:4d}  {atom_name:<4s}  {shift:.3f} ppm")
+
+                elif sub == "noes":
+                    cutoff = float(parts[2]) if len(parts) > 2 else 5.0
+                    per_frame_n = []
+                    for frame in ensemble:
+                        try:
+                            noe_dict = calculate_synthetic_noes(frame, cutoff=cutoff)
+                            flat: dict = {}
+                            for ri, peers in noe_dict.items():
+                                for rj, dist in peers.items():
+                                    flat[(ri, rj)] = dist
+                            per_frame_n.append(flat)
+                        except Exception as e:
+                            print(f"Warning: NOE calculation failed for a frame: {e}")
+                    if per_frame_n:
+                        avg_noes = ensemble_average_noes(per_frame_n)
+                        for (ri, rj), r_eff in sorted(avg_noes.items()):
+                            print(f"Res {ri:4d} — Res {rj:4d}  r_eff = {r_eff:.3f} Å")
+
+                elif sub == "rdcs":
+                    Da = float(parts[2]) if len(parts) > 2 else 10.0
+                    R = float(parts[3]) if len(parts) > 3 else 0.5
+                    per_frame_r = [calculate_rdcs(f, Da=Da, R=R) for f in ensemble]
+                    avg_rdcs = ensemble_average_rdcs(per_frame_r)
+                    for res_id, rdc in sorted(avg_rdcs.items()):
+                        print(f"ResID {res_id:4d}  D_NH = {rdc:.3f} Hz")
+
+                elif sub == "s2":
+                    s2_map = compute_s2_from_trajectory(ensemble)
+                    for res_id, s2_val in sorted(s2_map.items()):
+                        print(f"ResID {res_id:4d}  S² = {s2_val:.4f}")
+
+                else:
+                    print(f"Error: Unknown ensemble subcommand: {sub}")
 
             elif command == "calculate" and len(parts) > 1 and parts[1].lower() == "rdc":
                 if structure is None:

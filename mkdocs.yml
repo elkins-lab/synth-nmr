@@ -51,6 +51,7 @@ nav:
     - NOEs (Distances): science/noes.md
     - J-Couplings (Dihedrals): science/j_couplings.md
     - RDCs (Orientations): science/rdcs.md
+    - Ensemble NMR & MD: science/trajectory.md
   - Tutorials:
     - Basic Predictions: tutorials/basic_nmr_prediction.ipynb
     - Advanced Observables: tutorials/advanced_observables.ipynb

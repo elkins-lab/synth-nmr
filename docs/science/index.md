@@ -33,3 +33,4 @@ We will explore the biophysics behind the observables that `synth-nmr` predicts,
 *   **[Chemical Shifts](chemical_shifts.md)**: The relationship between local environment and Larmor frequency.
 *   **[Dihedral Angles (J-Coupling)](j_couplings.md)**: The Karplus equation and parameterized structural dependencies.
 *   **[Global Orientations (RDCs)](rdcs.md)**: Alignment tensors and structural elucidation.
+*   **[Ensemble NMR & MD](trajectory.md)**: Time-averaging over dynamic conformational ensembles — accessible to NMR beginners.

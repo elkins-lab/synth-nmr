@@ -32,6 +32,7 @@ classifiers = [
 
 [project.optional-dependencies]
 performance = ["numba>=0.55.0"]
+trajectory = ["mdtraj>=1.9.0"]
 ml = [
     "torch>=2.0.0",
     "torch-geometric>=2.3.0",
@@ -84,7 +85,8 @@ module = [
     "torch.*",
     "torch_geometric.*",
     "sklearn.*",
-    "scipy.*"
+    "scipy.*",
+    "mdtraj.*"
 ]
 ignore_missing_imports = true
 

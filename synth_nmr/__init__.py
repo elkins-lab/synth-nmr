@@ -9,6 +9,7 @@ structures, including:
 - J-couplings (Karplus equation)
 - RDC calculations
 - NEF format I/O for NMR data exchange
+- MD trajectory loading and ensemble-averaged NMR observables
 
 Originally extracted from the synth-pdb package to provide a lightweight,
 standalone NMR toolkit that works with any protein structure source.
@@ -21,6 +22,14 @@ from .relaxation import calculate_relaxation_rates, predict_order_parameters
 from .chemical_shifts import predict_chemical_shifts, calculate_csi
 from .j_coupling import calculate_hn_ha_coupling
 from .rdc import calculate_rdcs
+from .trajectory import (
+    TrajectoryEnsemble,
+    load_trajectory,
+    ensemble_average_shifts,
+    ensemble_average_noes,
+    ensemble_average_rdcs,
+    compute_s2_from_trajectory,
+)
 
 __all__ = [
     "calculate_synthetic_noes",
@@ -30,4 +39,11 @@ __all__ = [
     "calculate_csi",
     "calculate_hn_ha_coupling",
     "calculate_rdcs",
+    # Trajectory / Ensemble NMR
+    "TrajectoryEnsemble",
+    "load_trajectory",
+    "ensemble_average_shifts",
+    "ensemble_average_noes",
+    "ensemble_average_rdcs",
+    "compute_s2_from_trajectory",
 ]
