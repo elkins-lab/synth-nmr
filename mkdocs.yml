@@ -47,6 +47,7 @@ nav:
   - Scientific Background:
     - Introduction & Theory: science/index.md
     - Chemical Shifts: science/chemical_shifts.md
+    - SHIFTX2 Integration: science/shiftx2.md
     - Relaxation (Dynamics): science/relaxation.md
     - NOEs (Distances): science/noes.md
     - J-Couplings (Dihedrals): science/j_couplings.md

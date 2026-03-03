@@ -50,3 +50,20 @@ print(shifts[10]['CA']) # Output: 56.4 (ppm)
 **Key Steps in the Algorithm**:
 1.  **Backbone Geometry**: The algorithm identifies primary secondary structures using Ramachandran $\phi / \psi$ binning and applies base conformation shifts.
 2.  **Ring Current Corrections**: The algorithm identifies all aromatic rings (PHE, TYR, TRP, HIS) and establishes their geometric normal vectors. It then calculates the Haigh-Mallion spatial integral to apply shielding/deshielding corrections to all neighboring atoms based on their exact Cartesian distance and elevation angle from the ring center.
+
+### SHIFTX2: The Primary Predictor
+
+By default, `predict_chemical_shifts()` first attempts to use **SHIFTX2**, a
+state-of-the-art hybrid machine-learning predictor (Han et al. 2011) that achieves
+roughly half the error of SPARTA+ fragment-mining methods (~0.44 ppm Cα RMSD vs.
+~0.9–1.1 ppm).  If SHIFTX2 is not installed or encounters an error, the function
+automatically falls back to the SPARTA+ empirical model described above.
+
+See the **[SHIFTX2 Integration](shiftx2.md)** page for:
+
+- Why SHIFTX2 is significantly more accurate
+- Step-by-step installation instructions
+- How the automatic detection and fallback works
+- Direct API usage (`ShiftX2Predictor` class)
+- A table of all automated test cases
+

@@ -20,7 +20,7 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 
 - **NOE Calculations**: Synthetic NOE distance restraints
 - **Relaxation Rates**: R1, R2, and heteronuclear NOE predictions
-- **Chemical Shifts**: High-accuracy Neural Network predictions with SPARTA+ empirical fallback
+- **Chemical Shifts**: Integrates to SHIFTX2 predictions with SPARTA+ empirical fallback
 - **J-Couplings**: Karplus equation for scalar couplings
 - **RDC Calculations**: Prediction of residual dipolar couplings
 - **MD Trajectory / Ensemble NMR**: S², ensemble-averaged shifts, NOEs (r⁻⁶), and RDCs from NMR ensembles or MD trajectories
