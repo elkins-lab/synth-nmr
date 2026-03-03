@@ -56,6 +56,7 @@ nav:
     - Basic Predictions: tutorials/basic_nmr_prediction.ipynb
     - Advanced Observables: tutorials/advanced_observables.ipynb
     - Relaxation Analysis: tutorials/relaxation_analysis.ipynb
+    - Ensemble NMR Analysis: tutorials/ensemble_nmr_analysis.ipynb
   - API Reference:
     - Overview: api/index.md
     - Chemical Shifts: api/chemical_shifts.md
