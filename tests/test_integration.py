@@ -42,7 +42,7 @@ def test_package_import():
     """Test that the package can be imported."""
     import synth_nmr
 
-    assert synth_nmr.__version__ == "0.6.1"
+    assert synth_nmr.__version__ == "0.7.0"
 
 
 def test_calculate_synthetic_noes():

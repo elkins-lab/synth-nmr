@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "synth-nmr"
-version = "0.6.1"
+version = "0.7.0"
 description = "NMR spectroscopy calculations for protein structures"
 authors = [{name = "George Elkins"}]
 readme = "README.md"
