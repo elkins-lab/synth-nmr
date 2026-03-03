@@ -12,13 +12,13 @@
         <meta name="author" content="George Elkins">
       
       
-        <link rel="canonical" href="https://elkins.github.io/synth-nmr/tutorials/advanced_observables/">
+        <link rel="canonical" href="https://elkins.github.io/synth-nmr/tutorials/ensemble_nmr_analysis/">
       
       
-        <link rel="prev" href="../basic_nmr_prediction/">
+        <link rel="prev" href="../relaxation_analysis/">
       
       
-        <link rel="next" href="../relaxation_analysis/">
+        <link rel="next" href="../../api/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Advanced NMR Observables: J-Couplings, NOEs, and RDCs - synth-nmr</title>
+        <title>NMR Ensemble Analysis: Proteins in Motion - synth-nmr</title>
       
     
     
@@ -85,7 +85,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#advanced-nmr-observables-j-couplings-noes-and-rdcs" class="md-skip">
+        <a href="#nmr-ensemble-analysis-proteins-in-motion" class="md-skip">
           Skip to content
         </a>
       
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Advanced NMR Observables: J-Couplings, NOEs, and RDCs
+              NMR Ensemble Analysis: Proteins in Motion
             
           </span>
         </div>
@@ -836,37 +836,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Advanced NMR Observables: J-Couplings, NOEs, and RDCs
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../advanced_observables/" class="md-nav__link">
         
   
   
@@ -882,92 +855,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#1-setup-environment-load-structure" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Setup Environment &amp; Load Structure
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#2-j-couplings-probing-dihedral-angles" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. J-Couplings: Probing Dihedral Angles
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3-noes-short-range-distance-restraints" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. NOEs: Short-Range Distance Restraints
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#4-rdcs-long-range-orientational-restraints" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. RDCs: Long-Range Orientational Restraints
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#5-ensemble-effects-on-noes-when-flexibility-changes-the-picture" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Ensemble Effects on NOEs: When Flexibility Changes the Picture
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#summary" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Summary
-      
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1005,10 +892,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../ensemble_nmr_analysis/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NMR Ensemble Analysis: Proteins in Motion
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1024,6 +938,120 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-setup-load-libraries" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Setup &amp; Load Libraries
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-loading-the-nmr-structural-ensemble" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Loading the NMR Structural Ensemble
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-order-parameters-quantifying-backbone-flexibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Order Parameters: Quantifying Backbone Flexibility
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ensemble-averaged-chemical-shifts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Ensemble-Averaged Chemical Shifts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-noe-averaging-why-r6-matters" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. NOE Averaging: Why r⁻⁶ Matters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-rdc-ensemble-averaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. RDC Ensemble Averaging
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further reading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1292,10 +1320,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-setup-environment-load-structure" class="md-nav__link">
+  <a href="#1-setup-load-libraries" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Setup Environment &amp; Load Structure
+        1. Setup &amp; Load Libraries
       
     </span>
   </a>
@@ -1303,10 +1331,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-j-couplings-probing-dihedral-angles" class="md-nav__link">
+  <a href="#2-loading-the-nmr-structural-ensemble" class="md-nav__link">
     <span class="md-ellipsis">
       
-        2. J-Couplings: Probing Dihedral Angles
+        2. Loading the NMR Structural Ensemble
       
     </span>
   </a>
@@ -1314,10 +1342,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-noes-short-range-distance-restraints" class="md-nav__link">
+  <a href="#3-order-parameters-quantifying-backbone-flexibility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        3. NOEs: Short-Range Distance Restraints
+        3. Order Parameters: Quantifying Backbone Flexibility
       
     </span>
   </a>
@@ -1325,10 +1353,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-rdcs-long-range-orientational-restraints" class="md-nav__link">
+  <a href="#4-ensemble-averaged-chemical-shifts" class="md-nav__link">
     <span class="md-ellipsis">
       
-        4. RDCs: Long-Range Orientational Restraints
+        4. Ensemble-Averaged Chemical Shifts
       
     </span>
   </a>
@@ -1336,10 +1364,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-ensemble-effects-on-noes-when-flexibility-changes-the-picture" class="md-nav__link">
+  <a href="#5-noe-averaging-why-r6-matters" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. Ensemble Effects on NOEs: When Flexibility Changes the Picture
+        5. NOE Averaging: Why r⁻⁶ Matters
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-rdc-ensemble-averaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. RDC Ensemble Averaging
       
     </span>
   </a>
@@ -1354,6 +1393,23 @@
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#further-reading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Further reading
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2104,16 +2160,25 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><a href="https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/advanced_observables.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
-<h1 id="advanced-nmr-observables-j-couplings-noes-and-rdcs">Advanced NMR Observables: J-Couplings, NOEs, and RDCs<a class="anchor-link" href="#advanced-nmr-observables-j-couplings-noes-and-rdcs">¶</a></h1><p>In this tutorial, we will dive deeper into three crucial NMR observables that provide
-distinct structural and dynamic information:</p>
-<ul>
-<li><strong>J-Couplings</strong>: Scalar couplings that depend on backbone dihedral angles.</li>
-<li><strong>NOEs</strong>: Nuclear Overhauser Effects providing short-range distance restraints.</li>
-<li><strong>RDCs</strong>: Residual Dipolar Couplings yielding long-range orientational information relative to an alignment tensor.</li>
-</ul>
-<p>A new final section demonstrates how <strong>ensemble averaging</strong> changes the NOE picture
-when protein flexibility is taken into account.</p>
+<p><a href="https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/ensemble_nmr_analysis.ipynb" target="_parent"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg"/></a></p>
+<h1 id="nmr-ensemble-analysis-proteins-in-motion">NMR Ensemble Analysis: Proteins in Motion<a class="anchor-link" href="#nmr-ensemble-analysis-proteins-in-motion">¶</a></h1><p>A single crystal or energy-minimised structure is a <strong>frozen snapshot</strong>.  In solution,
+a protein is constantly flexing — backbone loops swing, side chains rotate, and even
+the core breathes gently.  NMR spectroscopists routinely solve <strong>ensembles</strong> of
+structures (families of conformers all consistent with the experimental data) precisely
+to capture this motion.</p>
+<p>In this tutorial we use the 10-conformer NMR ensemble of <strong>Ubiquitin</strong> (PDB: 1D3Z)
+to demonstrate <code>synth-nmr</code>'s ensemble averaging module.  We will:</p>
+<ol>
+<li><strong>Load the ensemble</strong> into a <code>TrajectoryEnsemble</code> object.</li>
+<li><strong>Compute S²</strong> (Lipari-Szabo order parameters) directly from NH vector geometry.</li>
+<li><strong>Average chemical shifts</strong> correctly across all 10 conformers.</li>
+<li><strong>Demonstrate NOE r⁻⁶ averaging</strong> — and why a simple mean gives the wrong answer.</li>
+<li><strong>Average RDCs</strong> and visualise per-conformer scatter around the mean.</li>
+</ol>
+<blockquote>
+<p><strong>No MD simulation required.</strong>  The 1D3Z NMR ensemble already provides a
+physically meaningful set of conformations sampled by the real protein in solution.</p>
+</blockquote>
 </div>
 </div>
 </div>
@@ -2124,7 +2189,7 @@ when protein flexibility is taken into account.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="1-setup-environment-load-structure">1. Setup Environment &amp; Load Structure<a class="anchor-link" href="#1-setup-environment-load-structure">¶</a></h2><p>First, we'll install <code>synth-nmr</code> and load the Ubiquitin structure (1D3Z) using <code>biotite</code>.</p>
+<h2 id="1-setup-load-libraries">1. Setup &amp; Load Libraries<a class="anchor-link" href="#1-setup-load-libraries">¶</a></h2>
 </div>
 </div>
 </div>
@@ -2147,37 +2212,45 @@ when protein flexibility is taken into account.</p>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">matplotlib</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Install synth-nmr and its dependencies</span>
+<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">matplotlib</span> <span class="n">numpy</span>
 
-<span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin</span><span class="o">.</span><span class="n">pdb</span>
+<span class="c1"># Download the Ubiquitin NMR solution ensemble — 10 conformers from NOE-restrained MD</span>
+<span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin_ensemble</span><span class="o">.</span><span class="n">pdb</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'figure.dpi'</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s1">'font.size'</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-                     <span class="s1">'axes.spines.top'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'axes.spines.right'</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
-
-<span class="c1"># 1D3Z has 10 NMR conformers; use model 1 for single-structure analyses</span>
-<span class="n">stack</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s1">'ubiquitin.pdb'</span><span class="p">)</span>
-<span class="n">structure</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loaded 1D3Z: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span><span class="si">}</span><span class="s1"> conformers — using model 1 for static analyses.'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
+    <span class="s1">'figure.dpi'</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
+    <span class="s1">'font.size'</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="s1">'axes.titlesize'</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+    <span class="s1">'axes.spines.top'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s1">'axes.spines.right'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Environment ready.'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">!pip install -q synth-nmr biotite matplotlib
+<div class="clipboard-copy-txt" id="cell-1"># Install synth-nmr and its dependencies
+!pip install -q synth-nmr biotite matplotlib numpy
 
-!wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin.pdb
+# Download the Ubiquitin NMR solution ensemble — 10 conformers from NOE-restrained MD
+!wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin_ensemble.pdb
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import biotite.structure.io as strucio
 
-plt.rcParams.update({'figure.dpi': 110, 'font.size': 11,
-                     'axes.spines.top': False, 'axes.spines.right': False})
-
-# 1D3Z has 10 NMR conformers; use model 1 for single-structure analyses
-stack = strucio.load_structure('ubiquitin.pdb')
-structure = stack[0]
-print(f'Loaded 1D3Z: {len(stack)} conformers — using model 1 for static analyses.')</div>
+plt.rcParams.update({
+    'figure.dpi': 120,
+    'font.size': 11,
+    'axes.titlesize': 13,
+    'axes.spines.top': False,
+    'axes.spines.right': False,
+})
+print('Environment ready.')</div>
 </div>
 </div>
 </div>
@@ -2190,10 +2263,13 @@ print(f'Loaded 1D3Z: {len(stack)} conformers — using model 1 for static analys
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="2-j-couplings-probing-dihedral-angles">2. J-Couplings: Probing Dihedral Angles<a class="anchor-link" href="#2-j-couplings-probing-dihedral-angles">¶</a></h2><p>Scalar couplings ($^3J$) are mediated through chemical bonds.  The $^3J_{HN-H\alpha}$
-coupling strongly correlates with the backbone $\phi$ dihedral angle via the
-<strong>Karplus equation</strong>.  By predicting these couplings, we can validate the secondary
-structure of our models.  Let's calculate them for our Ubiquitin structure.</p>
+<h2 id="2-loading-the-nmr-structural-ensemble">2. Loading the NMR Structural Ensemble<a class="anchor-link" href="#2-loading-the-nmr-structural-ensemble">¶</a></h2><p>PDB entry <strong>1D3Z</strong> contains 10 conformers of Ubiquitin determined by solution NMR.
+Each conformer was obtained by energy minimisation restrained by the experimental
+NOE distances and J-coupling dihedral angles — so each one is genuinely consistent
+with the spectroscopic data.  Together they represent the <em>conformational space</em>
+sampled by Ubiquitin tumbling in solution.</p>
+<p><code>biotite.structure.io.load_structure</code> automatically detects multiple MODEL records
+and returns an <strong>AtomArrayStack</strong> — a 3-D array indexed <code>[model, atom, xyz]</code>.</p>
 </div>
 </div>
 </div>
@@ -2216,59 +2292,49 @@ structure of our models.  Let's calculate them for our Ubiquitin structure.</p>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.j_coupling</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_hn_ha_coupling</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">load_trajectory</span><span class="p">,</span>
+    <span class="n">compute_s2_from_trajectory</span><span class="p">,</span>
+    <span class="n">ensemble_average_shifts</span><span class="p">,</span>
+    <span class="n">ensemble_average_noes</span><span class="p">,</span>
+    <span class="n">ensemble_average_rdcs</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">j_couplings</span> <span class="o">=</span> <span class="n">calculate_hn_ha_coupling</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+<span class="c1"># Load all NMR conformers from the PDB file</span>
+<span class="n">stack</span>    <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s1">'ubiquitin_ensemble.pdb'</span><span class="p">)</span>
+<span class="n">n_models</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
 
-<span class="n">chain_a_couplings</span> <span class="o">=</span> <span class="n">j_couplings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="p">{})</span>
-<span class="n">residues</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chain_a_couplings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">j_vals</span>   <span class="o">=</span> <span class="p">[</span><span class="n">chain_a_couplings</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
+<span class="c1"># Each stack[i] is a single AtomArray (one conformer)</span>
+<span class="n">frames</span>   <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_models</span><span class="p">)]</span>
 
-<span class="c1"># Colour by secondary structure context (values around 4 Hz = helix; ~9 Hz = sheet)</span>
-<span class="n">j_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'#e74c3c'</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">5.5</span> <span class="k">else</span> <span class="s1">'#2980b9'</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mf">7.5</span> <span class="k">else</span> <span class="s1">'#7f8c8d'</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">j_vals</span><span class="p">]</span>
+<span class="c1"># Wrap into a TrajectoryEnsemble container</span>
+<span class="n">ensemble</span> <span class="o">=</span> <span class="n">load_trajectory</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">residues</span><span class="p">,</span> <span class="n">j_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">j_colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.84</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-helix threshold (~4 Hz)'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-sheet threshold (~9 Hz)'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'</span><span class="se">\u00b3</span><span class="s1">J(HN-H</span><span class="se">\u03b1</span><span class="s1">) Coupling (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Predicted Scalar Couplings across Ubiquitin Backbone</span><span class="se">\n</span><span class="s1">'</span>
-          <span class="s1">'Red = helix-like, Blue = sheet-like, Grey = intermediate'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loaded PDB 1D3Z (</span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s1"> NMR conformers, </span><span class="si">{</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span><span class="si">}</span><span class="s1"> atoms each)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'TrajectoryEnsemble: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span><span class="si">}</span><span class="s1"> frames'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">ensemble</span><span class="p">))</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">from synth_nmr.j_coupling import calculate_hn_ha_coupling
+<div class="clipboard-copy-txt" id="cell-2">from synth_nmr.trajectory import (
+    load_trajectory,
+    compute_s2_from_trajectory,
+    ensemble_average_shifts,
+    ensemble_average_noes,
+    ensemble_average_rdcs,
+)
 
-j_couplings = calculate_hn_ha_coupling(structure)
+# Load all NMR conformers from the PDB file
+stack    = strucio.load_structure('ubiquitin_ensemble.pdb')
+n_models = len(stack)
 
-chain_a_couplings = j_couplings.get('A', {})
-residues = sorted(chain_a_couplings.keys())
-j_vals   = [chain_a_couplings[r] for r in residues]
+# Each stack[i] is a single AtomArray (one conformer)
+frames   = [stack[i] for i in range(n_models)]
 
-# Colour by secondary structure context (values around 4 Hz = helix; ~9 Hz = sheet)
-j_colors = ['#e74c3c' if v &lt; 5.5 else '#2980b9' if v &gt; 7.5 else '#7f8c8d'
-            for v in j_vals]
+# Wrap into a TrajectoryEnsemble container
+ensemble = load_trajectory(frames)
 
-plt.figure(figsize=(11, 4))
-plt.bar(residues, j_vals, color=j_colors, alpha=0.84, width=0.9)
-plt.axhline(5.5, color='#e74c3c', ls='--', lw=1, alpha=0.5,
-            label='\u03b1-helix threshold (~4 Hz)')
-plt.axhline(7.5, color='#2980b9', ls='--', lw=1, alpha=0.5,
-            label='\u03b2-sheet threshold (~9 Hz)')
-plt.xlabel('Residue Number', fontsize=12)
-plt.ylabel('\u00b3J(HN-H\u03b1) Coupling (Hz)', fontsize=12)
-plt.title('Predicted Scalar Couplings across Ubiquitin Backbone\n'
-          'Red = helix-like, Blue = sheet-like, Grey = intermediate', fontsize=12)
-plt.legend(fontsize=10)
-plt.grid(axis='y', linestyle='--', alpha=0.4)
-plt.tight_layout()
-plt.show()</div>
+print(f'Loaded PDB 1D3Z ({n_models} NMR conformers, {frames[0].array_length()} atoms each)')
+print(f'TrajectoryEnsemble: {len(ensemble)} frames')
+print(repr(ensemble))</div>
 </div>
 </div>
 </div>
@@ -2281,30 +2347,34 @@ plt.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Values around 4 Hz typically indicate $\alpha$-helical regions, whereas larger
-values (~9 Hz) often correspond to $\beta$-sheets.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="3-noes-short-range-distance-restraints">3. NOEs: Short-Range Distance Restraints<a class="anchor-link" href="#3-noes-short-range-distance-restraints">¶</a></h2><p>Nuclear Overhauser Effects (NOEs) provide distance information between protons.
-The intensity of an NOE signal is proportional to $r^{-6}$, meaning it drops off
-extremely rapidly with distance.  The two panels below illustrate a subtle but
-important physical point:</p>
-<ul>
-<li><strong>Left</strong>: The <em>number</em> of proton pairs in each distance bin <strong>increases</strong> with distance
-(geometry: a larger shell has more volume).  Most restraints come from pairs near
-the 5 Å cutoff simply because there are more of them at larger radii.</li>
-<li><strong>Right</strong>: The <em>total NOE signal power</em> ($\Sigma\, r^{-6}$) in each bin <strong>decreases</strong>
-steeply with distance.  The closest contacts dominate the spectrum even though they
-are rarer, because $r^{-6}$ amplifies short distances enormously.</li>
-</ul>
+<h2 id="3-order-parameters-quantifying-backbone-flexibility">3. Order Parameters: Quantifying Backbone Flexibility<a class="anchor-link" href="#3-order-parameters-quantifying-backbone-flexibility">¶</a></h2><p>The <strong>Lipari-Szabo generalized order parameter S²</strong> measures how much each backbone
+N–H bond vector moves across the ensemble:</p>
+<p>$$S^2 = |\langle \hat{\mu} \rangle|^2$$</p>
+<p>where $\hat{\mu}$ is the unit vector along the N→H bond in each conformer.  If all
+conformers point the same way, the mean vector is long and $S^2 \approx 1$ (rigid).
+If they scatter in all directions, the mean vector cancels and $S^2 \approx 0$ (floppy).</p>
+<table>
+<thead>
+<tr>
+<th>S² range</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.85–1.0</td>
+<td>Rigid backbone (core helices and sheets)</td>
+</tr>
+<tr>
+<td>0.60–0.85</td>
+<td>Mild flexibility (surface loops, turns)</td>
+</tr>
+<tr>
+<td>0.0–0.60</td>
+<td>Significant disorder (termini, disordered regions)</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -2327,109 +2397,111 @@ are rarer, because $r^{-6}$ amplifies short distances enormously.</li>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_synthetic_noes</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Compute S² = |&lt;μ̂&gt;|² for every backbone amide in the ensemble</span>
+<span class="n">s2_map</span> <span class="o">=</span> <span class="n">compute_s2_from_trajectory</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'S² computed for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">s2_map</span><span class="p">)</span><span class="si">}</span><span class="s1"> backbone amide sites</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
 
-<span class="c1"># calculate_synthetic_noes returns a list of dicts, each with keys:</span>
-<span class="c1"># 'index_1', 'atom_name_1', 'res_name_1', 'index_2', 'atom_name_2',</span>
-<span class="c1"># 'res_name_2', 'distance', 'upper_limit'</span>
-<span class="n">noes</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                                <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># ---------- Secondary structure of Ubiquitin (1D3Z) ----------------------------</span>
+<span class="n">alpha_res</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>                                    <span class="c1"># α-Helix</span>
+<span class="n">beta_res</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>   <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>             <span class="c1"># β1, β2</span>
+           <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">46</span><span class="p">))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">51</span><span class="p">))</span>             <span class="c1"># β3, β4</span>
+           <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">73</span><span class="p">)))</span>                                  <span class="c1"># β5</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Generated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noes</span><span class="p">)</span><span class="si">}</span><span class="s1"> inter-residue synthetic NOE distance restraints.</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">alpha_res</span><span class="p">:</span> <span class="k">return</span> <span class="s1">'#e74c3c'</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">beta_res</span><span class="p">:</span>  <span class="k">return</span> <span class="s1">'#2980b9'</span>
+    <span class="k">return</span> <span class="s1">'#7f8c8d'</span>
 
-<span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">noes</span><span class="p">])</span>
-<span class="n">signal_r6</span> <span class="o">=</span> <span class="n">distances</span> <span class="o">**</span> <span class="o">-</span><span class="mf">6.0</span>   <span class="c1"># NOE intensity proportional to r^{-6}</span>
+<span class="n">residues</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s2_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">s2_vals</span>  <span class="o">=</span> <span class="p">[</span><span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
+<span class="n">colors</span>   <span class="o">=</span> <span class="p">[</span><span class="n">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
 
-<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">distances</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">31</span><span class="p">)</span>
-<span class="n">bin_centers</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
-
-<span class="n">counts</span><span class="p">,</span>     <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
-<span class="n">signal_sum</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">signal_r6</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
-
-<span class="c1"># Left: pair count per distance bin (increases with distance — geometric effect)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">bin_centers</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mf">0.9</span><span class="p">,</span>
-       <span class="n">color</span><span class="o">=</span><span class="s1">'#16a085'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Distance (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Number of NOE Pairs'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Pair Count per Distance Bin</span><span class="se">\n</span><span class="s1">'</span>
-             <span class="s1">'Increases with distance (geometric shell volume </span><span class="se">\u221d</span><span class="s1"> r</span><span class="se">\u00b2</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-
-<span class="c1"># Right: cumulative r^{-6} signal power (decreases steeply — the real physics)</span>
-<span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">bin_centers</span><span class="p">,</span> <span class="n">signal_sum</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mf">0.9</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s1">'#c0392b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Distance (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Cumulative NOE Signal Power  (</span><span class="se">\u03a3</span><span class="s1"> r</span><span class="se">\u207b\u2076</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'NOE Signal Power per Distance Bin</span><span class="se">\n</span><span class="s1">'</span>
-             <span class="s1">'Steep falloff: short contacts completely dominate  (r</span><span class="se">\u207b\u2076</span><span class="s1"> effect)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">'The r</span><span class="se">\u207b\u2076</span><span class="s1"> Effect: More Pairs at Long Range, but Short Contacts Drive the Signal'</span><span class="p">,</span>
-             <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
+<span class="c1"># ---------- Plot ---------------------------------------------------------------</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">residues</span><span class="p">,</span> <span class="n">s2_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#2c3e50'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="s1">'Typical rigid threshold  S² = 0.85'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'S²  (order parameter)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s1">'Backbone S² from the 10-Conformer NMR Ensemble of Ubiquitin (1D3Z)</span><span class="se">\n</span><span class="s1">'</span>
+    <span class="s1">'S² = |</span><span class="se">\u27e8\u03bc\u0302\u27e9</span><span class="s1">|</span><span class="se">\u00b2</span><span class="s1">   (Lipari &amp; Szabo 1982; Clore et al. 1990)'</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">patches</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-Helix  (res</span><span class="se">\u2020</span><span class="s1">23</span><span class="se">\u2013</span><span class="s1">34)'</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-Strands'</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#7f8c8d'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Loops / Turns'</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches</span> <span class="o">+</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'lower left'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">'N-terminus</span><span class="se">\n</span><span class="s1">(disordered)'</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s2_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span>
+            <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s1">'-&gt;'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">'C-terminus</span><span class="se">\n</span><span class="s1">(disordered)'</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="n">s2_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">68</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span>
+            <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s1">'-&gt;'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Sample NOE Restraints:'</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">noe</span> <span class="ow">in</span> <span class="n">noes</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_1'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; "</span>
-          <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_2'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: "</span>
-          <span class="sa">f</span><span class="s2">"Distance </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2"> (Upper Limit: </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'upper_limit'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">)</span>
+<span class="n">flexible</span> <span class="o">=</span> <span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span> <span class="k">if</span> <span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.60</span><span class="p">]</span>
+<span class="k">if</span> <span class="n">flexible</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Highly flexible residues (S² &lt; 0.60):'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">flexible</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'  Res </span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s1">3d</span><span class="si">}</span><span class="s1">:  S² = </span><span class="si">{</span><span class="n">s2</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">from synth_nmr.nmr import calculate_synthetic_noes
+<div class="clipboard-copy-txt" id="cell-3"># Compute S² = |&lt;μ̂&gt;|² for every backbone amide in the ensemble
+s2_map = compute_s2_from_trajectory(ensemble)
+print(f'S² computed for {len(s2_map)} backbone amide sites\n')
 
-# calculate_synthetic_noes returns a list of dicts, each with keys:
-# 'index_1', 'atom_name_1', 'res_name_1', 'index_2', 'atom_name_2',
-# 'res_name_2', 'distance', 'upper_limit'
-noes = calculate_synthetic_noes(structure, cutoff=5.0, buffer=0.5,
-                                exclude_intra_residue=True)
+# ---------- Secondary structure of Ubiquitin (1D3Z) ----------------------------
+alpha_res = set(range(23, 35))                                    # α-Helix
+beta_res  = (set(range(1, 8))   | set(range(10, 18))             # β1, β2
+           | set(range(40, 46)) | set(range(48, 51))             # β3, β4
+           | set(range(64, 73)))                                  # β5
 
-print(f'Generated {len(noes)} inter-residue synthetic NOE distance restraints.\n')
+def ss_color(r):
+    if r in alpha_res: return '#e74c3c'
+    if r in beta_res:  return '#2980b9'
+    return '#7f8c8d'
 
-distances = np.array([n['distance'] for n in noes])
-signal_r6 = distances ** -6.0   # NOE intensity proportional to r^{-6}
+residues = sorted(s2_map.keys())
+s2_vals  = [s2_map[r] for r in residues]
+colors   = [ss_color(r) for r in residues]
 
-bins = np.linspace(distances.min(), distances.max(), 31)
-bin_centers = 0.5 * (bins[:-1] + bins[1:])
-
-counts,     _ = np.histogram(distances, bins=bins)
-signal_sum, _ = np.histogram(distances, bins=bins, weights=signal_r6)
-
-fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
-
-# Left: pair count per distance bin (increases with distance — geometric effect)
-ax = axes[0]
-ax.bar(bin_centers, counts, width=(bins[1]-bins[0])*0.9,
-       color='#16a085', alpha=0.82, edgecolor='white', lw=0.3)
-ax.set_xlabel('Distance (\u00c5)', fontsize=12)
-ax.set_ylabel('Number of NOE Pairs', fontsize=12)
-ax.set_title('Pair Count per Distance Bin\n'
-             'Increases with distance (geometric shell volume \u221d r\u00b2)', fontsize=11)
-ax.grid(axis='y', ls='--', alpha=0.4)
-
-# Right: cumulative r^{-6} signal power (decreases steeply — the real physics)
-ax2 = axes[1]
-ax2.bar(bin_centers, signal_sum, width=(bins[1]-bins[0])*0.9,
-        color='#c0392b', alpha=0.82, edgecolor='white', lw=0.3)
-ax2.set_xlabel('Distance (\u00c5)', fontsize=12)
-ax2.set_ylabel('Cumulative NOE Signal Power  (\u03a3 r\u207b\u2076)', fontsize=12)
-ax2.set_title('NOE Signal Power per Distance Bin\n'
-             'Steep falloff: short contacts completely dominate  (r\u207b\u2076 effect)', fontsize=11)
-ax2.grid(axis='y', ls='--', alpha=0.4)
-
-fig.suptitle('The r\u207b\u2076 Effect: More Pairs at Long Range, but Short Contacts Drive the Signal',
-             fontsize=13, fontweight='bold', y=1.01)
+# ---------- Plot ---------------------------------------------------------------
+fig, ax = plt.subplots(figsize=(13, 4.5))
+ax.bar(residues, s2_vals, color=colors, alpha=0.88, width=0.9, zorder=3)
+ax.axhline(0.85, color='#2c3e50', ls='--', lw=1.2, alpha=0.5,
+           label='Typical rigid threshold  S² = 0.85')
+ax.set_ylim(0, 1.15)
+ax.set_xlabel('Residue Number', fontsize=12)
+ax.set_ylabel('S²  (order parameter)', fontsize=12)
+ax.set_title(
+    'Backbone S² from the 10-Conformer NMR Ensemble of Ubiquitin (1D3Z)\n'
+    'S² = |\u27e8\u03bc\u0302\u27e9|\u00b2   (Lipari &amp; Szabo 1982; Clore et al. 1990)',
+    fontsize=13)
+ax.grid(axis='y', linestyle='--', alpha=0.35, zorder=0)
+patches = [
+    mpatches.Patch(color='#e74c3c', alpha=0.88, label='\u03b1-Helix  (res\u202023\u201334)'),
+    mpatches.Patch(color='#2980b9', alpha=0.88, label='\u03b2-Strands'),
+    mpatches.Patch(color='#7f8c8d', alpha=0.88, label='Loops / Turns'),
+]
+ax.legend(handles=patches + [ax.lines[0]], loc='lower left', fontsize=10)
+ax.annotate('N-terminus\n(disordered)', xy=(1, s2_map.get(1, 0.5)),
+            xytext=(4, 0.25), fontsize=9, color='#555',
+            arrowprops=dict(arrowstyle='-&gt;', color='#555', lw=0.8))
+ax.annotate('C-terminus\n(disordered)', xy=(76, s2_map.get(76, 0.5)),
+            xytext=(68, 0.25), fontsize=9, color='#555',
+            arrowprops=dict(arrowstyle='-&gt;', color='#555', lw=0.8))
 plt.tight_layout()
 plt.show()
 
-print('Sample NOE Restraints:')
-for noe in noes[:5]:
-    print(f"  {noe['res_name_1']}{noe['index_1']} {noe['atom_name_1']} &lt;--&gt; "
-          f"{noe['res_name_2']}{noe['index_2']} {noe['atom_name_2']}: "
-          f"Distance {noe['distance']:.2f} \u00c5 (Upper Limit: {noe['upper_limit']:.2f} \u00c5)")</div>
+flexible = [(r, s2_map[r]) for r in residues if s2_map[r] &lt; 0.60]
+if flexible:
+    print('Highly flexible residues (S² &lt; 0.60):')
+    for r, s2 in flexible:
+        print(f'  Res {r:3d}:  S² = {s2:.3f}')</div>
 </div>
 </div>
 </div>
@@ -2442,15 +2514,16 @@ for noe in noes[:5]:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="4-rdcs-long-range-orientational-restraints">4. RDCs: Long-Range Orientational Restraints<a class="anchor-link" href="#4-rdcs-long-range-orientational-restraints">¶</a></h2><p>Residual Dipolar Couplings (RDCs) measure the angle of a bond vector (like N-H)
-relative to a global alignment tensor.  While NOEs give short-range distances,
-RDCs provide global orientational information, which makes them highly
-complementary.</p>
-<p>We use two parameters to define the alignment tensor's magnitude and asymmetry:</p>
-<ul>
-<li><strong>Da</strong>: The axial component of the alignment tensor.</li>
-<li><strong>R</strong>: The rhombicity, defining deviation from axial symmetry.</li>
-</ul>
+<h2 id="4-ensemble-averaged-chemical-shifts">4. Ensemble-Averaged Chemical Shifts<a class="anchor-link" href="#4-ensemble-averaged-chemical-shifts">¶</a></h2><p>In the <strong>fast-exchange limit</strong> (which holds for most backbone motions in solution),
+the chemical shift you observe in the spectrum is the <em>time-average</em> of the shift
+over all conformations:</p>
+<p>$$\delta_\text{obs} = \langle \delta \rangle_t = \frac{1}{N} \sum_{i=1}^{N} \delta_i$$</p>
+<p>A simple <strong>arithmetic mean</strong> is the correct choice here.  Where the ensemble-averaged
+shift differs significantly from the single-model prediction, conformational averaging
+is important and should not be ignored.</p>
+<blockquote>
+<p>⏱  This cell predicts shifts for each of the 10 conformers — allow ~30–60 s.</p>
+</blockquote>
 </div>
 </div>
 </div>
@@ -2473,55 +2546,109 @@ complementary.</p>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.rdc</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_rdcs</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.chemical_shifts</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_chemical_shifts</span>
 
-<span class="n">Da</span> <span class="o">=</span> <span class="mf">10.0</span>
-<span class="n">rhombicity</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">flatten_shifts</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Merge {method: {res_id: {atom: shift}}} → {res_id: {atom: shift}}."""</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">mdict</span> <span class="ow">in</span> <span class="n">raw</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">res_id</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="n">mdict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">merged</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span>
 
-<span class="n">rdcs</span> <span class="o">=</span> <span class="n">calculate_rdcs</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">Da</span><span class="o">=</span><span class="n">Da</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">rhombicity</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Predicting chemical shifts for all 10 conformers...'</span><span class="p">)</span>
+<span class="n">per_frame_shifts</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_shifts</span><span class="p">(</span><span class="n">predict_chemical_shifts</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">]</span>
+<span class="n">avg_shifts</span>       <span class="o">=</span> <span class="n">ensemble_average_shifts</span><span class="p">(</span><span class="n">per_frame_shifts</span><span class="p">)</span>
+<span class="n">model1_shifts</span>    <span class="o">=</span> <span class="n">per_frame_shifts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Done.  Ensemble-averaged shifts for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_shifts</span><span class="p">)</span><span class="si">}</span><span class="s1"> residues.'</span><span class="p">)</span>
 
-<span class="n">res_rdc</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rdcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">rdc_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">rdcs</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_rdc</span><span class="p">]</span>
+<span class="c1"># ---------- Cα shifts: model 1 vs ensemble average ----------------------------</span>
+<span class="n">res_ca</span>   <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">avg_shifts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">'CA'</span> <span class="ow">in</span> <span class="n">model1_shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">and</span> <span class="s1">'CA'</span> <span class="ow">in</span> <span class="n">avg_shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">{})]</span>
+<span class="n">ca_m1</span>    <span class="o">=</span> <span class="p">[</span><span class="n">model1_shifts</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="s1">'CA'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_ca</span><span class="p">]</span>
+<span class="n">ca_avg</span>   <span class="o">=</span> <span class="p">[</span><span class="n">avg_shifts</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="s1">'CA'</span><span class="p">]</span>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_ca</span><span class="p">]</span>
+<span class="n">diff_ppm</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">,</span> <span class="n">ca_avg</span><span class="p">)]</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_rdc</span><span class="p">,</span> <span class="n">rdc_vals</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">'#e74c3c'</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'#2980b9'</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rdc_vals</span><span class="p">],</span>
-        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'-'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'D_NH (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Predicted N-H RDCs across Ubiquitin (Da = </span><span class="si">{</span><span class="n">Da</span><span class="si">}</span><span class="s1"> Hz, R = </span><span class="si">{</span><span class="n">rhombicity</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span>
-          <span class="s1">'Red = positive coupling, Blue = negative coupling'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Left: scatter model 1 vs ensemble</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">,</span> <span class="n">ca_avg</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">diff_ppm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'plasma'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
+                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'|Model</span><span class="se">\u2020</span><span class="s1">01 </span><span class="se">\u2212</span><span class="s1"> Ensemble avg|  (ppm)'</span><span class="p">)</span>
+<span class="n">lo</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ca_avg</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ca_avg</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Perfect agreement'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'C</span><span class="se">\u03b1</span><span class="s1"> shift  </span><span class="se">\u2014</span><span class="s1"> Model</span><span class="se">\u2002</span><span class="s1">1  (ppm)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'C</span><span class="se">\u03b1</span><span class="s1"> shift  </span><span class="se">\u2014</span><span class="s1"> Ensemble average  (ppm)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'C</span><span class="se">\u03b1</span><span class="s1"> Chemical Shifts:</span><span class="se">\n</span><span class="s1">Model</span><span class="se">\u2002</span><span class="s1">1 vs. 10-Frame Ensemble Average'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Right: per-residue shift difference bar</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_ca</span><span class="p">,</span> <span class="n">diff_ppm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#8e44ad'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'|</span><span class="se">\u0394</span><span class="s1"> C</span><span class="se">\u03b1</span><span class="s1">|  (ppm)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue C</span><span class="se">\u03b1</span><span class="s1"> Shift Change</span><span class="se">\n</span><span class="s1">due to Ensemble Averaging'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Calculated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rdcs</span><span class="p">)</span><span class="si">}</span><span class="s1"> backbone N-H RDCs.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Mean |</span><span class="se">\u0394</span><span class="s1">C</span><span class="se">\u03b1</span><span class="s1">| (model 1 vs ensemble): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff_ppm</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> ppm'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Max  |</span><span class="se">\u0394</span><span class="s1">C</span><span class="se">\u03b1</span><span class="s1">| (model 1 vs ensemble): </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">diff_ppm</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> ppm'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">from synth_nmr.rdc import calculate_rdcs
+<div class="clipboard-copy-txt" id="cell-4">from synth_nmr.chemical_shifts import predict_chemical_shifts
 
-Da = 10.0
-rhombicity = 0.2
+def flatten_shifts(raw):
+    """Merge {method: {res_id: {atom: shift}}} → {res_id: {atom: shift}}."""
+    merged = {}
+    for mdict in raw.values():
+        for res_id, atoms in mdict.items():
+            merged.setdefault(res_id, {}).update(atoms)
+    return merged
 
-rdcs = calculate_rdcs(structure, Da=Da, R=rhombicity)
+print('Predicting chemical shifts for all 10 conformers...')
+per_frame_shifts = [flatten_shifts(predict_chemical_shifts(f)) for f in ensemble]
+avg_shifts       = ensemble_average_shifts(per_frame_shifts)
+model1_shifts    = per_frame_shifts[0]
+print(f'Done.  Ensemble-averaged shifts for {len(avg_shifts)} residues.')
 
-res_rdc  = sorted(rdcs.keys())
-rdc_vals = [rdcs[r] for r in res_rdc]
+# ---------- Cα shifts: model 1 vs ensemble average ----------------------------
+res_ca   = [r for r in sorted(avg_shifts)
+            if 'CA' in model1_shifts.get(r, {}) and 'CA' in avg_shifts.get(r, {})]
+ca_m1    = [model1_shifts[r]['CA'] for r in res_ca]
+ca_avg   = [avg_shifts[r]['CA']    for r in res_ca]
+diff_ppm = [abs(m - a) for m, a in zip(ca_m1, ca_avg)]
 
-plt.figure(figsize=(11, 4))
-plt.bar(res_rdc, rdc_vals,
-        color=['#e74c3c' if v &gt; 0 else '#2980b9' for v in rdc_vals],
-        alpha=0.82, width=0.9)
-plt.axhline(0, color='black', lw=0.8, ls='-', alpha=0.4)
-plt.xlabel('Residue Number', fontsize=12)
-plt.ylabel('D_NH (Hz)', fontsize=12)
-plt.title(f'Predicted N-H RDCs across Ubiquitin (Da = {Da} Hz, R = {rhombicity})\n'
-          'Red = positive coupling, Blue = negative coupling', fontsize=12)
-plt.grid(axis='y', ls='--', alpha=0.4)
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+
+# Left: scatter model 1 vs ensemble
+ax = axes[0]
+sc = ax.scatter(ca_m1, ca_avg, c=diff_ppm, cmap='plasma', s=65,
+                alpha=0.85, edgecolors='none', zorder=3)
+cb = plt.colorbar(sc, ax=ax, label='|Model\u202001 \u2212 Ensemble avg|  (ppm)')
+lo = min(min(ca_m1), min(ca_avg)) - 1
+hi = max(max(ca_m1), max(ca_avg)) + 1
+ax.plot([lo, hi], [lo, hi], 'k--', lw=1.2, alpha=0.45, label='Perfect agreement')
+ax.set_xlabel('C\u03b1 shift  \u2014 Model\u20021  (ppm)', fontsize=12)
+ax.set_ylabel('C\u03b1 shift  \u2014 Ensemble average  (ppm)', fontsize=12)
+ax.set_title('C\u03b1 Chemical Shifts:\nModel\u20021 vs. 10-Frame Ensemble Average', fontsize=12)
+ax.legend(fontsize=10)
+
+# Right: per-residue shift difference bar
+ax2 = axes[1]
+ax2.bar(res_ca, diff_ppm, color='#8e44ad', alpha=0.78, width=0.9)
+ax2.set_xlabel('Residue Number', fontsize=12)
+ax2.set_ylabel('|\u0394 C\u03b1|  (ppm)', fontsize=12)
+ax2.set_title('Per-Residue C\u03b1 Shift Change\ndue to Ensemble Averaging', fontsize=12)
+ax2.grid(axis='y', ls='--', alpha=0.35)
+
 plt.tight_layout()
 plt.show()
 
-print(f'Calculated {len(rdcs)} backbone N-H RDCs.')</div>
+print(f'Mean |\u0394C\u03b1| (model 1 vs ensemble): {np.mean(diff_ppm):.3f} ppm')
+print(f'Max  |\u0394C\u03b1| (model 1 vs ensemble): {max(diff_ppm):.3f} ppm')</div>
 </div>
 </div>
 </div>
@@ -2534,16 +2661,17 @@ print(f'Calculated {len(rdcs)} backbone N-H RDCs.')</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="5-ensemble-effects-on-noes-when-flexibility-changes-the-picture">5. Ensemble Effects on NOEs: When Flexibility Changes the Picture<a class="anchor-link" href="#5-ensemble-effects-on-noes-when-flexibility-changes-the-picture">¶</a></h2><p>So far we have used a <strong>single static model</strong> (conformer 1 of 1D3Z).  But Ubiquitin
-in solution is not static — it samples all 10 conformers and countless intermediate
-geometries.  The NOE signal you observe in a NOESY spectrum is the <strong>cumulative
-average over all conformations</strong>:</p>
+<h2 id="5-noe-averaging-why-r6-matters">5. NOE Averaging: Why r⁻⁶ Matters<a class="anchor-link" href="#5-noe-averaging-why-r6-matters">¶</a></h2><p>The NOE signal intensity between two protons is proportional to $r^{-6}$, so short
+distances dominate overwhelmingly.  The <strong>effective distance</strong> extracted from a NOESY
+spectrum is:</p>
 <p>$$r_\text{eff} = \langle r^{-6} \rangle^{-1/6}$$</p>
-<p>Because of the $r^{-6}$ weighting, <strong>transient short contacts dominate</strong>.  A pair of
-protons that is briefly at 2 Å in one conformer but at 5 Å in nine others will
-show a strong NOE — closer than the simple geometric mean (3.9 Å) would suggest.</p>
-<p>The cells below compare the 10-conformer ensemble NOE distances with the
-single-model distances, revealing which residues are most affected by flexibility.</p>
+<p>This is always <strong>shorter</strong> than the arithmetic mean distance whenever conformations differ.
+The scatter plot below makes this vivid: every point lies on or below the diagonal,
+because transient close contacts are amplified by the sixth power.</p>
+<blockquote>
+<p>Using an arithmetic mean for NOE distances is a well-known source of systematic
+error in structure determination from dynamic proteins.</p>
+</blockquote>
 </div>
 </div>
 </div>
@@ -2566,22 +2694,15 @@ single-model distances, revealing which residues are most affected by flexibilit
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">load_trajectory</span><span class="p">,</span>
-    <span class="n">ensemble_average_noes</span><span class="p">,</span>
-<span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_synthetic_noes</span>
 
-<span class="c1"># Load all 10 conformers into a TrajectoryEnsemble</span>
-<span class="n">frames</span>       <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">))]</span>
-<span class="n">noe_ensemble</span> <span class="o">=</span> <span class="n">load_trajectory</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s1">-conformer TrajectoryEnsemble for NOE analysis.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Calculating NOEs for each conformer (cutoff 5.5 </span><span class="se">\u00c5</span><span class="s1">) ...'</span><span class="p">)</span>
 
-<span class="c1"># Build per-frame flat dicts: {(res_i, atom_i, res_j, atom_j): distance}</span>
-<span class="c1"># Note: calculate_synthetic_noes returns a LIST of dicts (one per atom pair),</span>
-<span class="c1"># not a nested dict — we build the flat dict by iterating that list.</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Calculating NOEs for each conformer...'</span><span class="p">)</span>
+<span class="c1"># calculate_synthetic_noes returns a LIST of dicts (one per atom pair).</span>
+<span class="c1"># Each dict has keys: 'index_1', 'atom_name_1', 'index_2', 'atom_name_2', 'distance', ...</span>
+<span class="c1"># We build a flat dict keyed by (res_i, atom_i, res_j, atom_j) for each frame.</span>
 <span class="n">per_frame_noes</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">noe_ensemble</span><span class="p">:</span>
+<span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">:</span>
     <span class="n">raw</span>  <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
@@ -2590,39 +2711,67 @@ single-model distances, revealing which residues are most affected by flexibilit
         <span class="n">flat</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span>
     <span class="n">per_frame_noes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
 
-<span class="c1"># r⁻⁶-averaged effective distances across the ensemble</span>
 <span class="n">eff_noes</span> <span class="o">=</span> <span class="n">ensemble_average_noes</span><span class="p">(</span><span class="n">per_frame_noes</span><span class="p">)</span>
 
-<span class="c1"># Arithmetic mean distances (physically wrong for NOEs, shown for comparison)</span>
+<span class="c1"># Arithmetic mean (for comparison — physically WRONG for NOEs)</span>
 <span class="n">r_arith</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">eff_noes</span><span class="p">:</span>
     <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="n">pair</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">per_frame_noes</span> <span class="k">if</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ensemble</span><span class="p">):</span>
         <span class="n">r_arith</span><span class="p">[</span><span class="n">pair</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span>
 
 <span class="n">common</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r_arith</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">eff_noes</span><span class="p">]</span>
-<span class="n">x</span>   <span class="o">=</span> <span class="p">[</span><span class="n">r_arith</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>  <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>   <span class="c1"># arithmetic mean  (overestimates)</span>
-<span class="n">y</span>   <span class="o">=</span> <span class="p">[</span><span class="n">eff_noes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>   <span class="c1"># r⁻⁶ average   (physically correct)</span>
-<span class="n">gap</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">e</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span>
+<span class="n">x</span>      <span class="o">=</span> <span class="p">[</span><span class="n">r_arith</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>  <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>
+<span class="n">y</span>      <span class="o">=</span> <span class="p">[</span><span class="n">eff_noes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>
+<span class="n">gap</span>    <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">e</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> NOE pairs present in all </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s1"> conformers.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> NOE pairs present in all </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s1"> conformers.'</span><span class="p">)</span>
+
+<span class="c1"># ---------- Plot ---------------------------------------------------------------</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Left: scatter r_arith vs r_eff</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">gap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'YlOrRd'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span>
+                <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'r_arith </span><span class="se">\u2212</span><span class="s1"> r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">)</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.15</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'r_eff = r_arith'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Arithmetic Mean Distance  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'r</span><span class="se">\u207b\u2076</span><span class="s1">-Averaged Distance  r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'NOE Averaging:</span><span class="se">\n</span><span class="s1">All points at or BELOW the diagonal'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="c1"># Right: histogram of gap (r_arith - r_eff)</span>
+<span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">gap</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#c0392b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gap</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#2c3e50'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Mean gap = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\u00c5</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'r_arith </span><span class="se">\u2212</span><span class="s1"> r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Count'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Distribution of Distance Overestimation</span><span class="se">\n</span><span class="s1">from Simple Averaging'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">n_biased</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gap</span> <span class="k">if</span> <span class="n">g</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_biased</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> pairs show r_arith overestimates r_eff by &gt; 0.05 </span><span class="se">\u00c5</span><span class="s1">'</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">gap</span><span class="p">:</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">gap</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">gap</span><span class="p">))</span>
+    <span class="n">ri</span><span class="p">,</span> <span class="n">ai</span><span class="p">,</span> <span class="n">rj</span><span class="p">,</span> <span class="n">aj</span> <span class="o">=</span> <span class="n">common</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Largest overestimation: </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\u00c5</span><span class="s1">  '</span>
+          <span class="sa">f</span><span class="s1">'(Res </span><span class="si">{</span><span class="n">ri</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">ai</span><span class="si">}</span><span class="s1"> </span><span class="se">\u2014</span><span class="s1"> Res </span><span class="si">{</span><span class="n">rj</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">aj</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">from synth_nmr.trajectory import (
-    load_trajectory,
-    ensemble_average_noes,
-)
+<div class="clipboard-copy-txt" id="cell-5">from synth_nmr.nmr import calculate_synthetic_noes
 
-# Load all 10 conformers into a TrajectoryEnsemble
-frames       = [stack[i] for i in range(len(stack))]
-noe_ensemble = load_trajectory(frames)
-print(f'Loaded {len(noe_ensemble)}-conformer TrajectoryEnsemble for NOE analysis.')
+print('Calculating NOEs for each conformer (cutoff 5.5 \u00c5) ...')
 
-# Build per-frame flat dicts: {(res_i, atom_i, res_j, atom_j): distance}
-# Note: calculate_synthetic_noes returns a LIST of dicts (one per atom pair),
-# not a nested dict — we build the flat dict by iterating that list.
-print('Calculating NOEs for each conformer...')
+# calculate_synthetic_noes returns a LIST of dicts (one per atom pair).
+# Each dict has keys: 'index_1', 'atom_name_1', 'index_2', 'atom_name_2', 'distance', ...
+# We build a flat dict keyed by (res_i, atom_i, res_j, atom_j) for each frame.
 per_frame_noes = []
-for frame in noe_ensemble:
+for frame in ensemble:
     raw  = calculate_synthetic_noes(frame, cutoff=5.5, exclude_intra_residue=True)
     flat = {}
     for entry in raw:
@@ -2631,24 +2780,76 @@ for frame in noe_ensemble:
         flat[key] = entry['distance']
     per_frame_noes.append(flat)
 
-# r⁻⁶-averaged effective distances across the ensemble
 eff_noes = ensemble_average_noes(per_frame_noes)
 
-# Arithmetic mean distances (physically wrong for NOEs, shown for comparison)
+# Arithmetic mean (for comparison — physically WRONG for NOEs)
 r_arith = {}
 for pair in eff_noes:
     vals = [d[pair] for d in per_frame_noes if pair in d]
-    if len(vals) == len(noe_ensemble):
+    if len(vals) == len(ensemble):
         r_arith[pair] = float(np.mean(vals))
 
 common = [p for p in r_arith if p in eff_noes]
-x   = [r_arith[p]  for p in common]   # arithmetic mean  (overestimates)
-y   = [eff_noes[p] for p in common]   # r⁻⁶ average   (physically correct)
-gap = [a - e for a, e in zip(x, y)]
+x      = [r_arith[p]  for p in common]
+y      = [eff_noes[p] for p in common]
+gap    = [a - e for a, e in zip(x, y)]
 
-print(f'{len(common)} NOE pairs present in all {len(noe_ensemble)} conformers.')</div>
+print(f'{len(common)} NOE pairs present in all {n_models} conformers.')
+
+# ---------- Plot ---------------------------------------------------------------
+fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+
+# Left: scatter r_arith vs r_eff
+ax = axes[0]
+sc = ax.scatter(x, y, c=gap, cmap='YlOrRd', s=20, alpha=0.65,
+                edgecolors='none', vmin=0, zorder=3)
+cb = plt.colorbar(sc, ax=ax, label='r_arith \u2212 r_eff  (\u00c5)')
+hi = max(max(x), max(y)) + 0.15
+ax.plot([1.5, hi], [1.5, hi], 'k--', lw=1.2, alpha=0.5, label='r_eff = r_arith')
+ax.set_xlabel('Arithmetic Mean Distance  (\u00c5)', fontsize=12)
+ax.set_ylabel('r\u207b\u2076-Averaged Distance  r_eff  (\u00c5)', fontsize=12)
+ax.set_title('NOE Averaging:\nAll points at or BELOW the diagonal', fontsize=12)
+ax.legend(fontsize=10)
+
+# Right: histogram of gap (r_arith - r_eff)
+ax2 = axes[1]
+ax2.hist(gap, bins=40, color='#c0392b', alpha=0.78, edgecolor='white', lw=0.4)
+ax2.axvline(np.mean(gap), color='#2c3e50', ls='--', lw=1.5,
+            label=f'Mean gap = {np.mean(gap):.3f} \u00c5')
+ax2.set_xlabel('r_arith \u2212 r_eff  (\u00c5)', fontsize=12)
+ax2.set_ylabel('Count', fontsize=12)
+ax2.set_title('Distribution of Distance Overestimation\nfrom Simple Averaging', fontsize=12)
+ax2.legend(fontsize=10)
+
+plt.tight_layout()
+plt.show()
+
+n_biased = sum(1 for g in gap if g &gt; 0.05)
+print(f'{n_biased}/{len(common)} pairs show r_arith overestimates r_eff by &gt; 0.05 \u00c5')
+if gap:
+    idx = gap.index(max(gap))
+    ri, ai, rj, aj = common[idx]
+    print(f'Largest overestimation: {max(gap):.3f} \u00c5  '
+          f'(Res {ri} {ai} \u2014 Res {rj} {aj})')</div>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="6-rdc-ensemble-averaging">6. RDC Ensemble Averaging<a class="anchor-link" href="#6-rdc-ensemble-averaging">¶</a></h2><p>Residual Dipolar Couplings (RDCs) depend on the orientation of a bond vector relative
+to a static alignment tensor.  Like chemical shifts, RDCs are in the <strong>fast-exchange
+limit</strong>, so the observed coupling is the arithmetic mean over all conformers:</p>
+<p>$$D_\text{obs} = \langle D_i \rangle_t$$</p>
+<p>The plot below shows the 10 individual conformer RDC traces (grey) and the
+ensemble average (blue).  The spread of grey lines is a direct visual measure of
+conformational variation — wider spread = more dynamic region.</p>
 </div>
 </div>
 </div>
@@ -2671,89 +2872,117 @@ print(f'{len(common)} NOE pairs present in all {len(noe_ensemble)} conformers.')
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.rdc</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_rdcs</span>
 
-<span class="c1"># Left: scatter r_arith vs r_eff — all points at or below the diagonal</span>
+<span class="n">Da</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.2</span>   <span class="c1"># typical weak alignment tensor for Ubiquitin</span>
+
+<span class="n">per_frame_rdcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">calculate_rdcs</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Da</span><span class="o">=</span><span class="n">Da</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">]</span>
+<span class="n">avg_rdcs</span>       <span class="o">=</span> <span class="n">ensemble_average_rdcs</span><span class="p">(</span><span class="n">per_frame_rdcs</span><span class="p">)</span>
+
+<span class="n">res_all</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">avg_rdcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+<span class="c1"># Left: line plot, individual models + average</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">gap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'YlOrRd'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span>
-                <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'r_arith </span><span class="se">\u2212</span><span class="s1"> r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">)</span>
-<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.1</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s1">'r_eff = r_arith (no difference)'</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Arithmetic Mean Distance  (</span><span class="se">\u00c5</span><span class="s1">)</span><span class="se">\n</span><span class="s1">(simple average </span><span class="se">\u2014</span><span class="s1"> ignores r</span><span class="se">\u207b\u2076</span><span class="s1"> physics)'</span><span class="p">,</span>
-              <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'r</span><span class="se">\u207b\u2076</span><span class="s1">-Averaged Distance r_eff  (</span><span class="se">\u00c5</span><span class="s1">)</span><span class="se">\n</span><span class="s1">(physically correct for NOEs)'</span><span class="p">,</span>
-              <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'NOE Averaging Error:</span><span class="se">\n</span><span class="s1">All points lie BELOW or ON the diagonal'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">per_frame_rdcs</span><span class="p">):</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">fr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#bdc3c7'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s1">'Individual conformer'</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">''</span><span class="p">)</span>
+<span class="n">avg_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">avg_rdcs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">avg_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#1a6ea3'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.8</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s1">'Ensemble average'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#7f8c8d'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'D_NH  (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'N-H RDC: Conformer Spread vs. Ensemble Average</span><span class="se">\n</span><span class="s1">'</span>
+             <span class="sa">f</span><span class="s1">'Da = </span><span class="si">{</span><span class="n">Da</span><span class="si">}</span><span class="s1"> Hz, R = </span><span class="si">{</span><span class="n">R</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
-<span class="c1"># Right: per-residue maximum averaging error</span>
-<span class="c1"># Keys are (res_i, atom_i, res_j, atom_j) — extract residue numbers</span>
+<span class="c1"># Right: per-residue standard deviation across conformers</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">res_gap</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="k">for</span> <span class="p">(</span><span class="n">ri</span><span class="p">,</span> <span class="n">_ai</span><span class="p">,</span> <span class="n">rj</span><span class="p">,</span> <span class="n">_aj</span><span class="p">),</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">common</span><span class="p">,</span> <span class="n">gap</span><span class="p">):</span>
-    <span class="n">res_gap</span><span class="p">[</span><span class="n">ri</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">res_gap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ri</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">g</span><span class="p">)</span>
-    <span class="n">res_gap</span><span class="p">[</span><span class="n">rj</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">res_gap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rj</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">g</span><span class="p">)</span>
+<span class="n">rdc_std</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">:</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">fr</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">fr</span> <span class="ow">in</span> <span class="n">per_frame_rdcs</span> <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">fr</span><span class="p">]</span>
+    <span class="n">rdc_std</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span> <span class="k">if</span> <span class="n">vals</span> <span class="k">else</span> <span class="mf">0.0</span><span class="p">)</span>
 
-<span class="n">res_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">res_gap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">max_gap</span>    <span class="o">=</span> <span class="p">[</span><span class="n">res_gap</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_sorted</span><span class="p">]</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_sorted</span><span class="p">,</span> <span class="n">max_gap</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#c0392b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">bar_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">]</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">rdc_std</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">bar_colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
 <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Max. distance overestimate  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue NOE Error from Simple Averaging</span><span class="se">\n</span><span class="s1">'</span>
-              <span class="s1">'Peaks = residues most affected by conformational flexibility'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'</span><span class="se">\u03c3</span><span class="s1">(D_NH)  (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue RDC Variability Across Conformers</span><span class="se">\n</span><span class="s1">'</span>
+              <span class="s1">'Higher = more conformational diversity at this site'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="n">patches2</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-Helix'</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-Strands'</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#7f8c8d'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Loops'</span><span class="p">),</span>
+<span class="p">]</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches2</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="n">n_sig</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gap</span> <span class="k">if</span> <span class="n">g</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_sig</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> NOE pairs: arithmetic mean overestimates by &gt; 0.1 </span><span class="se">\u00c5</span><span class="s1">'</span><span class="p">)</span>
-<span class="n">worst_res</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">res_gap</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">res_gap</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Worst residue: </span><span class="si">{</span><span class="n">worst_res</span><span class="si">}</span><span class="s1">  (max overestimate </span><span class="si">{</span><span class="n">res_gap</span><span class="p">[</span><span class="n">worst_res</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">)</span>
+<span class="n">most_variable</span> <span class="o">=</span> <span class="n">res_all</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">rdc_std</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Most variable RDC residue: </span><span class="si">{</span><span class="n">most_variable</span><span class="si">}</span><span class="s1">  '</span>
+      <span class="sa">f</span><span class="s1">'(</span><span class="se">\u03c3</span><span class="s1"> = </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">rdc_std</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> Hz)'</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+<div class="clipboard-copy-txt" id="cell-6">from synth_nmr.rdc import calculate_rdcs
 
-# Left: scatter r_arith vs r_eff — all points at or below the diagonal
+Da, R = 10.0, 0.2   # typical weak alignment tensor for Ubiquitin
+
+per_frame_rdcs = [calculate_rdcs(f, Da=Da, R=R) for f in ensemble]
+avg_rdcs       = ensemble_average_rdcs(per_frame_rdcs)
+
+res_all = sorted(avg_rdcs.keys())
+
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+# Left: line plot, individual models + average
 ax = axes[0]
-sc = ax.scatter(x, y, c=gap, cmap='YlOrRd', s=18, alpha=0.65,
-                edgecolors='none', vmin=0, zorder=3)
-cb = plt.colorbar(sc, ax=ax, label='r_arith \u2212 r_eff  (\u00c5)')
-hi = max(max(x), max(y)) + 0.1
-ax.plot([1.5, hi], [1.5, hi], 'k--', lw=1.2, alpha=0.5,
-        label='r_eff = r_arith (no difference)')
-ax.set_xlabel('Arithmetic Mean Distance  (\u00c5)\n(simple average \u2014 ignores r\u207b\u2076 physics)',
-              fontsize=11)
-ax.set_ylabel('r\u207b\u2076-Averaged Distance r_eff  (\u00c5)\n(physically correct for NOEs)',
-              fontsize=11)
-ax.set_title('NOE Averaging Error:\nAll points lie BELOW or ON the diagonal', fontsize=12)
+for i, fr in enumerate(per_frame_rdcs):
+    vals = [fr.get(r, np.nan) for r in res_all]
+    ax.plot(res_all, vals, color='#bdc3c7', lw=0.9, alpha=0.75,
+            label='Individual conformer' if i == 0 else '')
+avg_vals = [avg_rdcs.get(r, np.nan) for r in res_all]
+ax.plot(res_all, avg_vals, color='#1a6ea3', lw=2.8, zorder=4,
+        label='Ensemble average')
+ax.axhline(0, color='#7f8c8d', lw=0.8, ls='--', alpha=0.5)
+ax.set_xlabel('Residue Number', fontsize=12)
+ax.set_ylabel('D_NH  (Hz)', fontsize=12)
+ax.set_title(f'N-H RDC: Conformer Spread vs. Ensemble Average\n'
+             f'Da = {Da} Hz, R = {R}', fontsize=12)
 ax.legend(fontsize=10)
 
-# Right: per-residue maximum averaging error
-# Keys are (res_i, atom_i, res_j, atom_j) — extract residue numbers
+# Right: per-residue standard deviation across conformers
 ax2 = axes[1]
-res_gap = {}
-for (ri, _ai, rj, _aj), g in zip(common, gap):
-    res_gap[ri] = max(res_gap.get(ri, 0.0), g)
-    res_gap[rj] = max(res_gap.get(rj, 0.0), g)
+rdc_std = []
+for r in res_all:
+    vals = [fr[r] for fr in per_frame_rdcs if r in fr]
+    rdc_std.append(float(np.std(vals)) if vals else 0.0)
 
-res_sorted = sorted(res_gap.keys())
-max_gap    = [res_gap[r] for r in res_sorted]
-ax2.bar(res_sorted, max_gap, color='#c0392b', alpha=0.78, width=0.9)
+bar_colors = [ss_color(r) for r in res_all]
+ax2.bar(res_all, rdc_std, color=bar_colors, alpha=0.82, width=0.9)
 ax2.set_xlabel('Residue Number', fontsize=12)
-ax2.set_ylabel('Max. distance overestimate  (\u00c5)', fontsize=12)
-ax2.set_title('Per-Residue NOE Error from Simple Averaging\n'
-              'Peaks = residues most affected by conformational flexibility', fontsize=12)
+ax2.set_ylabel('\u03c3(D_NH)  (Hz)', fontsize=12)
+ax2.set_title('Per-Residue RDC Variability Across Conformers\n'
+              'Higher = more conformational diversity at this site', fontsize=12)
 ax2.grid(axis='y', ls='--', alpha=0.35)
+import matplotlib.patches as mpatches
+patches2 = [
+    mpatches.Patch(color='#e74c3c', alpha=0.82, label='\u03b1-Helix'),
+    mpatches.Patch(color='#2980b9', alpha=0.82, label='\u03b2-Strands'),
+    mpatches.Patch(color='#7f8c8d', alpha=0.82, label='Loops'),
+]
+ax2.legend(handles=patches2, fontsize=10)
 
 plt.tight_layout()
 plt.show()
 
-n_sig = sum(1 for g in gap if g &gt; 0.1)
-print(f'{n_sig} of {len(common)} NOE pairs: arithmetic mean overestimates by &gt; 0.1 \u00c5')
-worst_res = max(res_gap, key=res_gap.get)
-print(f'Worst residue: {worst_res}  (max overestimate {res_gap[worst_res]:.3f} \u00c5)')</div>
+most_variable = res_all[np.argmax(rdc_std)]
+print(f'Most variable RDC residue: {most_variable}  '
+      f'(\u03c3 = {max(rdc_std):.2f} Hz)')</div>
 </div>
 </div>
 </div>
@@ -2766,17 +2995,23 @@ print(f'Worst residue: {worst_res}  (max overestimate {res_gap[worst_res]:.3f} \
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h2 id="summary">Summary<a class="anchor-link" href="#summary">¶</a></h2><p>By combining <strong>Chemical Shifts</strong> (secondary structure), <strong>Relaxation Rates</strong> (dynamics),
-<strong>J-Couplings</strong> (dihedrals), <strong>NOEs</strong> (distances), and <strong>RDCs</strong> (orientations),
-<code>synth-nmr</code> allows you to construct a comprehensive profile of how your theoretical
-3D model would behave in an NMR magnet!</p>
-<p>The NOE section above highlights two crucial lessons:</p>
-<ol>
-<li><strong>Pair count vs. signal power</strong>: more pairs exist at larger distances (geometry),
-but the $r^{-6}$ weighting means the spectrum is dominated by the closest contacts.</li>
-<li><strong>Ensemble averaging matters</strong>: using the physically correct $r^{-6}$ average
-instead of a simple geometric mean is essential when the protein is flexible.</li>
-</ol>
+<h2 id="summary">Summary<a class="anchor-link" href="#summary">¶</a></h2><p>Using the 10-conformer NMR ensemble of Ubiquitin (PDB: 1D3Z), we have demonstrated
+four key ensemble NMR analysis workflows:</p>
+<p>| Observable | Averaging method | Key insight |
+|---|---|---|
+| <strong>S² order parameter</strong> | $|\langle\hat{\mu}\rangle|^2$ | Direct measure of NH bond mobility — no model fitting needed |
+| <strong>Chemical shifts</strong> | Arithmetic mean | Ensemble-averaged shifts differ most in flexible loops |
+| <strong>NOE distances</strong> | $\langle r^{-6}\rangle^{-1/6}$ | Always shorter than arithmetic mean — short contacts dominate |
+| <strong>RDCs</strong> | Arithmetic mean | Conformer spread reveals dynamic regions at a glance |</p>
+<p>The same workflow applies directly to <strong>MD simulation trajectories</strong>: load your
+trajectory frames (<code>.xtc</code>, <code>.dcd</code>, etc.) via <code>load_trajectory("traj.xtc", topology="protein.pdb")</code>
+after <code>pip install synth-nmr[trajectory]</code>, and the same four analyses run unchanged.</p>
+<h3 id="further-reading">Further reading<a class="anchor-link" href="#further-reading">¶</a></h3><ul>
+<li>Lipari &amp; Szabo (1982) <em>J. Am. Chem. Soc.</em> <strong>104</strong>, 4546 — Model-free formalism</li>
+<li>Clore et al. (1990) <em>J. Am. Chem. Soc.</em> <strong>112</strong>, 4989 — S² from trajectory</li>
+<li>Solomon (1955) <em>Phys. Rev.</em> <strong>99</strong>, 559 — NOE and r⁻⁶ dependence</li>
+<li>Cornilescu et al. (1998) <em>J. Biomol. NMR</em> <strong>13</strong>, 289 — Ubiquitin NMR ensemble</li>
+</ul>
 </div>
 </div>
 </div>
@@ -2825,7 +3060,7 @@ instead of a simple geometric mean is essential when the protein is flexible.</l
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../basic_nmr_prediction/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Basic NMR Prediction Tutorial">
+          <a href="../relaxation_analysis/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Relaxation &amp;amp; Dynamics Analysis">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2835,20 +3070,20 @@ instead of a simple geometric mean is essential when the protein is flexible.</l
                 Previous
               </span>
               <div class="md-ellipsis">
-                Basic NMR Prediction Tutorial
+                Relaxation &amp; Dynamics Analysis
               </div>
             </div>
           </a>
         
         
           
-          <a href="../relaxation_analysis/" class="md-footer__link md-footer__link--next" aria-label="Next: Relaxation &amp;amp; Dynamics Analysis">
+          <a href="../../api/" class="md-footer__link md-footer__link--next" aria-label="Next: Overview">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Relaxation &amp; Dynamics Analysis
+                Overview
               </div>
             </div>
             <div class="md-footer__button md-icon">
