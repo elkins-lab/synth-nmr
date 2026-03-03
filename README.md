@@ -1,6 +1,11 @@
 # synth-nmr
 
 [![Tests](https://github.com/elkins/synth-nmr/actions/workflows/test.yml/badge.svg)](https://github.com/elkins/synth-nmr/actions/workflows/test.yml)
+[![PyPI version](https://img.shields.io/pypi/v/synth-nmr)](https://pypi.org/project/synth-nmr/)
+[![Python versions](https://img.shields.io/pypi/pyversions/synth-nmr)](https://pypi.org/project/synth-nmr/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Mypy](https://img.shields.io/badge/type--checked-mypy-blue)](http://mypy-lang.org/)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
 
 <img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
@@ -18,6 +23,7 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 - **Chemical Shifts**: High-accuracy Neural Network predictions with SPARTA+ empirical fallback
 - **J-Couplings**: Karplus equation for scalar couplings
 - **RDC Calculations**: Prediction of residual dipolar couplings
+- **MD Trajectory / Ensemble NMR**: S², ensemble-averaged shifts, NOEs (r⁻⁶), and RDCs from NMR ensembles or MD trajectories
 - **NEF I/O**: Read and write NMR Exchange Format files
 - **Secondary Structure**: Automatic classification for enhanced predictions
 
@@ -28,6 +34,7 @@ Try out `synth-nmr` immediately in your browser using Google Colab!
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/basic_nmr_prediction.ipynb) **Basic NMR Prediction**
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/advanced_observables.ipynb) **Advanced Observables: J-Couplings, NOEs, and RDCs**
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/ensemble_nmr_analysis.ipynb) **Ensemble NMR Analysis: Proteins in Motion**
 
 ## Installation
 
@@ -38,6 +45,11 @@ pip install synth-nmr
 For improved performance with JIT compilation:
 ```bash
 pip install synth-nmr[performance]
+```
+
+For MD trajectory / ensemble NMR analysis:
+```bash
+pip install synth-nmr[trajectory]
 ```
 
 ## Command-Line Interface
