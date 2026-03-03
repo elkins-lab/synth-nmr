@@ -504,11 +504,6 @@ class TestComputeS2FromTrajectory:
 
     def test_returns_dict_of_residue_ids(self):
         """Return type is dict[int, float] keyed by residue ID."""
-        frames = [
-            _make_nh_frame([0.0, 0.0, 0.0], [0.0, 0.0, 1.02], res_id=i)
-            for i in range(1, 4)
-            for _ in range(5)
-        ]
         # Build separately per residue to keep each frame as one residue
         frame_data = []
         for _ in range(5):

@@ -75,7 +75,7 @@ def process_commands(args: List[str]) -> None:
             # Usage: load trajectory frame1.pdb frame2.pdb [...]
             frame_paths = []
             j = i + 2
-            while j < len(args) and not args[j].lower() in (
+            while j < len(args) and args[j].lower() not in (
                 "load",
                 "ensemble",
                 "read",
