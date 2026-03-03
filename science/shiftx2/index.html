@@ -12,13 +12,13 @@
         <meta name="author" content="George Elkins">
       
       
-        <link rel="canonical" href="https://elkins.github.io/synth-nmr/science/chemical_shifts/">
+        <link rel="canonical" href="https://elkins.github.io/synth-nmr/science/shiftx2/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../chemical_shifts/">
       
       
-        <link rel="next" href="../shiftx2/">
+        <link rel="next" href="../relaxation/">
       
       
         
@@ -29,7 +29,7 @@
     
     
       
-        <title>Chemical Shifts - synth-nmr</title>
+        <title>SHIFTX2 Integration - synth-nmr</title>
       
     
     
@@ -85,7 +85,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#chemical-shifts" class="md-skip">
+        <a href="#shiftx2-integration" class="md-skip">
           Skip to content
         </a>
       
@@ -121,7 +121,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Chemical Shifts
+              SHIFTX2 Integration
             
           </span>
         </div>
@@ -579,6 +579,34 @@
                 
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../chemical_shifts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chemical Shifts
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -598,7 +626,7 @@
   <span class="md-ellipsis">
     
   
-    Chemical Shifts
+    SHIFTX2 Integration
   
 
     
@@ -616,7 +644,7 @@
   <span class="md-ellipsis">
     
   
-    Chemical Shifts
+    SHIFTX2 Integration
   
 
     
@@ -642,55 +670,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#secondary-structure-dependence" class="md-nav__link">
+  <a href="#why-shiftx2-the-accuracy-hierarchy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Secondary Structure Dependence
+        Why SHIFTX2? The Accuracy Hierarchy
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-physics-of-ring-currents" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Physics of Ring Currents
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#synth-nmr-implementation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        synth-nmr Implementation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="synth-nmr Implementation">
+    <nav class="md-nav" aria-label="Why SHIFTX2? The Accuracy Hierarchy">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-predict_chemical_shifts" class="md-nav__link">
+  <a href="#what-makes-shiftx2-different" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function: predict_chemical_shifts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shiftx2-the-primary-predictor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SHIFTX2: The Primary Predictor
+        What makes SHIFTX2 different?
       
     </span>
   </a>
@@ -702,38 +697,126 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#automatic-detection-and-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Detection and Fallback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-shiftx2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing SHIFTX2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing SHIFTX2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-direct-download-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 — Direct download (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-sbgrid-academic-institutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2 — SBGrid (academic institutions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verifying-the-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying the Integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-shiftx2-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using SHIFTX2 Directly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-executable-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Executable Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-synth-nmr-calls-shiftx2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How synth-nmr Calls SHIFTX2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Test Coverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../shiftx2/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    SHIFTX2 Integration
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1315,55 +1398,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#secondary-structure-dependence" class="md-nav__link">
+  <a href="#why-shiftx2-the-accuracy-hierarchy" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Secondary Structure Dependence
+        Why SHIFTX2? The Accuracy Hierarchy
       
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#the-physics-of-ring-currents" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        The Physics of Ring Currents
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#synth-nmr-implementation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        synth-nmr Implementation
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="synth-nmr Implementation">
+    <nav class="md-nav" aria-label="Why SHIFTX2? The Accuracy Hierarchy">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-predict_chemical_shifts" class="md-nav__link">
+  <a href="#what-makes-shiftx2-different" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function: predict_chemical_shifts
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shiftx2-the-primary-predictor" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        SHIFTX2: The Primary Predictor
+        What makes SHIFTX2 different?
       
     </span>
   </a>
@@ -1372,6 +1422,122 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automatic-detection-and-fallback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Detection and Fallback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-shiftx2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Installing SHIFTX2
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing SHIFTX2">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#option-1-direct-download-recommended" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 1 — Direct download (recommended)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#option-2-sbgrid-academic-institutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Option 2 — SBGrid (academic institutions)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#verifying-the-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verifying the Integration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-shiftx2-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using SHIFTX2 Directly
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-executable-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Executable Path
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-synth-nmr-calls-shiftx2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How synth-nmr Calls SHIFTX2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#automated-test-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Test Coverage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reference
+      
+    </span>
+  </a>
   
 </li>
       
@@ -1395,52 +1561,246 @@
   
 
 
-<h1 id="chemical-shifts">Chemical Shifts</h1>
-<p>The <strong>Chemical Shift</strong> (<span class="arithmatex">\(\delta\)</span>) is the defining parameter of NMR spectroscopy. The exact resonance frequency (Larmor frequency) of a nucleus is exquisitely sensitive to its local electronic environment.</p>
-<p>Because electrons are charged particles in motion, they generate tiny induced magnetic fields that oppose the giant external spectrometer field (<span class="arithmatex">\(B_0\)</span>). We say the nucleus is <strong>shielded</strong> by its electron cloud. </p>
-<div class="arithmatex">\[
-B_{\text{effective}} = B_0 \cdot (1 - \sigma)
-\]</div>
-<p>Where <span class="arithmatex">\(\sigma\)</span> is the chemical shielding tensor. Changes to the backbone conformation, hydrogen bonding, or nearby aromatic rings will change the electron distribution, thereby changing <span class="arithmatex">\(\sigma\)</span>, and resulting in a "shift" in the measurable frequency.</p>
-<h2 id="secondary-structure-dependence">Secondary Structure Dependence</h2>
-<p>The most profound application of chemical shifts in proteins is the determination of secondary structure. Backbone atoms (<span class="arithmatex">\(^{13}\text{C}\alpha\)</span>, <span class="arithmatex">\(^{13}\text{C}\beta\)</span>, <span class="arithmatex">\(^{13}\text{C}'\)</span>, <span class="arithmatex">\(^{15}\text{N}\)</span>, <span class="arithmatex">\(^1\text{H}\alpha\)</span>) show massive, consistent deviations from their random coil values depending on the local <span class="arithmatex">\(\phi / \psi\)</span> dihedral angles.</p>
-<p>The <strong>Chemical Shift Index</strong> (CSI) formalized this:
--   <strong><span class="arithmatex">\(\alpha\)</span>-helices</strong>: <span class="arithmatex">\(^{13}\text{C}\alpha\)</span> heavily shifts downfield (positive <span class="arithmatex">\(\Delta\delta\)</span>), while <span class="arithmatex">\(^{13}\text{C}\beta\)</span> shifts upfield (negative <span class="arithmatex">\(\Delta\delta\)</span>).
--   <strong><span class="arithmatex">\(\beta\)</span>-sheets</strong>: The exact opposite.<span class="arithmatex">\(^{13}\text{C}\alpha\)</span> shifts upfield, <span class="arithmatex">\(^{13}\text{C}\beta\)</span> shifts downfield.</p>
-<p>By simply analyzing the assigned backbone chemical shifts without any structures or distance restraints, a researcher can perfectly map the secondary structural elements of the protein.</p>
-<h2 id="the-physics-of-ring-currents">The Physics of Ring Currents</h2>
-<p>A dramatic source of chemical shifting arises from <strong>Aromatic Ring Currents</strong>. </p>
-<p>Residues like Phenylalanine, Tyrosine, and Tryptophan possess delocalized <span class="arithmatex">\(\pi\)</span>-electron clouds above and below the plane of their aromatic rings. When placed in the <span class="arithmatex">\(B_0\)</span> spectrometer field, these <span class="arithmatex">\(\pi\)</span>-electrons freely circulate in a loop, acting like a tiny electromagnet.</p>
-<p>This ring current generates a powerful, highly localized magnetic field. If a proton from another residue is spatially folded such that it sits <em>directly above</em> the face of a Tryptophan ring, it will experience a massive opposing field from the ring current. It will be strongly <strong>shielded</strong>, and its chemical shift will move drastically upfield (even into negative ppm territories!).</p>
-<p>Because this effect is entirely dependent on 3D spatial geometry (distance and angle from the ring plane), predicting ring current shifts is a powerful way to validate tertiary folds.</p>
+<h1 id="shiftx2-integration">SHIFTX2 Integration</h1>
+<p>SHIFTX2 is a state-of-the-art chemical shift prediction tool that combines a
+hybrid machine-learning / empirical physics approach to predict backbone and
+side-chain NMR chemical shifts from 3D protein coordinates.  When installed,
+<code>synth-nmr</code> uses it automatically as the <strong>primary</strong> prediction engine, falling
+back to its built-in SPARTA+ empirical model when SHIFTX2 is unavailable.</p>
 <hr />
-<h2 id="synth-nmr-implementation"><code>synth-nmr</code> Implementation</h2>
-<p><code>synth-nmr</code> utilizes empirical algorithms based on the <strong>SPARTA+</strong> methodology to predict chemical shifts directly from 3D coordinates.</p>
-<h3 id="function-predict_chemical_shifts">Function: <code>predict_chemical_shifts</code></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_chemical_shifts</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Predict H, N, CA, CB, and C&#39; shifts for every residue</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">shifts</span> <span class="o">=</span> <span class="n">predict_chemical_shifts</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">shifts</span><span class="p">[</span><span class="mi">10</span><span class="p">][</span><span class="s1">&#39;CA&#39;</span><span class="p">])</span> <span class="c1"># Output: 56.4 (ppm)</span>
-</span></code></pre></div>
-<p><strong>Key Steps in the Algorithm</strong>:
-1.  <strong>Backbone Geometry</strong>: The algorithm identifies primary secondary structures using Ramachandran <span class="arithmatex">\(\phi / \psi\)</span> binning and applies base conformation shifts.
-2.  <strong>Ring Current Corrections</strong>: The algorithm identifies all aromatic rings (PHE, TYR, TRP, HIS) and establishes their geometric normal vectors. It then calculates the Haigh-Mallion spatial integral to apply shielding/deshielding corrections to all neighboring atoms based on their exact Cartesian distance and elevation angle from the ring center.</p>
-<h3 id="shiftx2-the-primary-predictor">SHIFTX2: The Primary Predictor</h3>
-<p>By default, <code>predict_chemical_shifts()</code> first attempts to use <strong>SHIFTX2</strong>, a
-state-of-the-art hybrid machine-learning predictor (Han et al. 2011) that achieves
-roughly half the error of SPARTA+ fragment-mining methods (~0.44 ppm Cα RMSD vs.
-~0.9–1.1 ppm).  If SHIFTX2 is not installed or encounters an error, the function
-automatically falls back to the SPARTA+ empirical model described above.</p>
-<p>See the <strong><a href="../shiftx2/">SHIFTX2 Integration</a></strong> page for:</p>
+<h2 id="why-shiftx2-the-accuracy-hierarchy">Why SHIFTX2?  The Accuracy Hierarchy</h2>
+<p>Chemical shift prediction from structure is a hard problem.  Three broad approaches exist,
+in increasing order of accuracy:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Basis</th>
+<th>Typical Cα RMSD</th>
+<th>Used in <code>synth-nmr</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Random coil + secondary structure offsets</strong></td>
+<td>Amino acid type + Ramachandran bin</td>
+<td>~2–3 ppm</td>
+<td>Built-in fallback (SPARTA+ style)</td>
+</tr>
+<tr>
+<td><strong>Database / fragment mining</strong></td>
+<td>Nearest-neighbour search in known PDB+BMRB pairs</td>
+<td>~0.9–1.1 ppm</td>
+<td>SPARTA+ (Han et al. 2011)</td>
+</tr>
+<tr>
+<td><strong>SHIFTX2</strong></td>
+<td>Hybrid ML + physics (ensemble of random forests, SVMs, ANNs)</td>
+<td><strong>~0.44 ppm Cα</strong></td>
+<td><strong>Primary (auto-detected)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The ~2× improvement in Cα RMSD between fragment-mining and SHIFTX2 is not merely
+academic.  For structure validation, a 0.5 ppm artefact can mask or manufacture
+secondary chemical shift signatures.  SHIFTX2's per-atom models also cover
+side-chain nuclei (Hβ, Cγ, etc.) that simpler methods typically approximate
+or omit entirely.</p>
+<h3 id="what-makes-shiftx2-different">What makes SHIFTX2 different?</h3>
+<p>SHIFTX2 (Han et al., 2011) trains separate machine-learning models for each heavy-atom
++ proton type (HA, CA, CB, C', N, HN …) using a curated reference database of
+proteins with both known high-resolution structures and experimentally assigned
+chemical shifts (the BMRB).  Each model is a committee of learners trained on
+descriptor features that encode:</p>
 <ul>
-<li>Why SHIFTX2 is significantly more accurate</li>
-<li>Step-by-step installation instructions</li>
-<li>How the automatic detection and fallback works</li>
-<li>Direct API usage (<code>ShiftX2Predictor</code> class)</li>
-<li>A table of all automated test cases</li>
+<li>Backbone torsion angles (φ, ψ, χ₁, χ₂)</li>
+<li>Hydrogen bond geometry (donor/acceptor distance and angle)</li>
+<li>Ring current effects (explicit geometry, not just intensity factors)</li>
+<li>Solvent accessibility (SASA)</li>
+<li>Neighbouring residue identity (i±1, i±2)</li>
 </ul>
+<p>This is qualitatively richer than the SPARTA+ implementation in <code>synth-nmr</code>, which
+applies per-secondary-structure mean offsets and a point-dipole ring current model.</p>
+<hr />
+<h2 id="automatic-detection-and-fallback">Automatic Detection and Fallback</h2>
+<p><code>predict_chemical_shifts()</code> in <code>synth-nmr</code> follows this logic every time it is called:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>┌─────────────────────────────────────────────────┐
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>│  predict_chemical_shifts(structure)              │
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│                                                 │
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│  1. Is &#39;shiftx2.py&#39; executable in PATH?         │
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│     YES → run SHIFTX2 subprocess                │
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│            └─ non-empty output? → return it ✓   │
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>│            └─ empty / crash?    → ⚠ log warning  │
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>│     NO  → ⚠ log warning                         │
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>│                                                 │
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>│  2. Fallback: predict_empirical_shifts()         │
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>│     (SPARTA+ offsets + ring current model)      │
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>└─────────────────────────────────────────────────┘
+</span></code></pre></div>
+<p>This design means:</p>
+<ul>
+<li><strong>Zero configuration required</strong> — if SHIFTX2 is not installed, everything still
+  works, just with ~2× higher shift RMSDs.</li>
+<li><strong>No silent failure</strong> — a <code>logging.WARNING</code> is emitted whenever the fallback fires,
+  so the user is never unaware of which engine is running.</li>
+<li><strong>Crash-safe</strong> — if SHIFTX2 exits with a non-zero return code, the exception is
+  caught and logged; the empirical model takes over.</li>
+</ul>
+<hr />
+<h2 id="installing-shiftx2">Installing SHIFTX2</h2>
+<p>SHIFTX2 is free for non-commercial use.  Two installation routes:</p>
+<h3 id="option-1-direct-download-recommended">Option 1 — Direct download (recommended)</h3>
+<ol>
+<li>Go to <a href="http://www.shiftx2.ca/download.html">http://www.shiftx2.ca/download.html</a></li>
+<li>Download the version matching your OS (Linux/macOS).</li>
+<li>Unpack the archive and make the script executable:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>chmod<span class="w"> </span>+x<span class="w"> </span>shiftx2.py
+</span></code></pre></div>
+<ol>
+<li>Move it into your PATH (or add the directory to PATH):</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Example: move to a directory already on PATH</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>mv<span class="w"> </span>shiftx2.py<span class="w"> </span>/usr/local/bin/shiftx2.py
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Or add to PATH in your shell profile</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/path/to/shiftx2_dir:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+</span></code></pre></div>
+<ol>
+<li>Verify installation:</li>
+</ol>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>shiftx2.py<span class="w"> </span>--help
+</span></code></pre></div>
+<h3 id="option-2-sbgrid-academic-institutions">Option 2 — SBGrid (academic institutions)</h3>
+<p>If your institution is an SBGrid subscriber:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>sbgrid-cli<span class="w"> </span>install<span class="w"> </span>shiftx2
+</span></code></pre></div>
+<p>After installation, <code>shiftx2.py</code> will be available in the SBGrid PATH automatically.</p>
+<hr />
+<h2 id="verifying-the-integration">Verifying the Integration</h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.chemical_shifts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShiftX2Predictor</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">predictor</span> <span class="o">=</span> <span class="n">ShiftX2Predictor</span><span class="p">()</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SHIFTX2 available:&quot;</span><span class="p">,</span> <span class="n">predictor</span><span class="o">.</span><span class="n">is_available</span><span class="p">())</span>
+</span></code></pre></div>
+<p>To verify end-to-end:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_chemical_shifts</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>   <span class="c1"># so you can see which engine is used</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">structure</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">&quot;protein.pdb&quot;</span><span class="p">)</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">shifts</span> <span class="o">=</span> <span class="n">predict_chemical_shifts</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Inspect a few Cα shifts</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="k">for</span> <span class="n">res_id</span><span class="p">,</span> <span class="n">atoms</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">())[:</span><span class="mi">5</span><span class="p">]:</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Res </span><span class="si">{</span><span class="n">res_id</span><span class="si">}</span><span class="s2">: Cα = </span><span class="si">{</span><span class="n">atoms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CA&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2"> ppm&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The log output will say either:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>INFO  synth_nmr.chemical_shifts: Successfully predicted chemical shifts using SHIFTX2.
+</span></code></pre></div>
+<p>or:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>WARNING  synth_nmr.chemical_shifts: SHIFTX2 executable not found in PATH ...
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>         Falling back to empirical chemical shift prediction (SPARTA+ algorithm).
+</span></code></pre></div>
+<hr />
+<h2 id="using-shiftx2-directly">Using SHIFTX2 Directly</h2>
+<p>You can also call the <code>ShiftX2Predictor</code> class directly if you want the raw SHIFTX2
+output without the automatic fallback:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.chemical_shifts</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShiftX2Predictor</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">structure</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">&quot;protein.pdb&quot;</span><span class="p">)</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="n">predictor</span> <span class="o">=</span> <span class="n">ShiftX2Predictor</span><span class="p">()</span>           <span class="c1"># default: looks for &#39;shiftx2.py&#39; in PATH</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="c1"># predictor = ShiftX2Predictor(executable=&quot;/opt/shiftx2/shiftx2.py&quot;)  # custom path</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="k">if</span> <span class="n">predictor</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>    <span class="n">shifts</span> <span class="o">=</span> <span class="n">predictor</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>    <span class="c1"># shifts: {&quot;A&quot;: {1: {&quot;CA&quot;: 52.3, &quot;N&quot;: 122.1, ...}, 2: {...}, ...}}</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="k">else</span><span class="p">:</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SHIFTX2 not installed — see docs for setup instructions&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>The returned dictionary format is identical to <code>predict_empirical_shifts()</code>, so all
+downstream analysis functions (<code>calculate_csi()</code>, <code>ensemble_average_shifts()</code>, etc.)
+work unchanged.</p>
+<hr />
+<h2 id="custom-executable-path">Custom Executable Path</h2>
+<p>If <code>shiftx2.py</code> is not on your PATH (e.g., it's inside a conda environment or module
+system), pass the path explicitly:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">predictor</span> <span class="o">=</span> <span class="n">ShiftX2Predictor</span><span class="p">(</span><span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/path/to/shiftx2.py&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<hr />
+<h2 id="how-synth-nmr-calls-shiftx2">How <code>synth-nmr</code> Calls SHIFTX2</h2>
+<p>Under the hood, <code>ShiftX2Predictor.predict()</code> does exactly what you would do manually:</p>
+<ol>
+<li><strong>Writes a temporary PDB</strong> from the biotite <code>AtomArray</code> to a <code>tempfile.TemporaryDirectory</code>.</li>
+<li><strong>Runs</strong> <code>shiftx2.py -i input.pdb</code> as a subprocess.</li>
+<li><strong>Parses</strong> the <code>.cs</code> CSV output file that SHIFTX2 writes next to the input file.</li>
+<li><strong>Returns</strong> a <code>{chain: {res_id: {atom: shift}}}</code> dict and deletes the temp directory.</li>
+</ol>
+<p>The subprocess output (stdout/stderr) is captured; a non-zero exit code raises
+<code>RuntimeError</code> and triggers the fallback in <code>predict_chemical_shifts()</code>.</p>
+<hr />
+<h2 id="automated-test-coverage">Automated Test Coverage</h2>
+<p>The integration is tested without requiring SHIFTX2 to be installed, using <code>pytest-mock</code>
+to simulate every branch:</p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>What is verified</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_shiftx2_is_available_mocked</code></td>
+<td><code>is_available()</code> returns <code>True</code> when <code>shutil.which</code> finds the executable</td>
+</tr>
+<tr>
+<td><code>test_shiftx2_predict_not_available</code></td>
+<td><code>predict()</code> raises <code>RuntimeError</code> when executable is missing</td>
+</tr>
+<tr>
+<td><code>test_shiftx2_predict_subprocess_error</code></td>
+<td><code>predict()</code> raises <code>RuntimeError</code> on non-zero subprocess exit</td>
+</tr>
+<tr>
+<td><code>test_shiftx2_parse_output_missing_file</code></td>
+<td><code>_parse_output()</code> raises <code>FileNotFoundError</code> for absent output</td>
+</tr>
+<tr>
+<td><code>test_shiftx2_parse_output_bad_format</code></td>
+<td>Malformed CSV lines are silently skipped</td>
+</tr>
+<tr>
+<td><code>test_predict_chemical_shifts_shiftx2_success</code></td>
+<td><code>predict_chemical_shifts()</code> returns SHIFTX2 result when available</td>
+</tr>
+<tr>
+<td><code>test_predict_chemical_shifts_shiftx2_empty</code></td>
+<td>Falls back to SPARTA+ when SHIFTX2 returns empty dict</td>
+</tr>
+<tr>
+<td><code>test_predict_chemical_shifts_shiftx2_exception</code></td>
+<td>Falls back to SPARTA+ when <code>predict()</code> raises any exception</td>
+</tr>
+<tr>
+<td><code>test_shiftx2_predictor_predict_success</code></td>
+<td>Full subprocess + output parsing with realistic mocked CSV</td>
+</tr>
+</tbody>
+</table>
+<p>All tests pass without SHIFTX2 installed and run in CI on every pull request.</p>
+<hr />
+<h2 id="reference">Reference</h2>
+<blockquote>
+<p>Han, B., Liu, Y., Ginzinger, S., &amp; Wishart, D. (2011).<br />
+<strong>SHIFTX2: significantly improved protein chemical shift prediction.</strong><br />
+<em>Journal of Biomolecular NMR</em>, 50(1), 43–57.<br />
+<a href="https://doi.org/10.1007/s10858-011-9478-4">doi:10.1007/s10858-011-9478-4</a></p>
+</blockquote>
 
 
 
@@ -1478,7 +1838,7 @@ automatically falls back to the SPARTA+ empirical model described above.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Introduction &amp; Theory">
+          <a href="../chemical_shifts/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Chemical Shifts">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1488,20 +1848,20 @@ automatically falls back to the SPARTA+ empirical model described above.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Introduction & Theory
+                Chemical Shifts
               </div>
             </div>
           </a>
         
         
           
-          <a href="../shiftx2/" class="md-footer__link md-footer__link--next" aria-label="Next: SHIFTX2 Integration">
+          <a href="../relaxation/" class="md-footer__link md-footer__link--next" aria-label="Next: Relaxation (Dynamics)">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                SHIFTX2 Integration
+                Relaxation (Dynamics)
               </div>
             </div>
             <div class="md-footer__button md-icon">
