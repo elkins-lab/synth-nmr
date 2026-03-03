@@ -50,7 +50,7 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/elkins/synth-nmr"
 Repository = "https://github.com/elkins/synth-nmr"
-Documentation = "https://github.com/elkins/synth-nmr#readme"
+Documentation = "https://elkins.github.io/synth-nmr/"
 
 [project.scripts]
 synth-nmr-cli = "synth_nmr.synth_nmr_cli:main"
