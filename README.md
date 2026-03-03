@@ -5,7 +5,7 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/synth-nmr)](https://pypi.org/project/synth-nmr/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Mypy](https://img.shields.io/badge/type--checked-mypy-blue)](http://mypy-lang.org/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
 
 <img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">

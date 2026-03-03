@@ -1,0 +1,50 @@
+{
+    "title": "synth-nmr: NMR spectroscopy calculations for protein structures",
+    "description": "A lightweight, standalone Python package for calculating NMR observables from protein structures. Provides tools for NOE distance restraints, R1/R2/heteronuclear NOE relaxation rates, chemical shift prediction (SHIFTX2 with SPARTA+ fallback), J-couplings via the Karplus equation, residual dipolar couplings (RDCs), ensemble/MD-averaged NMR observables, and NMR Exchange Format (NEF) I/O. Originally extracted from the synth-pdb package to provide a focused toolkit compatible with any protein structure source including PDB files, AlphaFold predictions, and MD simulations.",
+    "creators": [
+        {
+            "name": "Elkins, George",
+            "affiliation": "Independent Researcher"
+        }
+    ],
+    "upload_type": "software",
+    "access_right": "open",
+    "license": "MIT",
+    "language": "eng",
+    "keywords": [
+        "NMR spectroscopy",
+        "protein NMR",
+        "structural biology",
+        "chemical shifts",
+        "SPARTA+",
+        "SHIFTX2",
+        "NOE",
+        "relaxation rates",
+        "J-couplings",
+        "residual dipolar couplings",
+        "RDC",
+        "NMR Exchange Format",
+        "NEF",
+        "molecular dynamics",
+        "computational chemistry",
+        "bioinformatics",
+        "Python"
+    ],
+    "related_identifiers": [
+        {
+            "identifier": "https://github.com/elkins/synth-nmr",
+            "relation": "isSupplementTo",
+            "scheme": "url"
+        },
+        {
+            "identifier": "https://pypi.org/project/synth-nmr/",
+            "relation": "isIdenticalTo",
+            "scheme": "url"
+        },
+        {
+            "identifier": "https://elkins.github.io/synth-nmr/",
+            "relation": "isDocumentedBy",
+            "scheme": "url"
+        }
+    ]
+}
