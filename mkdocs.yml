@@ -8,6 +8,7 @@ copyright: Copyright &copy; 2026 George Elkins
 
 theme:
   name: material
+  custom_dir: docs/overrides
   features:
     - navigation.tabs
     - navigation.tabs.sticky
