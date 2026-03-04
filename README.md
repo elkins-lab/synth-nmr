@@ -7,6 +7,7 @@
 [![Mypy](https://img.shields.io/badge/type--checked-mypy-blue)](http://mypy-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18855129.svg)](https://doi.org/10.5281/zenodo.18855129)
 
 <img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
 
@@ -240,6 +241,7 @@ If you use synth-nmr in your research, please cite:
   author = {Elkins, George},
   title = {synth-nmr: NMR spectroscopy calculations for protein structures},
   year = {2026},
+  doi = {10.5281/zenodo.18855129},
   url = {https://github.com/elkins/synth-nmr}
 }
 ```
