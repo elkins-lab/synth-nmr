@@ -393,12 +393,22 @@ def calculate_relaxation_rates(
             # Get S2
             s2 = s2_map.get(rid, 0.85)  # Fallback to 0.85 if missing from map
 
-            # Frequencies for J(w)
-            j_0 = spectral_density(0, tau_m, s2)
-            j_wn = spectral_density(omega_n, tau_m, s2)
-            j_wh = spectral_density(omega_h, tau_m, s2)
-            j_diff = spectral_density(omega_h - omega_n, tau_m, s2)
-            j_sum = spectral_density(omega_h + omega_n, tau_m, s2)
+            # Fast internal motion timescale (tau_f): heuristic from S2.
+            # In the Lipari-Szabo model, flexible residues (low S2) undergo fast
+            # local motions on the ps timescale; rigid residues (high S2) have
+            # negligible internal dynamics (tau_f → 0). Without a non-zero tau_f
+            # the (1−S2) term in J(ω) vanishes and S2 cancels in the NOE ratio,
+            # giving an unphysical flat line. This heuristic spans ~50 ps (rigid)
+            # to ~550 ps (fully flexible), consistent with MD-derived tau_f values.
+            # Reference: Lipari & Szabo (1982) J Am Chem Soc 104:4546.
+            tau_f = (1.0 - s2) * 500e-12 + 50e-12  # 50–550 ps
+
+            # Frequencies for J(w) — now with per-residue tau_f
+            j_0 = spectral_density(0, tau_m, s2, tau_f)
+            j_wn = spectral_density(omega_n, tau_m, s2, tau_f)
+            j_wh = spectral_density(omega_h, tau_m, s2, tau_f)
+            j_diff = spectral_density(omega_h - omega_n, tau_m, s2, tau_f)
+            j_sum = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
 
             # Calculate Rates
             # R1 (Longitudinal Relaxation Rate)
