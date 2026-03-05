@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.2] - 2026-03-04
+
+### Fixed
+
+- **`synth_nmr/relaxation.py`** — `calculate_relaxation_rates()`: Heteronuclear NOE
+  values were identical for every residue (a flat horizontal line), regardless of
+  backbone flexibility.  Root cause: when the fast internal motion timescale `tau_f`
+  defaults to 0, the order parameter S² cancels exactly in the ratio of the
+  cross-relaxation rate to R₁, making NOE a function of τ_m and field strength only.
+  Fix: a per-residue `tau_f` is now derived from S² using the heuristic
+  `tau_f = (1 − S²) × 500 ps + 50 ps` (range 50–550 ps), consistent with
+  MD-derived backbone timescales.  Flexible residues (low S²) now correctly produce
+  lower HetNOE values (approaching 0 and negative) while rigid secondary-structure
+  elements (high S²) give HetNOE ≈ 0.5–0.8, matching experimental profiles.
+  Reference: Lipari & Szabo (1982) *J Am Chem Soc* **104**:4546.
+
 ## [0.7.0] - 2026-03-03
+
 
 ### Added
 
