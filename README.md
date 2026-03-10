@@ -37,6 +37,11 @@ Try out `synth-nmr` immediately in your browser using Google Colab!
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
 - [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/ensemble_nmr_analysis.ipynb) **Ensemble NMR Analysis: Proteins in Motion**
 
+## AI Assistant & Interactive Documentation
+
+**[NotebookLM Source Guide](https://notebooklm.google.com/)**  
+We've assembled the repository documentation, roadmap, and core physics code into a single curated text file: `synth_nmr_source_guide.txt`. You can upload this file directly to Google's NotebookLM to instantly create an interactive, AI-powered study guide. Use it to chat with the codebase, learn the underlying NMR spectroscopy physics, or ask how to use the CLI and API!
+
 ## Installation
 
 ```bash

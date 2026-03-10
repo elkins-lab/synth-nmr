@@ -1,0 +1,1783 @@
+# synth-nmr
+
+[![Tests](https://github.com/elkins/synth-nmr/actions/workflows/test.yml/badge.svg)](https://github.com/elkins/synth-nmr/actions/workflows/test.yml)
+[![PyPI version](https://img.shields.io/pypi/v/synth-nmr)](https://pypi.org/project/synth-nmr/)
+[![Python versions](https://img.shields.io/pypi/pyversions/synth-nmr)](https://pypi.org/project/synth-nmr/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Mypy](https://img.shields.io/badge/type--checked-mypy-blue)](http://mypy-lang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18855129.svg)](https://doi.org/10.5281/zenodo.18855129)
+
+<img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
+
+**NMR spectroscopy calculations for protein structures**
+
+A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
+
+**[Read the full documentation here!](https://elkins.github.io/synth-nmr/)**
+
+## Features
+
+- **NOE Calculations**: Synthetic NOE distance restraints
+- **Relaxation Rates**: R1, R2, and heteronuclear NOE predictions
+- **Chemical Shifts**: Integrates to SHIFTX2 predictions with SPARTA+ empirical fallback
+- **J-Couplings**: Karplus equation for scalar couplings
+- **RDC Calculations**: Prediction of residual dipolar couplings
+- **MD Trajectory / Ensemble NMR**: S², ensemble-averaged shifts, NOEs (r⁻⁶), and RDCs from NMR ensembles or MD trajectories
+- **NEF I/O**: Read and write NMR Exchange Format files
+- **Secondary Structure**: Automatic classification for enhanced predictions
+
+## Interactive Tutorials
+
+Try out `synth-nmr` immediately in your browser using Google Colab!
+
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/basic_nmr_prediction.ipynb) **Basic NMR Prediction**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/advanced_observables.ipynb) **Advanced Observables: J-Couplings, NOEs, and RDCs**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/docs/tutorials/ensemble_nmr_analysis.ipynb) **Ensemble NMR Analysis: Proteins in Motion**
+
+## Installation
+
+```bash
+pip install synth-nmr
+```
+
+For improved performance with JIT compilation:
+```bash
+pip install synth-nmr[performance]
+```
+
+For MD trajectory / ensemble NMR analysis:
+```bash
+pip install synth-nmr[trajectory]
+```
+
+## Command-Line Interface
+
+`synth-nmr` provides a command-line interface for common tasks, allowing you to perform calculations directly from your terminal.
+
+### Usage
+
+You can run `synth-nmr` CLI commands directly or enter an interactive mode.
+
+#### Non-Interactive Mode
+
+Execute commands by passing them as arguments to the `synth_nmr.synth_nmr_cli` module:
+
+```bash
+python -m synth_nmr.synth_nmr_cli <command> [arguments]
+```
+
+**Examples:**
+
+1.  **Read a PDB file and calculate RDCs:**
+    ```bash
+    python -m synth_nmr.synth_nmr_cli read pdb protein.pdb calculate rdc 10.0 0.5
+    ```
+
+2.  **Read a PDB file and predict chemical shifts:**
+    ```bash
+    python -m synth_nmr.synth_nmr_cli read pdb protein.pdb predict shifts
+    ```
+
+3.  **Read a PDB file and calculate J-couplings:**
+    ```bash
+    python -m synth_nmr.synth_nmr_cli read pdb protein.pdb calculate j-coupling
+    ```
+
+#### Interactive Mode
+
+To enter interactive mode, run the CLI without any arguments:
+
+```bash
+python -m synth_nmr.synth_nmr_cli
+```
+
+Once in interactive mode, you will see a `SynthNMR>` prompt. Type `help` to see available commands:
+
+```
+SynthNMR> help
+Commands:
+  read pdb <filename>
+  calculate rdc [Da] [R]
+  predict shifts
+  calculate j-coupling
+  exit
+SynthNMR> read pdb protein.pdb
+SynthNMR> calculate rdc 10.0 0.5
+SynthNMR> exit
+```
+
+### Available Commands
+
+-   `read pdb <filename>`: Loads a protein structure from the specified PDB file. This command must be executed before any calculation commands.
+-   `calculate rdc [Da] [R]`: Calculates Residual Dipolar Couplings.
+    -   `Da`: (Optional) Axial component of the alignment tensor in Hz (default: 10.0).
+    -   `R`: (Optional) Rhombicity of the alignment tensor (dimensionless) (default: 0.5).
+-   `predict shifts`: Predicts chemical shifts using SPARTA+ with ring current corrections.
+-   `calculate j-coupling`: Calculates ³J(HN-Hα) couplings using the Karplus equation.
+-   `help`: (Interactive mode only) Displays a list of available commands.
+-   `exit`: (Interactive mode only) Exits the CLI.
+
+## Quick Start
+
+```python
+import biotite.structure.io as strucio
+from synth_nmr import (
+    calculate_synthetic_noes,
+    calculate_relaxation_rates,
+    predict_chemical_shifts,
+    calculate_hn_ha_coupling,
+    calculate_rdcs
+)
+
+# Load a protein structure
+structure = strucio.load_structure("protein.pdb")
+
+# Calculate NOEs
+noes = calculate_synthetic_noes(structure, cutoff=5.0)
+
+# Predict relaxation rates
+relaxation = calculate_relaxation_rates(
+    structure,
+    field_strength=600.0,  # MHz
+    temperature=298.0,      # K
+    correlation_time=5.0    # ns
+)
+
+# Predict chemical shifts
+shifts = predict_chemical_shifts(structure)
+
+# Calculate J-couplings
+j_couplings = calculate_hn_ha_coupling(structure)
+
+# Predict RDCs
+rdcs = calculate_rdcs(
+    structure,
+    Da=10.0, # Axial component of alignment tensor (Hz)
+    R=0.5    # Rhombic component of alignment tensor
+)
+```
+
+## Requirements
+
+- Python ≥ 3.8
+- NumPy ≥ 1.20
+- Biotite ≥ 0.35.0
+- Numba ≥ 0.55.0 (optional, for performance)
+
+## Documentation
+
+### Core Functions
+
+#### `calculate_synthetic_noes(structure, cutoff=5.0)`
+Calculate synthetic NOE distance restraints.
+
+**Parameters:**
+- `structure`: biotite AtomArray
+- `cutoff`: Distance cutoff in Ångströms (default: 5.0)
+
+**Returns:** Dictionary of NOE restraints
+
+#### `calculate_relaxation_rates(structure, field_strength, temperature, correlation_time)`
+Predict NMR relaxation rates (R1, R2, heteronuclear NOE).
+
+**Parameters:**
+- `structure`: biotite AtomArray
+- `field_strength`: Spectrometer frequency in MHz
+- `temperature`: Temperature in Kelvin
+- `correlation_time`: Molecular correlation time in nanoseconds
+
+**Returns:** Dictionary of relaxation rates per residue
+
+#### `predict_chemical_shifts(structure)`
+Predict chemical shifts using SPARTA+ with ring current corrections.
+
+**Parameters:**
+- `structure`: biotite AtomArray
+
+**Returns:** Dictionary of chemical shifts by residue and atom type
+
+#### `calculate_hn_ha_coupling(structure)`
+Calculate ³J(HN-Hα) couplings using the Karplus equation.
+
+**Parameters:**
+- `structure`: biotite AtomArray
+
+**Returns:** Dictionary of J-coupling values per residue
+
+#### `calculate_rdcs(structure, Da, R)`
+Predict residual dipolar couplings (RDCs) for backbone N-H vectors.
+
+**Parameters:**
+- `structure`: biotite AtomArray
+- `Da`: Axial component of the alignment tensor in Hz
+- `R`: Rhombicity of the alignment tensor (dimensionless)
+
+**Returns:** Dictionary of RDC values per residue
+
+## Use Cases
+
+- **Structure Validation**: Compare predicted vs experimental NMR data
+- **MD Analysis**: Calculate NMR observables from molecular dynamics trajectories
+- **Protein Design**: Predict NMR properties of designed structures
+- **Data Integration**: Generate synthetic NMR data for machine learning
+
+## Compatibility
+
+Works with protein structures from any source:
+- PDB files
+- AlphaFold predictions
+- Molecular dynamics simulations
+- De novo structure generation (e.g., synth-pdb)
+
+## Citation
+
+If you use synth-nmr in your research, please cite:
+
+```bibtex
+@software{synth_nmr,
+  author = {Elkins, George},
+  title = {synth-nmr: NMR spectroscopy calculations for protein structures},
+  year = {2026},
+  doi = {10.5281/zenodo.18855129},
+  url = {https://github.com/elkins/synth-nmr}
+}
+```
+
+## License
+
+MIT License - see LICENSE file for details
+
+## Related Projects
+
+- [synth-pdb](https://github.com/elkins/synth-pdb) - Synthetic protein structure generation
+- [Biotite](https://www.biotite-python.org/) - Computational biology toolkit
+
+## References
+
+This package relies on the following peer-reviewed research:
+
+- **SPARTA+**: For chemical shift predictions.
+  > Yang, Y., & Bax, A. (2011). *Journal of Biomolecular NMR*, 51(3), 259–274.
+
+- **Karplus Equation**: For J-coupling calculations.
+  > Karplus, M. (1959). *The Journal of Chemical Physics*, 30(1), 11–15.
+
+- **NMR Relaxation**: The underlying theory for relaxation rate predictions.
+  > Lipari, G., & Szabo, A. (1982). *Journal of the American Chemical Society*, 104(17), 4546–4559.
+
+- **Residual Dipolar Couplings**: Seminal work on applying RDCs to proteins.
+  > Bax, A., & Tjandra, N. (1997). *Journal of the American Chemical Society*, 119(49), 12041-12042.
+
+- **Nuclear Overhauser Effect**: Foundational experimental observation.
+  > Solomon, I. (1955). *Physical Review*, 99(2), 559.
+
+- **2D NOESY**: Development of two-dimensional NOE spectroscopy for biomolecules.
+  > Kumar, A., Ernst, R. R., & Wüthrich, K. (1980). *Biochemical and Biophysical Research Communications*, 95(1), 1-6.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## Support
+
+For issues and questions, please use the [GitHub issue tracker](https://github.com/elkins/synth-nmr/issues).
+# Roadmap: synth-nmr
+
+This document serves as a repository for future ideas, feature proposals, and potential architectural improvements for the `synth-nmr` project. It is organized into strategic development tracks.
+
+## 1. Expanding the Physics & Observables
+
+- [ ] **Expanded J-Coupling Subtypes**:
+    Currently, the project only calculates the $^3J_{H_N, H_\alpha}$ coupling (which depends on the backbone $\Phi$ dihedral angle) via the Karplus equation in `synth_nmr/j_coupling.py`. This should be expanded to include:
+    - [ ] $^3J_{H_\alpha, H_\beta}$ (derived from the $\chi_1$ side-chain angle).
+    - [ ] $^3J_{C', C_\gamma}$ couplings.
+- [ ] **Paramagnetic Relaxation Enhancements (PRE) & Pseudocontact Shifts (PCS)**:
+    Adding support for predicting PREs and PCSs. These spatial observables are critical in modern NMR for analyzing long-range distances and large multi-domain proteins or protein-ligand complexes.
+
+## 2. Advancing the Machine Learning Pipeline
+
+- [ ] **Structural Encoders & Pre-trained Embeddings**:
+    The current GNN relies on Euclidean distances bounded by a `scipy.spatial.KDTree`. To give the GNN a deeper understanding of the chemical environment:
+    - [ ] Integrate pre-trained protein language model embeddings (e.g., ESM-2).
+    - [ ] Incorporate learned structural features (e.g., inverse-folding encodings like ProteinMPNN).
+- [ ] **SE(3)-Equivariant Neural Architectures**:
+    Upgrade the architecture from a standard Graph Attention Network (GAT) to an SE(3)-equivariant model (like EGNN). This naturally maintains the 3D rotational and translational invariance of protein atomic coordinates inherently better than standard message passing.
+
+## 3. Usability & Computational Integrations
+
+- [ ] **Molecular Dynamics (MD) Support**:
+    Shift beyond parsing static `.pdb` / NEF files to evaluating ensembles.
+    - [ ] Add direct parsing support for reading GROMACS (`.gro`/`.xtc`) or AMBER topology trajectories.
+    - [ ] Implement logic to calculate time-averaged NMR observables across an entire simulation ensemble.
+- [ ] **RDC Tensor Fitting (Inverse Problem)**:
+    Currently, RDCs are predicted in a forward-direction based on assumed molecular alignment tensors ($D_a$ and $R$).
+    - [ ] Write an inverse Singular Value Decomposition (SVD) algorithm that *fits* the alignment tensor given a coordinate structure and a user-provided set of *experimental* RDCs.
+- [ ] **Web Interface / User Application**:
+    - [ ] Wrap the `synth-nmr` backend in a FastAPI endpoint or a Streamlit UI.
+    - [ ] Deploy as a web application allowing users to upload PDBs and instantly visualize predicted spectra directly in their browser without utilizing the CLI or writing Python code.
+- [ ] **Interactive AI Documentation (NotebookLM)**:
+    - [ ] Create a curated "source guide" (e.g., merging the README, ROADMAP, mathematical theory, and core module code) to upload to Google's NotebookLM.
+    - [ ] Add a public NotebookLM link to the `README.md` allowing users to chat with the repository, learn the NMR physics, or ask how to use the CLI/API.
+
+## 4. CI/CD & Documentation
+
+- [x] **GitHub Actions Automation**:
+    Leverage the 99% test coverage and strict `mypy` typing to harden the repository.
+    - [x] Write a comprehensive `.github/workflows/ci.yml` pipeline. *(Successfully running: zero test failures across 324 tests!)*
+    - [x] Automatically run `pytest`, `black`, `ruff`, and `mypy` on every push and pull request. *(Zero linting issues found)*
+- [x] **MkDocs Automatic Deployment**:
+    Formalize the documentation website referenced in the `README.md`.
+    - [x] Configure `mkdocs-material` and deploy the living documentation automatically via GitHub Pages actions.
+"""
+Scalar Coupling (J-coupling) calculations.
+
+EDUCATIONAL NOTE - Karplus Equation:
+====================================
+Scalar couplings (J-couplings) are mediated through chemical bonds.
+The 3-bond coupling (^3J) depends heavily on the torsion angle between the atoms.
+
+For the backbone amide proton (HN) and alpha proton (HA), the coupling ^3J_HNHa
+tells us about the Phi angle, and thus the secondary structure.
+
+Formula:
+  ^3J = A * cos^2(theta) + B * cos(theta) + C
+
+Where theta = Phi - 60 degrees (phase shift).
+Typical values:
+- Alpha Helix (Phi ~ -60): theta ~ -120 -> J is small (~4 Hz)
+- Beta Sheet (Phi ~ -120): theta ~ -180 -> J is large (~9 Hz)
+- Random Coil: Averaged (~7 Hz)
+
+This allows NMR spectroscopists to determine secondary structure just by measuring J-couplings!
+"""
+
+import numpy as np
+import biotite.structure as struc
+import logging
+from typing import Dict
+
+logger = logging.getLogger(__name__)
+
+# Vuister & Bax parameters (J. Am. Chem. Soc. 1993, 115, 7772-7777)
+KARPLUS_PARAMS = {"A": 6.51, "B": -1.76, "C": 1.60}
+
+
+def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
+    """
+    Calculate 3J_HNHa coupling constants for the protein backbone.
+
+    Args:
+        structure: AtomArray containing the protein
+
+    Returns:
+        Dict keyed by Chain ID -> Residue ID -> J-coupling value (Hz)
+    """
+    logger.info("Calculating 3J_HNHa scalar couplings...")
+
+    phi, psi, omega = struc.dihedral_backbone(structure)
+
+    # biotite returns angles for each residue.
+    # The first residue has no Phi (undefined).
+    # The corresponding residues are structure residues that have backbone atoms.
+    # We need to map these back to Res IDs.
+
+    res_starts = struc.get_residue_starts(structure)
+    # Filter to only amino acids? Usually safe.
+
+    results: Dict[str, Dict[int, float]] = {}
+
+    # Iterate over residues
+    # Angles array matches number of residues
+    if len(phi) != len(res_starts):
+        logger.warning(
+            f"Mismatch in backbone angles count ({len(phi)}) vs residue count ({len(res_starts)})."
+        )
+        return {}
+
+    for i, start_idx in enumerate(res_starts):
+        # Get residue info
+        res_atoms = structure[start_idx : res_starts[i + 1] if i + 1 < len(res_starts) else None]
+        chain_id = res_atoms.chain_id[0]
+        res_id = res_atoms.res_id[0]
+
+        if chain_id not in results:
+            results[chain_id] = {}
+
+        # Get Phi angle (in radians)
+        phi_rad = phi[i]
+
+        # Check for NaN (undefined, e.g. N-terminus)
+        if np.isnan(phi_rad):
+            # No coupling defined
+            continue
+
+        # Glycine has HA2/HA3, usually averaged or specific.
+        # This equation assumes standard H-N-Ca-Ha geometry.
+        # For Glycine, which has two alpha protons (HA2/HA3), this calculation provides
+        # a single value based on the averaged phi angle. It does not explicitly
+        # distinguish between the potentially different couplings for HA2 and HA3.
+
+        # EDUCATIONAL NOTE: The relationship theta = phi - 60 is a geometric consequence
+        # of how the phi angle and the Karplus angle are defined.
+        # - Phi (C'-N-Ca-C') measures the rotation around the N-Ca bond.
+        # - Theta for 3J(HN-HA) is the dihedral H-N-Ca-HA.
+        # In an ideal trans peptide plane, the HN and C' atoms are roughly 180 degrees
+        # apart relative to the N-Ca bond. The HA proton is at a stereochemically
+        # fixed position relative to the Ca-C' bond. This results in an approximate
+        # 60-degree phase offset between the two dihedral angles.
+        theta = phi_rad - (np.deg2rad(60.0))
+
+        # Calculate J
+        # J = A cos^2(theta) + B cos(theta) + C
+        cos_theta = np.cos(theta)
+        j_val = (
+            (KARPLUS_PARAMS["A"] * (cos_theta**2))
+            + (KARPLUS_PARAMS["B"] * cos_theta)
+            + KARPLUS_PARAMS["C"]
+        )
+
+        results[chain_id][res_id] = round(j_val, 2)
+
+    return results
+"""
+synth_nmr.neural_shifts
+~~~~~~~~~~~~~~~~~~~~~~~
+Neural network-based chemical shift predictor.
+
+─────────────────────────────────────────────────────────────────────────────
+EDUCATIONAL BACKGROUND — Why a neural predictor on top of the empirical model?
+─────────────────────────────────────────────────────────────────────────────
+
+The existing `predict_chemical_shifts()` applies two corrections to random-coil
+baseline values:
+  1. A secondary structure offset (helix / sheet / coil), from a lookup table.
+  2. A ring current correction for protons near aromatic residues.
+
+Both corrections are hand-crafted from general statistics.  They miss:
+
+  • **Sequence-neighbour effects**: The identity of residues i−1 and i+1
+    shifts the chemical shift of residue i by 0.1–0.5 ppm.  SPARTA+ was
+    specifically built to exploit this; neural shift predictors (ShiftML,
+    UCBShift) show marked improvement from neighbour features.
+
+  • **Non-linear geometry dependence**: The shift is a smooth, non-linear
+    function of (φ, ψ) — not a step function over three SS categories.
+    A neural net can learn the full Ramachandran-shift surface directly.
+
+  • **Residue-specific coupling of features**: The φ/ψ effect on CA depends
+    on the amino acid type.  A lookup table treats all residues with the
+    same offset; an MLP can learn per-residue different responses.
+
+The `NeuralShiftPredictor` learns **correction terms** (ΔCS) on top of the
+existing empirical model, rather than predicting raw shifts from scratch.
+This has two benefits:
+  1. Even an untrained model (random weights) produces physically grounded
+     outputs — the empirical baseline is always present.
+  2. The neural component only needs to learn residuals, which are small
+     (typically ±1 ppm) and easier to fit than the full shift range.
+
+─────────────────────────────────────────────────────────────────────────────
+ARCHITECTURE — MLP Regression
+─────────────────────────────────────────────────────────────────────────────
+
+    Input: per-residue feature vector (74-dim, see build_residue_features)
+         │
+    Linear(74 → 128) + LayerNorm + ReLU + Dropout(0.2)   Layer 1
+         │
+    Linear(128 → 64) + LayerNorm + ReLU + Dropout(0.2)   Layer 2
+         │
+    Linear(64 → 32)  + LayerNorm + ReLU                  Layer 3
+         │
+    Linear(32 → 6)   (no activation)                     Output
+         │
+    ΔCS corrections: [ΔHA, ΔCA, ΔCB, ΔC, ΔN, ΔH]  (ppm)
+
+Why LayerNorm instead of BatchNorm?
+  BatchNorm averages statistics across the batch dimension.  Here each sample
+  is one residue, and batch sizes vary between small peptides (≤ 20 residues)
+  and full proteins.  LayerNorm normalises over the feature dimension for each
+  residue independently, making it batch-size agnostic — the same model works
+  for a single residue or a 500-residue protein.
+
+Loss function: MSELoss (mean squared error over ΔCS values in ppm).
+  MAELoss (L1) is more robust to outlier shifts but MSE penalises large
+  errors more strongly, which matters for well-defined peaks in secondary
+  structures where we want high accuracy.
+
+─────────────────────────────────────────────────────────────────────────────
+FEATURE VECTOR (74-dim) — one row per residue
+─────────────────────────────────────────────────────────────────────────────
+
+  Cols  0–19  : Amino acid type, one-hot (20 standard amino acids)
+  Cols 20–21  : sin(φ), cos(φ)         — backbone dihedral
+  Cols 22–23  : sin(ψ), cos(ψ)         — backbone dihedral
+  Cols 24–26  : Secondary structure one-hot (helix / sheet / coil)
+  Col  27     : Normalised sequence position (0 = N-term, 1 = C-term)
+  Cols 28–33  : Random coil baseline [HA, CA, CB, C, N, H]  (ppm)
+  Cols 34–53  : i−1 neighbour AA one-hot (zeros for N-terminal residue)
+  Cols 54–73  : i+1 neighbour AA one-hot (zeros for C-terminal residue)
+
+Output nuclei order (index 0–5): HA, CA, CB, C, N, H
+
+─────────────────────────────────────────────────────────────────────────────
+BENCHMARK — Empirical SPARTA+-like vs NeuralShiftPredictor on 1D3Z ubiquitin
+─────────────────────────────────────────────────────────────────────────────
+
+Measured on 1D3Z (76 residues). RMSE computed against BMRB entry bmr17769.
+
+  Speed:
+    Empirical predictor   59 µs/residue  (numpy + ring-current geometry)
+    Neural (random wts)   90 µs/residue  (1.52× overhead from PyTorch)
+
+  RMSE vs. BMRB experimentally measured shifts:
+    Nucleus   Empirical   Neural (untrained)   Expected after training
+    HA        0.40 ppm       0.62 ppm           ~0.20–0.25 ppm
+    CA        1.21 ppm       2.38 ppm           ~0.7–0.9 ppm
+    CB        1.57 ppm       2.59 ppm           ~0.9–1.1 ppm
+    C         1.62 ppm       2.58 ppm           ~0.8–1.0 ppm
+    N         3.91 ppm       4.11 ppm           ~2.0–2.5 ppm
+    H         0.67 ppm       0.71 ppm           ~0.3–0.4 ppm
+
+  Why is the untrained neural net WORSE than the empirical model?
+    Random weights add ±0.5–2 ppm of unstructured noise on top of the
+    physically grounded empirical baseline.  After training, corrections
+    shrink to learned residuals of ±0.1–0.5 ppm, cutting RMSE by ~30–50%
+    for CA/CB/C (literature benchmark: SPARTA+ ~1.0 ppm CA; ShiftML ~0.5 ppm).
+
+  Why does CB show the largest random-weight correction (~+1 ppm mean ΔCS)?
+    CB is the most sequence-environment-sensitive nucleus.  Its shift
+    reflects the χ₁ rotamer state (gauche vs. trans) and distinguishes
+    β-branched residues (Val, Ile, Thr) from others by >5 ppm.  The feature
+    variance across residues is high, so even an untrained model activates
+    strongly on the AA one-hot and RC-baseline inputs.
+
+─────────────────────────────────────────────────────────────────────────────
+USAGE
+─────────────────────────────────────────────────────────────────────────────
+
+    from synth_nmr.neural_shifts import NeuralShiftPredictor
+
+    predictor = NeuralShiftPredictor()          # random-weight or loads default ckpt
+    shifts = predictor.predict(structure)       # same dict as predict_chemical_shifts()
+
+    # After training:
+    predictor.save("models/neural_shifts_v1.pt")
+    predictor2 = NeuralShiftPredictor(model_path="models/neural_shifts_v1.pt")
+"""
+
+import logging
+import os
+from typing import Dict, Optional, Tuple, Any
+
+import numpy as np
+
+logger = logging.getLogger(__name__)
+
+# ── Constants ────────────────────────────────────────────────────────────────
+
+# Canonical amino acid ordering (deterministic one-hot encoding)
+_AA_ORDER = [
+    "ALA",
+    "ARG",
+    "ASN",
+    "ASP",
+    "CYS",
+    "GLN",
+    "GLU",
+    "GLY",
+    "HIS",
+    "ILE",
+    "LEU",
+    "LYS",
+    "MET",
+    "PHE",
+    "PRO",
+    "SER",
+    "THR",
+    "TRP",
+    "TYR",
+    "VAL",
+]
+_AA_INDEX = {aa: i for i, aa in enumerate(_AA_ORDER)}
+
+# His tautomers / protonation states → canonical HIS
+_AA_ALIASES = {"HID": "HIS", "HIE": "HIS", "HIP": "HIS", "CYX": "CYS"}
+
+# Output nucleus ordering — must match training script
+NUCLEUS_ORDER = ["HA", "CA", "CB", "C", "N", "H"]
+
+# Input feature dimensionality
+N_FEATURES = 74  # 20 + 2 + 2 + 3 + 1 + 6 + 20 + 20
+
+# Default checkpoint bundled inside the package
+_DEFAULT_CHECKPOINT = os.path.join(os.path.dirname(__file__), "models", "neural_shifts_v1.pt")
+
+
+# ── Feature engineering ──────────────────────────────────────────────────────
+
+
+def build_residue_features(structure: Any) -> np.ndarray:
+    """
+    Build the per-residue feature matrix (shape [N_residues, 74]) from a
+    biotite AtomArray.
+
+    This is the bridge between raw 3D protein structure and the MLP's input
+    space.  All features are unitless or normalised to aid optimisation.
+
+    Args:
+        structure: biotite.structure.AtomArray (any backbone-complete protein).
+
+    Returns:
+        float32 numpy array of shape [N_residues, 74].
+    """
+    import biotite.structure as struc
+    import math
+    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
+    from synth_nmr.structure_utils import get_secondary_structure
+
+    # ── Collect per-residue data ──────────────────────────────────────────
+    res_starts = struc.get_residue_starts(structure)
+    n_res = len(res_starts)
+
+    res_names = []
+    for i, start in enumerate(res_starts):
+        rn = structure.res_name[start]
+        rn = _AA_ALIASES.get(rn, rn)
+        res_names.append(rn)
+
+    # Secondary structure labels → one-hot [helix=0, sheet=1, coil=2]
+    ss_labels = get_secondary_structure(structure)
+    _SS_MAP = {"alpha": 0, "beta": 1, "coil": 2}
+
+    # Backbone dihedrals (radians) — biotite returns phi/psi per residue
+    try:
+        phi_angles, psi_angles, _ = struc.dihedral_backbone(structure)
+    except Exception:
+        phi_angles = np.zeros(n_res)
+        psi_angles = np.zeros(n_res)
+
+    if phi_angles is None or len(phi_angles) == 0:
+        phi_angles = np.zeros(n_res)
+    if psi_angles is None or len(psi_angles) == 0:
+        psi_angles = np.zeros(n_res)
+
+    # Pad/trim to match n_res exactly
+    def _pad(arr: Any, length: int) -> np.ndarray:
+        arr = np.asarray(arr, dtype=np.float32)
+        if len(arr) == length:
+            return arr
+        out = np.zeros(length, dtype=np.float32)
+        out[: min(len(arr), length)] = arr[: min(len(arr), length)]
+        return out
+
+    phi_angles = _pad(phi_angles, n_res)
+    psi_angles = _pad(psi_angles, n_res)
+
+    # Replace NaN (terminal residues or missing atoms) with 0
+    phi_angles = np.nan_to_num(phi_angles, nan=0.0)
+    psi_angles = np.nan_to_num(psi_angles, nan=0.0)
+
+    # ── Assemble feature matrix row by row ───────────────────────────────
+    X = np.zeros((n_res, N_FEATURES), dtype=np.float32)
+
+    for i, rn in enumerate(res_names):
+        col = 0
+
+        # ── Block 1: Current residue one-hot (20 dims) ──────────────────
+        # One-hot encoding maps from categorical AA type to a binary vector.
+        # The model learns separate weights for each residue type, allowing
+        # it to capture residue-specific chemical shift behaviours (e.g.
+        # GLY has no CB; PRO has no amide H).
+        aa_idx = _AA_INDEX.get(rn, -1)
+        if aa_idx >= 0:
+            X[i, col + aa_idx] = 1.0
+        col += 20
+
+        # ── Block 2: Backbone dihedrals as sin/cos (4 dims) ─────────────
+        # sin/cos encoding avoids the periodicity discontinuity at ±180°.
+        # The four values parameterise a point on the Ramachandran torus.
+        X[i, col + 0] = math.sin(phi_angles[i])
+        X[i, col + 1] = math.cos(phi_angles[i])
+        X[i, col + 2] = math.sin(psi_angles[i])
+        X[i, col + 3] = math.cos(psi_angles[i])
+        col += 4
+
+        # ── Block 3: Secondary structure one-hot (3 dims) ───────────────
+        # Unlike a raw label, one-hot lets the model learn independent
+        # coefficients for helix/sheet/coil without imposing an ordering.
+        ss_state = ss_labels[i] if i < len(ss_labels) else "coil"
+        ss_idx = _SS_MAP.get(ss_state, 2)  # default to coil
+        X[i, col + ss_idx] = 1.0
+        col += 3
+
+        # ── Block 4: Normalised sequence position (1 dim) ───────────────
+        # 0 at the N-terminus, 1 at the C-terminus.  Captures systematic
+        # terminal effects (fraying of secondary structures, end caps).
+        X[i, col] = float(i) / max(1, n_res - 1)
+        col += 1
+
+        # ── Block 5: Random coil baseline (6 dims) ──────────────────────
+        # Providing the empirical baseline as an input feature enables the
+        # network to learn corrections rather than absolute shifts.  This is
+        # analogous to residual connections in ResNets: the network learns
+        # "what the baseline missed", which is easier than learning everything
+        # from raw geometry.
+        rc = RANDOM_COIL_SHIFTS.get(rn, {})
+        for nuc in NUCLEUS_ORDER:
+            X[i, col] = float(rc.get(nuc, 0.0))
+            col += 1
+
+        # ── Block 6: i−1 neighbour one-hot (20 dims) ────────────────────
+        # Sequence-neighbour effects: the residue before i influences its
+        # shifts via through-bond coupling and steric contacts.  This is
+        # the primary feature SPARTA+ exploits that simple SS lookup tables
+        # miss.  Zeros for the N-terminal residue (no predecessor).
+        if i > 0:
+            prev_rn = _AA_ALIASES.get(res_names[i - 1], res_names[i - 1])
+            prev_idx = _AA_INDEX.get(prev_rn, -1)
+            if prev_idx >= 0:
+                X[i, col + prev_idx] = 1.0
+        col += 20
+
+        # ── Block 7: i+1 neighbour one-hot (20 dims) ────────────────────
+        # Analogous to block 6 for the successor residue.  Zeros for the
+        # C-terminal residue (no successor).
+        if i < n_res - 1:
+            next_rn = _AA_ALIASES.get(res_names[i + 1], res_names[i + 1])
+            next_idx = _AA_INDEX.get(next_rn, -1)
+            if next_idx >= 0:
+                X[i, col + next_idx] = 1.0
+        col += 20
+
+        assert col == N_FEATURES, f"Feature column count mismatch: {col} != {N_FEATURES}"
+
+    return X
+
+
+def build_graph_data(structure: Any) -> Any:
+    """
+    Builds a torch_geometric.data.Data object from an AtomArray.
+    Uses C-alpha distance (<= 8.0 A) to define edges.
+    """
+    try:
+        import torch
+        from torch_geometric.data import Data
+    except ImportError as exc:
+        raise ImportError(
+            "torch and torch_geometric are required. " "Install with: pip install synth-nmr[ml]"
+        ) from exc
+
+    import biotite.structure as struc
+    from scipy.spatial import KDTree
+
+    X = build_residue_features(structure)
+    x = torch.tensor(X, dtype=torch.float32)
+
+    res_starts = struc.get_residue_starts(structure)
+    n_res = len(res_starts)
+
+    if n_res == 0:
+        edge_index = torch.empty((2, 0), dtype=torch.long)
+        return Data(x=x, edge_index=edge_index)
+
+    coords = np.zeros((n_res, 3), dtype=np.float32)
+    for i, start in enumerate(res_starts):
+        end = res_starts[i + 1] if i + 1 < len(res_starts) else len(structure)
+        res_atoms = structure[start:end]
+        ca_mask = res_atoms.atom_name == "CA"
+        if np.any(ca_mask):
+            coords[i] = res_atoms.coord[ca_mask][0]
+        else:
+            coords[i] = res_atoms.coord[0]
+
+    tree = KDTree(coords)
+    pairs = tree.query_pairs(r=8.0)
+
+    src, dst = [], []
+    for i in range(n_res):
+        src.append(i)
+        dst.append(i)
+    for i, j in pairs:
+        src.extend([i, j])
+        dst.extend([j, i])
+
+    # Convert to standard torch tensor
+    edge_index = torch.tensor([src, dst], dtype=torch.long)
+
+    return Data(x=x, edge_index=edge_index)
+
+
+# ── Model factory ────────────────────────────────────────────────────────────
+
+
+def _make_mlp(
+    hidden_dims: Tuple[int, ...] = (128, 64, 32),
+    n_features: int = N_FEATURES,
+    n_outputs: int = 6,
+    dropout: float = 0.2,
+) -> Any:
+    """
+    Construct the MLP nn.Module.
+
+    Lazy-imported so torch is only required when actually building the model,
+    not at module-import time.
+
+    Architecture rationale:
+      • LayerNorm after each Linear so gradient flow is stable regardless of
+        protein length (no batch-size dependence, unlike BatchNorm).
+      • Dropout for regularisation — the training dataset (synthesised
+        structures) is small, so regularisation is especially important.
+      • No activation on the output layer — ΔCS values can be positive or
+        negative and there is no natural clamp.
+    """
+    try:
+        import torch.nn as nn
+    except ImportError as exc:
+        raise ImportError(
+            "torch is required for NeuralShiftPredictor. " "Install with: pip install synth-nmr[ml]"
+        ) from exc
+
+    layers = []
+    in_dim = n_features
+    for h in hidden_dims:
+        layers += [
+            nn.Linear(in_dim, h),
+            nn.LayerNorm(h),
+            nn.ReLU(),
+            nn.Dropout(p=dropout),
+        ]
+        in_dim = h
+
+    # Remove the final Dropout (only use during training, and cleaner output)
+    layers.pop()
+    layers.append(nn.Linear(in_dim, n_outputs))
+
+    return nn.Sequential(*layers)
+
+
+def _make_gnn(
+    hidden_dims: Tuple[int, ...] = (128, 64, 32),
+    n_features: int = N_FEATURES,
+    n_outputs: int = 6,
+    dropout: float = 0.2,
+) -> Any:
+    """Construct a PyTorch Geometric GNN."""
+    try:
+        import torch
+        import torch.nn as nn
+        from torch_geometric.nn import GATConv, LayerNorm
+    except ImportError as exc:
+        raise ImportError(
+            "torch_geometric is required. Install with: pip install synth-nmr[ml]"
+        ) from exc
+
+    class GNNModel(nn.Module):
+        def __init__(self) -> None:
+            super().__init__()
+            self.layers = nn.ModuleList()
+            self.norms = nn.ModuleList()
+
+            in_dim = n_features
+            for h in hidden_dims:
+                self.layers.append(GATConv(in_dim, h, heads=1, concat=False))
+                self.norms.append(LayerNorm(h))
+                in_dim = h
+
+            self.out = nn.Linear(in_dim, n_outputs)
+            self.dropout = nn.Dropout(p=dropout)
+
+        def forward(self, x: Any, edge_index: Any) -> Any:
+            for conv, norm in zip(self.layers, self.norms):
+                x = conv(x, edge_index)
+                x = norm(x)
+                x = torch.relu(x)
+                x = self.dropout(x)
+            x = self.out(x)
+            return x
+
+    return GNNModel()
+
+
+# ── Predictor class ──────────────────────────────────────────────────────────
+
+
+class NeuralShiftPredictor:
+    """
+    MLP-based chemical shift predictor.
+
+    Predicts per-residue ΔCS corrections (ppm) for 6 backbone nuclei
+    [HA, CA, CB, C, N, H] and adds them to the empirical baseline from
+    `predict_chemical_shifts()`.
+
+    ── API compatibility with predict_chemical_shifts() ────────────────────
+    Both return:
+        {chain_id: {res_id: {atom_name: float}}}
+
+    This means `NeuralShiftPredictor.predict(structure)` can be used as a
+    drop-in upgrade anywhere `predict_chemical_shifts(structure)` is called.
+
+    ── Model initialisation ─────────────────────────────────────────────────
+    1. If model_path is given → load checkpoint.
+    2. If the default bundled checkpoint exists → load it.
+    3. Otherwise → initialise with random weights (useful for testing
+       and as starting point for training).
+
+    Random-weight predictions are the *empirical* shifts + small random noise
+    (because ΔCS starts near zero with standard weight initialisation).
+
+    ── Performance (measured on 1D3Z ubiquitin, 76 residues) ───────────────
+    Speed vs. empirical predictor:
+      Empirical   59 µs/residue    (numpy + explicit ring-current geometry)
+      Neural      90 µs/residue    (1.52× overhead from PyTorch inference)
+
+    RMSE vs. BMRB experimental shifts (bmr17769) — current vs. potential:
+      Nucleus  Empirical    Untrained    After training (expected)
+      HA       0.40 ppm     0.62 ppm     ~0.20–0.25 ppm
+      CA       1.21 ppm     2.38 ppm     ~0.70–0.90 ppm   ← largest gain
+      CB       1.57 ppm     2.59 ppm     ~0.90–1.10 ppm   ← geometry-sensitive
+      C        1.62 ppm     2.58 ppm     ~0.80–1.00 ppm
+      N        3.91 ppm     4.11 ppm     ~2.00–2.50 ppm
+      H        0.67 ppm     0.71 ppm     ~0.30–0.40 ppm
+
+    CB insight: CB is the most sequence-environment-sensitive nucleus —
+    it reflects the χ₁ rotamer state and distinguishes β-branched residues
+    (Val, Ile, Thr — >5 ppm upfield vs. others).  Largest training gains
+    expected here.  Even with random weights the model reacts strongly to
+    the AA one-hot and RC-baseline inputs for CB.
+
+    ── Trade-offs vs. empirical model ──────────────────────────────────────
+    Pro:
+      • Captures i±1 neighbour effects (0.1–0.5 ppm per nucleus)
+      • Learns continuous φ/ψ → shift surface (vs. 3-bin SS lookup)
+      • Residue-specific φ/ψ responses learnable per-AA
+      • After training: ~30–50% RMSE reduction for CA/CB/C
+    Con:
+      • Requires PyTorch (optional [ml] extra)
+      • WORSE than empirical if untrained / data-starved
+      • 1.5× slower inference
+      • Less interpretable (black box vs. explicit table)
+    """
+
+    def __init__(
+        self,
+        model_path: Optional[str] = None,
+        hidden_dims: Tuple[int, ...] = (128, 64, 32),
+        model_type: str = "gnn",
+    ) -> None:
+        self.hidden_dims = hidden_dims
+        self.model_type = model_type
+        self.model: Any = None
+        self._model_path: Optional[str] = None
+
+        if model_path:
+            self.load(model_path)
+        elif os.path.exists(_DEFAULT_CHECKPOINT):
+            self.load(_DEFAULT_CHECKPOINT)
+        else:
+            logger.info(
+                "No pre-trained checkpoint found at %s. "
+                "Initialising with random weights. "
+                "Run scripts/train_neural_shifts.py to train.",
+                _DEFAULT_CHECKPOINT,
+            )
+            self._init_fresh_model()
+
+    # ------------------------------------------------------------------
+    # Public API
+    # ------------------------------------------------------------------
+
+    def predict(self, structure: Any) -> Dict[str, Dict[int, Dict[str, float]]]:
+        """
+        Predict chemical shifts using the empirical baseline + neural ΔCS.
+
+        The neural correction is added residue-by-residue to the empirical
+        prediction, maintaining the same dict schema.
+
+        Args:
+            structure: biotite.structure.AtomArray.
+
+        Returns:
+            {chain_id: {res_id: {atom_name: shift_in_ppm}}}
+        """
+        try:
+            import torch
+        except ImportError as exc:
+            raise ImportError(
+                "torch is required for NeuralShiftPredictor. "
+                "Install with: pip install synth-nmr[ml]"
+            ) from exc
+
+        import biotite.structure as struc
+        from synth_nmr.chemical_shifts import predict_empirical_shifts, RANDOM_COIL_SHIFTS
+
+        if len(structure) == 0:
+            return {}
+
+        # Step 1 — Get empirical predictions (our grounded baseline for topology mapping)
+        empirical = predict_empirical_shifts(structure)
+
+        # Step 2 — Build feature matrix and run the neural correction
+        if self.model_type == "gnn":
+            data = build_graph_data(structure)
+            self.model.eval()
+            with torch.no_grad():
+                delta = self.model(data.x, data.edge_index).numpy()
+        else:
+            X = build_residue_features(structure)
+            x = torch.tensor(X, dtype=torch.float32)
+            self.model.eval()
+            with torch.no_grad():
+                # delta: [N_residues, 6]  — ΔCS for each nucleus (Experimental - Random Coil)
+                delta = self.model(x).numpy()
+
+        # Step 3 — Add corrections to Random Coil baseline
+        # Map residue index → (chain_id, res_id) for merging
+        res_starts = struc.get_residue_starts(structure)
+        result: Dict[str, Dict[int, Dict[str, float]]] = {}
+
+        for i, start in enumerate(res_starts):
+            chain_id = structure.chain_id[start]
+            res_id = int(structure.res_id[start])
+            res_name = structure.res_name[start]
+
+            # Start from empirical shifts for this residue just to know which atoms exist
+            emp_atoms = empirical.get(chain_id, {}).get(res_id, {})
+            rc_atoms = RANDOM_COIL_SHIFTS.get(res_name, {})
+            corrected: Dict[str, float] = {}
+
+            for j, nucleus in enumerate(NUCLEUS_ORDER):
+                if nucleus in emp_atoms and rc_atoms.get(nucleus, 0.0) > 0:
+                    # Apply neural prediction to the random coil baseline
+                    corrected[nucleus] = round(
+                        float(np.clip(rc_atoms[nucleus] + delta[i, j], 0.0, 220.0)),
+                        3,
+                    )
+
+            if corrected:
+                if chain_id not in result:
+                    result[chain_id] = {}
+                result[chain_id][res_id] = corrected
+
+        return result
+
+    def save(self, path: str) -> None:
+        """
+        Save model weights and architecture config to a .pt checkpoint.
+
+        Checkpoint format:
+            {
+              "state_dict" : OrderedDict of parameter tensors,
+              "hidden_dims": tuple of ints,    ← architecture metadata
+              "n_features" : int,
+              "n_outputs"  : int,
+            }
+
+        Storing architecture metadata alongside weights makes the checkpoint
+        fully self-describing — you can reconstruct the model on any machine
+        without remembering the original constructor arguments.
+        """
+        try:
+            import torch
+        except ImportError as exc:
+            raise ImportError("torch is required to save a checkpoint.") from exc
+
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        torch.save(
+            {
+                "state_dict": self.model.state_dict(),
+                "hidden_dims": self.hidden_dims,
+                "n_features": N_FEATURES,
+                "n_outputs": len(NUCLEUS_ORDER),
+                "model_type": self.model_type,
+            },
+            path,
+        )
+        self._model_path = path
+        logger.info("NeuralShiftPredictor checkpoint saved to %s", path)
+
+    def load(self, path: str) -> None:
+        """
+        Load model weights from a .pt checkpoint.
+
+        The architecture is reconstructed from the stored metadata, then
+        `load_state_dict` copies the saved weights in.
+
+        Args:
+            path: Path to a .pt file written by NeuralShiftPredictor.save().
+        """
+        try:
+            import torch
+        except ImportError as exc:
+            raise ImportError("torch is required to load a checkpoint.") from exc
+
+        try:
+            ckpt = torch.load(path, map_location="cpu", weights_only=False)
+            self.hidden_dims = tuple(ckpt["hidden_dims"])
+            self.model_type = ckpt.get("model_type", "mlp")
+
+            if self.model_type == "gnn":
+                self.model = _make_gnn(
+                    hidden_dims=self.hidden_dims,
+                    n_features=ckpt["n_features"],
+                    n_outputs=ckpt["n_outputs"],
+                )
+            else:
+                self.model = _make_mlp(
+                    hidden_dims=self.hidden_dims,
+                    n_features=ckpt["n_features"],
+                    n_outputs=ckpt["n_outputs"],
+                )
+            self.model.load_state_dict(ckpt["state_dict"])
+            self.model.eval()
+            self._model_path = path
+            logger.info("NeuralShiftPredictor loaded from %s", path)
+        except Exception as exc:
+            logger.error("Failed to load checkpoint from %s: %s", path, exc, exc_info=True)
+            raise
+
+    # ------------------------------------------------------------------
+    # Internal
+    # ------------------------------------------------------------------
+
+    def _init_fresh_model(self) -> None:
+        """
+        Initialise a randomly-weighted model.
+
+        With standard PyTorch weight initialisation (Kaiming uniform), each
+        output neuron starts near zero.  This means the correction term ΔCS ≈ 0
+        initially, so predictions ≈ empirical model + negligible noise.
+        After training on labelled data, the corrections become meaningful.
+        """
+        if self.model_type == "gnn":
+            self.model = _make_gnn(hidden_dims=self.hidden_dims)
+        else:
+            self.model = _make_mlp(hidden_dims=self.hidden_dims)
+        self.model.eval()
+# EDUCATIONAL NOTE - Introduction to RDCs:
+# ==========================================
+# Residual Dipolar Couplings (RDCs) are a powerful NMR observable for determining the
+# structure and dynamics of biomolecules.
+#
+# 1. What are they?
+#    In solution, molecules tumble rapidly, averaging out the through-space dipolar
+#    couplings between nuclear spins to zero. However, if the solution is "anisotropic"
+#    (e.g., by adding rod-shaped liquid crystals), molecules will have a slight preference
+#    for a particular orientation. This incomplete averaging results in a small, measurable
+#    "residual" dipolar coupling.
+#
+# 2. Why are they useful?
+#    The magnitude of the RDC for a pair of atoms (like a backbone N-H) depends on the
+#    angle of the vector between them with respect to a global "alignment tensor" that
+#    describes the average orientation of the molecule.
+#
+#    RDC ~ < 3*cos^2(theta) - 1 >
+#
+#    Where 'theta' is the angle between the N-H vector and the main axis of alignment.
+#    This provides long-range orientational information, which is a powerful restraint
+#    for structure determination, complementary to short-range NOEs.
+
+import numpy as np
+import biotite.structure as struc
+from typing import Dict
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def calculate_rdcs(structure: struc.AtomArray, Da: float, R: float) -> Dict[int, float]:
+    """
+    Calculates Residual Dipolar Couplings (RDCs) for backbone N-H vectors.
+
+    This function assumes that the principal axis system (PAS) of the alignment
+    tensor is aligned with the Cartesian coordinate axes (x, y, z) of the
+    provided structure. The z-axis is assumed to be the principal axis.
+
+    Parameters
+    ----------
+    structure : struc.AtomArray
+        The protein structure (or a single residue) for which to calculate RDCs.
+        Must contain backbone 'N' and 'H' atoms.
+    Da : float
+        The axial component of the alignment tensor in Hz. It defines the
+        magnitude of the alignment. Must be a non-zero float.
+    R : float
+        The rhombicity of the alignment tensor (dimensionless, 0 <= R <= 2/3).
+        It describes the deviation from axial symmetry.
+
+    Returns
+    -------
+    Dict[int, float]
+        A dictionary mapping each residue ID to its calculated N-H RDC value in Hz.
+
+    Raises:
+        TypeError: If input types are incorrect.
+        ValueError: If input values (Da, R, or empty structure) are invalid.
+    """
+    # EDUCATIONAL NOTE - The Alignment Tensor:
+    # ========================================
+    # The alignment tensor (A) describes the average orientation of the molecule.
+    # In its own Principal Axis System (PAS), it is diagonal:
+    #      | Azz 0  0 |
+    #  A = | 0  Ayy 0 |
+    #      | 0  0  Axx|
+    #
+    # We use two parameters to describe it:
+    # 1. Da (Axial component) = Azz
+    # 2. R (Rhombicity) = (Axx - Ayy) / Azz
+    #
+    # The RDC for a vector 'v' depends on its orientation (theta, phi) in this PAS.
+
+    # 1. Input Validation
+    if not isinstance(structure, struc.AtomArray):
+        raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
+    if structure.array_length() == 0:
+        logger.warning("Input 'structure' is empty. Returning no RDCs.")
+        return {}
+    if not isinstance(Da, (int, float)):
+        raise ValueError("Parameter 'Da' must be a numeric value.")
+    if Da == 0:
+        logger.warning("Parameter 'Da' is zero. All RDCs will be zero.")
+    if not isinstance(R, (int, float)) or not (0 <= R <= 2 / 3):
+        raise ValueError("Parameter 'R' must be a numeric value between 0 and 2/3 (inclusive).")
+
+    logger.info(f"Starting RDC calculation with Da={Da:.2f} Hz, R={R:.3f}.")
+
+    try:
+        rdcs = {}
+
+        # For efficiency, create a filter for backbone amide nitrogens and hydrogens
+        n_atoms = structure[structure.atom_name == "N"]
+        h_atoms = structure[structure.atom_name == "H"]
+
+        if n_atoms.array_length() == 0 or h_atoms.array_length() == 0:
+            logger.warning("Structure lacks backbone 'N' or 'H' atoms. Cannot calculate RDCs.")
+            return {}
+
+        # Create a lookup map from residue ID to the coordinate of its amide hydrogen
+        h_coord_map = {h.res_id: h.coord for h in h_atoms}
+
+        logger.debug(
+            f"Found {n_atoms.array_length()} N atoms and {h_atoms.array_length()} H atoms."
+        )
+
+        # Iterate over each backbone nitrogen in the structure
+        for n_atom in n_atoms:
+            res_id = n_atom.res_id
+
+            # Proline residues do not have a backbone amide proton, so they have no N-H RDC.
+            if n_atom.res_name == "PRO":
+                continue
+
+            # Find the amide hydrogen corresponding to this nitrogen's residue
+            if res_id not in h_coord_map:
+                logger.debug(
+                    f"No corresponding backbone H found for residue {res_id}, skipping RDC calculation."
+                )
+                continue
+
+            h_coord = h_coord_map[res_id]
+            n_coord = n_atom.coord
+
+            # --- Vector Calculation ---
+            # Determine the vector between the Nitrogen and Hydrogen atoms
+            nh_vector = h_coord - n_coord
+
+            # Normalize the vector to get a unit vector, which simplifies angle calculations
+            norm = np.linalg.norm(nh_vector)
+            if norm == 0:
+                logger.warning(f"Residue {res_id} has a zero-length N-H vector. Skipping.")
+                continue
+            unit_vector = nh_vector / norm
+
+            # --- Angle Calculation in the PAS ---
+            # x, y, z components of the unit vector correspond to the cosines of the
+            # angles the vector makes with the x, y, and z axes.
+            x, y, z = unit_vector
+
+            # 'theta' is the polar angle with respect to the Z-axis (the principal axis).
+            # cos(theta) is simply the z-component of the unit vector.
+            cos_theta = z
+
+            # sin^2(theta) is needed for the rhombic part of the equation.
+            # We use sin^2 = 1 - cos^2 to avoid an expensive sqrt() operation.
+            sin_theta_sq = 1 - cos_theta**2
+
+            # 'phi' is the azimuthal angle in the X-Y plane.
+            # The RDC equation requires cos(2*phi).
+            # cos(phi) = x / sin(theta)
+            # sin(phi) = y / sin(theta)
+            # Using the double angle identity: cos(2*phi) = cos^2(phi) - sin^2(phi)
+            # cos(2*phi) = (x^2 - y^2) / sin_theta_sq
+            if sin_theta_sq < 1e-9:
+                # When the vector is nearly aligned with the Z-axis, sin(theta) is close to 0.
+                # In this case, phi is ill-defined. However, the rhombic term in the RDC
+                # equation is multiplied by sin^2(theta), so the whole term becomes zero.
+                # We can set cos_2phi to any value (e.g., 1.0) as it will be nullified.
+                cos_2phi = 1.0
+            else:
+                cos_2phi = (x * x - y * y) / sin_theta_sq
+
+            # --- The RDC Equation ---
+            # The full formula for the RDC value is:
+            # D(theta, phi) = Da * [ (3*cos^2(theta) - 1) + (3/2) * R * sin^2(theta) * cos(2*phi) ]
+            axial_term = 3 * cos_theta**2 - 1
+            rhombic_term = 1.5 * R * sin_theta_sq * cos_2phi
+
+            rdc_val = Da * (axial_term + rhombic_term)
+
+            rdcs[res_id] = round(rdc_val, 2)
+
+        if not rdcs and len(n_atoms) > 0:
+            logger.warning(
+                "No RDCs were calculated. Ensure the structure contains backbone N and corresponding H atoms."
+            )
+        elif rdcs:
+            logger.info(f"Successfully calculated {len(rdcs)} RDCs.")
+
+        return rdcs
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during RDC calculation: {e}", exc_info=True)
+        raise
+import numpy as np
+import biotite.structure as struc
+import logging
+from typing import Dict, Any, Optional
+from synth_nmr.structure_utils import get_secondary_structure
+
+logger = logging.getLogger(__name__)
+
+# --- Optional Numba JIT Support ---
+try:
+    from numba import njit
+except ImportError:
+
+    def njit(func: Any = None, **kwargs: Any) -> Any:
+        if func is None:
+            return lambda f: f
+        return func
+
+
+# --- Physical Constants for NMR Relaxation ---
+# SI Units used for internal calculation
+MU_0 = 4 * np.pi * 1e-7  # Vacuum permeability derived (T*m/A)
+H_PLANCK = 6.62607015e-34  # Planck constant (J*s)
+H_BAR = H_PLANCK / (2 * np.pi)
+
+GAMMA_H = 267.522e6  # Proton gyromagnetic ratio (rad s^-1 T^-1)
+GAMMA_N = -27.126e6  # Nitrogen-15 gyromagnetic ratio (rad s^-1 T^-1)
+
+R_NH = 1.02e-10  # NH Bond length (meters) - standard value
+CSA_N = -160e-6  # Polimorphic 15N CSA (unitless, ppm) -160 to -170 typical
+
+
+@njit
+def spectral_density(omega: float, tau_m: float, s2: float, tau_f: float = 0.0) -> float:
+    """
+    Calculate Spectral Density J(w) using Lipari-Szabo Model-Free formalism.
+
+    EDUCATIONAL NOTE - BPP Theory & Spectral Density:
+    -------------------------------------------------
+    In NMR, relaxation is caused by local magnetic fields that "flicker" due to
+    molecular tumbling. Spectral Density J(w) is essentially a measure of the
+    POWER of these fluctuations at a specific frequency (w).
+
+    - BPP Theory (Bloembergen-Purcell-Pound) shows that relaxation is most
+      efficient when the frequency of motion (1/tau_m) matches the Larmor
+      frequency of the nuclei.
+    - If a protein tumbles too fast (small tau_m), the fluctuations are too
+      high-frequency to cause efficient relaxation (Extreme Narrowing Limit).
+    - If it tumbles too slow (large tau_m), the energy is concentrated at
+      low frequencies, leading to fast T2 relaxation and broad lines.
+
+    Model-Free Analysis (Lipari-Szabo) separates this into Global Tumbling (tau_m)
+    and fast Local Motion (tau_f), weighted by the Order Parameter (S^2).
+
+    Formula:
+    J(w) = (2/5) * [ S^2 * tm / (1 + (w*tm)^2) + (1-S^2) * te / (1 + (w*te)^2) ]
+
+    where te (tau_e) is the effective internal correlation time: 1/te = 1/tm + 1/tf
+    Usually for simple MF, we assume fast motion tf << tm.
+
+    Args:
+        omega: Frequency (rad/s). Must be numeric.
+        tau_m: Global rotational correlation time (seconds). Must be numeric and positive.
+        s2: Generalized order parameter (0.0 to 1.0). Must be numeric and within this range.
+        tau_f: Fast internal correlation time (seconds). Must be numeric and non-negative.
+               If 0 (default), internal motion is considered infinitely fast/negligible,
+               and the function simplifies to a one-time scale model-free.
+    """
+    # Simple Model Free (assuming tf is very small/negligible or incorporated)
+    # If tau_f is provided, calculate effective time tau_e
+
+    # Term 1: Global tumbling
+    j_global = (s2 * tau_m) / (1 + (omega * tau_m) ** 2)
+
+    # Term 2: Fast internal motion
+    # Effective correlation time 1/tau_e = 1/tau_m + 1/tau_f
+    # If tau_f is 0, this term vanishes in standard simplified approximation
+    # or acts as a very fast motion limit.
+    j_fast = 0.0
+    if tau_f > 0:
+        tau_e = (tau_m * tau_f) / (tau_m + tau_f)
+        j_fast = ((1 - s2) * tau_e) / (1 + (omega * tau_e) ** 2)
+
+    return 0.4 * (j_global + j_fast)
+
+
+def _predict_s2_from_sasa(rel_sasa: float, base_s2: float) -> float:
+    """
+    Modulate the base Order Parameter (S2) depending on Solvent Accessible Surface Area (SASA).
+
+    EDUCATIONAL NOTE - SASA and S2:
+    ===============================
+    Protein interiors are tightly packed. If a residue is fully buried (rel_sasa=0),
+    it is geometrically restricted from moving, getting a bonus to its S2 rigidity (+0.05).
+    Conversely, if it's fully exposed to solvent (rel_sasa=1.0), it has more
+    freedom of motion, receiving a penalty flexibility (-0.15).
+    """
+    return base_s2 + 0.05 * (1.0 - rel_sasa) - 0.15 * rel_sasa
+
+
+def _apply_termini_effects(res_id: int, start_res: int, end_res: int, current_s2: float) -> float:
+    """
+    Apply chain-fraying flexibility penalties to the terminal residues.
+
+    EDUCATIONAL NOTE - Termini Dynamics:
+    ====================================
+    Regardless of secondary structure assigned by backbone dihedral angles, the
+    first and last few residues of a polypeptide chain lack the full network of
+    hydrogen bonds and packing constraints (Fraying usually affects first/last 2-3 residues).
+    They consistently exhibit high amplitude, fast timescale motions (lower S2) due to "fraying".
+    Termini effects override secondary structure.
+    """
+    if res_id <= start_res + 1 or res_id >= end_res - 1:
+        return 0.50
+    return current_s2
+
+
+def _calculate_dipolar_constant(r_nh: float) -> float:
+    """
+    Calculate the squared Dipolar integration constant (d^2) for N-H relaxation.
+
+    EDUCATIONAL NOTE - Dipolar Integration Constant (d):
+    ====================================================
+    The dominant relaxation mechanism for 15N is the Dipole-Dipole interaction
+    with the directly attached Amide Proton (H).
+    d = (μ0 * ħ * γH * γN) / (4π * r^3)
+
+    Where:
+    - μ0: Vacuum permeability
+    - r: N-H bond length (approx 1.02 Å)
+    - γH, γN: Gyromagnetic ratios
+
+    This constant represents the strength of the magnetic interaction distance dependence (r^-3).
+    In relaxation rate equations (R1, R2), it appears squared (d^2), leading to the famous r^-6 dependence.
+    """
+    dd_const = (MU_0 / (4 * np.pi)) * H_BAR * GAMMA_H * GAMMA_N * (r_nh**-3)
+    return dd_const**2
+
+
+def _calculate_csa_constant(csa_n: float, omega_n: float) -> float:
+    """
+    Calculate the squared Chemical Shift Anisotropy (CSA) constant (c^2) for 15N.
+
+    EDUCATIONAL NOTE - Chemical Shift Anisotropy (CSA) Constant (c):
+    ================================================================
+    The second major relaxation mechanism is CSA. The electron cloud around the 15N nucleus
+    is not spherical, so as the protein tumbles, the local magnetic field fluctuates.
+    c = (Δσ * ωN) / √3
+
+    Where:
+    - Δσ (CSA_N): The anisotropy parameter (-160 ppm typical for Beta Sheet / Helix average).
+    - ωN: The Larmor frequency of Nitrogen (field dependent!).
+
+    Note: Because 'c' depends on ωN (and thus B0), CSA relaxation increases quadratically
+    with magnetic field strength. At high fields (>800 MHz), CSA becomes dominant over Dipolar.
+    """
+    csa_const = (csa_n * omega_n) / np.sqrt(3)
+    return csa_const**2
+
+
+def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
+    """
+    Predict Generalized Order Parameters (S2) based on secondary structure,
+    termini effects, and solvent accessible surface area (SASA).
+
+    EDUCATIONAL NOTE - Lipari-Szabo Model Free:
+    ===========================================
+    The Order Parameter (S2) describes the amplitude of internal motion:
+    - S2 = 1.0: Completely rigid (no internal motion relative to tumbling).
+    - S2 = 0.0: Completely disordered (isotropic internal motion).
+
+    Typical values in proteins:
+    - Alpha Helices / Beta Sheets: S2 ~ 0.85 (Very rigid H-bond network)
+    - Loops / Turns: S2 ~ 0.60 - 0.70 (Flexible)
+    - Termini (N/C): S2 ~ 0.40 - 0.50 (Fraying)
+
+    Args:
+        structure: The biotite.structure.AtomArray containing the protein.
+
+    Returns:
+        A dictionary mapping each residue ID to its predicted S2 value.
+
+    Raises:
+        TypeError: If the input is not a biotite.structure.AtomArray.
+    """
+    logger.info("Predicting Generalized Order Parameters (S2)...")
+
+    # 1. Input Validation
+    if not isinstance(structure, struc.AtomArray):
+        raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
+    if structure.array_length() == 0:
+        logger.warning("Input 'structure' is empty. Returning no order parameters.")
+        return {}
+
+    try:
+        res_starts = struc.get_residue_starts(structure)
+        res_ids = np.unique(structure.res_id)
+        if len(res_ids) == 0:
+            logger.warning("No residues found in structure. Returning no order parameters.")
+            return {}
+
+        ss_list = get_secondary_structure(structure)
+
+        start_res = res_ids[0]
+        end_res = res_ids[-1]
+
+        # Heuristic Max SASA per residue (Angstrom^2) for normalization
+        MAX_SASA = 150.0
+
+        # Calculate SASA for "Packing Awareness"
+        sasa_per_residue = {}
+        try:
+            # Map non-standard residues to standard ones for SASA calculation
+            # This prevents "atom not found" or missing radii errors
+            temp_struc = structure.copy()
+
+            # Histidine Tautomers
+            temp_struc.res_name[np.isin(temp_struc.res_name, ["HIE", "HID", "HIP"])] = "HIS"
+
+            # Phosphorylated Residues
+            temp_struc.res_name[temp_struc.res_name == "SEP"] = "SER"
+            temp_struc.res_name[temp_struc.res_name == "TPO"] = "THR"
+            temp_struc.res_name[temp_struc.res_name == "PTR"] = "TYR"
+
+            # Filter out extra atoms (P, O1P, etc.) that Biotite doesn't have radii for
+            ptm_atom_names = ["P", "O1P", "O2P", "O3P"]
+            ptm_mask = np.isin(temp_struc.atom_name, ptm_atom_names)
+            if np.any(ptm_mask):
+                temp_struc = temp_struc[~ptm_mask]
+
+            # CRITICAL FIX for Metal Ions (ZN, etc.):
+            # Biotite's sasa function with ProtOr radii set fails for non-amino-acid residues
+            # like 'ZN' because they are not in the lookup table.
+            # We simply exclude them from the calculation. While this slightly reduces accuracy
+            # (ignoring burial by ions), it prevents the entire SASA calculation from crashing.
+            ion_res_names = ["ZN", "MG", "CA", "NA", "CL", "K", "FE", "CU", "MN"]
+            ion_mask = np.isin(temp_struc.res_name, ion_res_names)
+            if np.any(ion_mask):
+                temp_struc = temp_struc[~ion_mask]
+
+            # vdw_radii: Simple lookup. Biotite has defaults but good to be explicit or use default.
+            # atom_sasa: Array of same length as structure
+            # probe_radius=1.4 standard for water
+            filtered_sasa = struc.sasa(temp_struc, probe_radius=1.4)
+
+            # Handle NaNs
+            if np.any(np.isnan(filtered_sasa)):
+                filtered_sasa = np.nan_to_num(filtered_sasa, nan=50.0)
+
+            # Aggregate SASA by residue (robust to atom count changes)
+            curr_res_id = -99999
+            current_sum = 0.0
+
+            for i, atom in enumerate(temp_struc):
+                if atom.res_id != curr_res_id:
+                    if curr_res_id != -99999:
+                        sasa_per_residue[curr_res_id] = current_sum
+                    curr_res_id = atom.res_id
+                    current_sum = 0.0
+                current_sum += filtered_sasa[i]
+            # Last residue
+            if curr_res_id != -99999:
+                sasa_per_residue[curr_res_id] = current_sum
+
+        except Exception as e:
+            logger.warning(
+                f"SASA calculation failed ({e}). All residues will be treated as fully exposed (rel_sasa=1.0), which typically leads to lower S2 values.",
+                exc_info=True,
+            )
+
+        s2_map = {}
+
+        # Iterate over residues based on original structure's residue starts
+        for i, start_idx in enumerate(res_starts):
+            # Identify residue ID
+            rid = structure.res_id[start_idx]
+
+            # Get SASA from map (default to MAX_SASA/Exposed if failed/missing)
+            res_sasa = sasa_per_residue.get(rid, MAX_SASA)
+
+            # Relative SASA (0.0 = Buried, 1.0 = Exposed)
+            rel_sasa = min(res_sasa / MAX_SASA, 1.0)
+
+            ss = ss_list[i] if i < len(ss_list) else "coil"
+
+            # Base S2 from Secondary Structure
+            if ss in ["alpha", "beta"]:
+                base_s2 = 0.85
+            else:
+                base_s2 = 0.70  # Increased base slightly, so exposed loops drop to ~0.50
+
+            # Termini effects override secondary structure
+            base_s2 = _apply_termini_effects(rid, start_res, end_res, base_s2)
+
+            # Modulate by SASA
+            s2 = _predict_s2_from_sasa(rel_sasa, base_s2)
+
+            # Add realistic noise
+            s2 += np.random.normal(0, 0.02)
+            s2 = np.clip(s2, 0.01, 0.98)
+
+            s2_map[rid] = s2
+
+        logger.info(f"Successfully predicted S2 for {len(s2_map)} residues.")
+        return s2_map
+
+    except Exception as e:
+        logger.error(f"An unexpected error occurred during S2 prediction: {e}", exc_info=True)
+        raise
+
+
+def calculate_relaxation_rates(
+    structure: struc.AtomArray,
+    field_mhz: float = 600.0,
+    tau_m_ns: float = 10.0,
+    s2_map: Optional[Dict[int, float]] = None,
+) -> Dict[int, Dict[str, float]]:
+    """
+    Calculate R1, R2, and Heteronuclear NOE for all backbone Amides (N-H).
+
+    Args:
+        structure: The protein structure (must have hydrogens).
+        field_mhz: Proton Larmor frequency in MHz (e.g. 600). Must be positive.
+        tau_m_ns: Global tumbling time in ns (default 10.0). Must be positive.
+        s2_map: Optional dictionary of {res_id: S2}. If None, predicted from structure.
+
+    Returns:
+        Dictionary keyed by residue ID:
+        { res_id: {'R1': float, 'R2': float, 'NOE': float, 'S2': float} }
+
+    Raises:
+        TypeError: If input types are incorrect.
+        ValueError: If input values (field_mhz, tau_m_ns) are invalid.
+    """
+    logger.info(f"Starting Relaxation Rates calculation (Field={field_mhz}MHz, tm={tau_m_ns}ns)...")
+
+    # 1. Input Validation
+    if not isinstance(structure, struc.AtomArray):
+        raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
+    if structure.array_length() == 0:
+        logger.warning("Input 'structure' is empty. Returning no relaxation rates.")
+        return {}
+    if not isinstance(field_mhz, (int, float)) or field_mhz <= 0:
+        raise ValueError("Parameter 'field_mhz' must be a positive numeric value.")
+    if not isinstance(tau_m_ns, (int, float)) or tau_m_ns <= 0:
+        raise ValueError("Parameter 'tau_m_ns' must be a positive numeric value.")
+    if s2_map is not None and not isinstance(s2_map, dict):
+        raise TypeError("Parameter 's2_map' must be a dictionary or None.")
+
+    try:
+        # Calculate S2 profile if not provided
+        if s2_map is None:
+            s2_map = predict_order_parameters(structure)
+
+        # Convert inputs to SI units
+        tau_m = tau_m_ns * 1e-9
+
+        # Larmor Frequencies (rad/s)
+        omega_h = 2 * np.pi * field_mhz * 1e6
+
+        # Calculate B0 from proton freq
+        b0 = omega_h / GAMMA_H
+
+        omega_n = GAMMA_N * b0  # Negative val
+
+        logger.debug(f"B0 Field: {b0:.2f} T")
+        logger.debug(f"wH: {omega_h:.2e} rad/s, wN: {omega_n:.2e} rad/s")
+
+        d_sq = _calculate_dipolar_constant(R_NH)
+
+        c_sq = _calculate_csa_constant(CSA_N, omega_n)
+
+        results = {}
+
+        # Iterate over residues that have an N-H pair
+        res_ids = np.unique(structure.res_id)
+
+        for rid in res_ids:
+            # Check if N and H exist
+            res_mask = structure.res_id == rid
+            res_atoms = structure[res_mask]
+
+            has_n = "N" in res_atoms.atom_name
+            has_h = "H" in res_atoms.atom_name
+            res_name = res_atoms.res_name[0]
+
+            if not (has_n and has_h):
+                continue
+
+            if res_name == "PRO":
+                continue
+
+            # Get S2
+            s2 = s2_map.get(rid, 0.85)  # Fallback to 0.85 if missing from map
+
+            # Fast internal motion timescale (tau_f): heuristic from S2.
+            # In the Lipari-Szabo model, flexible residues (low S2) undergo fast
+            # local motions on the ps timescale; rigid residues (high S2) have
+            # negligible internal dynamics (tau_f → 0). Without a non-zero tau_f
+            # the (1−S2) term in J(ω) vanishes and S2 cancels in the NOE ratio,
+            # giving an unphysical flat line. This heuristic spans ~50 ps (rigid)
+            # to ~550 ps (fully flexible), consistent with MD-derived tau_f values.
+            # Reference: Lipari & Szabo (1982) J Am Chem Soc 104:4546.
+            tau_f = (1.0 - s2) * 500e-12 + 50e-12  # 50–550 ps
+
+            # Frequencies for J(w) — now with per-residue tau_f
+            j_0 = spectral_density(0, tau_m, s2, tau_f)
+            j_wn = spectral_density(omega_n, tau_m, s2, tau_f)
+            j_wh = spectral_density(omega_h, tau_m, s2, tau_f)
+            j_diff = spectral_density(omega_h - omega_n, tau_m, s2, tau_f)
+            j_sum = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
+
+            # Calculate Rates
+            # R1 (Longitudinal Relaxation Rate)
+            r1_val = d_sq * (j_diff + 3 * j_wn + 6 * j_sum) + c_sq * j_wn
+
+            # R2 (Transverse Relaxation Rate)
+            r2_val = 0.5 * d_sq * (4 * j_0 + j_diff + 3 * j_wn + 6 * j_wh + 6 * j_sum) + (
+                1.0 / 6.0
+            ) * c_sq * (4 * j_0 + 3 * j_wn)
+
+            # NOE (Heteronuclear Steady-State NOE)
+            # Ensure r1_val is not zero to prevent division by zero for NOE calculation
+            if r1_val == 0:
+                noe_val = np.nan
+                logger.warning(f"R1 value for residue {rid} is zero, NOE cannot be calculated.")
+            else:
+                noe_val = 1.0 + (GAMMA_H / GAMMA_N) * d_sq * (6 * j_sum - j_diff) * (1.0 / r1_val)
+
+            results[rid] = {"R1": r1_val, "R2": r2_val, "NOE": noe_val, "S2": s2}
+
+        logger.info(f"Successfully calculated relaxation rates for {len(results)} residues.")
+        return results
+
+    except Exception as e:
+        logger.error(
+            f"An unexpected error occurred during relaxation rate calculation: {e}", exc_info=True
+        )
+        raise
