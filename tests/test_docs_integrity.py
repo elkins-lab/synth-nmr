@@ -20,7 +20,6 @@ class TestDocumentationIntegrity(unittest.TestCase):
         self.nef_io_path = os.path.join(self.base_dir, "synth_nmr", "nef_io.py")
         self.dataset_path = os.path.join(self.base_dir, "synth_nmr", "dataset.py")
         self.data_path = os.path.join(self.base_dir, "synth_nmr", "data.py")
-        self.coupling_path = os.path.join(self.base_dir, "synth_nmr", "coupling.py")
 
     def _check_file_contains(self, filepath, substrings):
         """Helper to assert file contains list of substrings."""
@@ -77,10 +76,17 @@ class TestDocumentationIntegrity(unittest.TestCase):
         self._check_file_contains(self.relaxation_path, required_notes)
 
     def test_j_coupling_educational_notes(self):
-        """Ensure j_coupling.py retains Karplus note."""
+        """Ensure j_coupling.py retains Karplus and new sidechain notes."""
         required_notes = [
             "EDUCATIONAL NOTE - Karplus Equation:",
-            "J = A cos^2(theta) + B cos(theta) + C",
+            "J = A * cos^2(theta) + B * cos(theta) + C",
+            "depends heavily on the torsion angle",
+            "EDUCATIONAL NOTE: Chi1 Dihedral",
+            "identifying the dominant \"rotamer\" state",
+            "EDUCATIONAL NOTE: 3J(Ha, Hb) Couplings",
+            "trans rotamers (chi1 ~ 180) lead to larger, antiperiplanar couplings",
+            "EDUCATIONAL NOTE: 3J(C', Cg) Couplings",
+            "Unlike proton-proton couplings which rely on isotopic labeling",
         ]
         self._check_file_contains(self.j_coupling_path, required_notes)
 
@@ -117,11 +123,17 @@ class TestDocumentationIntegrity(unittest.TestCase):
     # ]
     # self._check_file_contains(self.dataset_path, required_notes)
 
-    def test_coupling_educational_notes(self):
-        """Ensure coupling.py retains Karplus note."""
-        required_notes = [
-            "Educational Note - The Karplus Equation",
-            "depends strongly on the dihedral angle",
-            "A * cos^2(theta) + B * cos(theta) + C",
-        ]
-        self._check_file_contains(self.coupling_path, required_notes)
+    def test_comment_ratio(self):
+        """Verify that the codebase maintains a high ratio of educational comments."""
+        # A simple check to ensure that the j_coupling.py file is at least roughly 30% comments
+        # which acts as a proxy for "the code is the textbook"
+        with open(self.j_coupling_path, "r", encoding="utf-8") as f:
+            lines = f.readlines()
+            
+        total_lines = len(lines)
+        comment_lines = sum(1 for line in lines if line.strip().startswith("#") or '"""' in line or "'''" in line)
+        
+        ratio = comment_lines / total_lines if total_lines > 0 else 0
+        
+        # Expecting at least 25% of the file to be comments/docstrings
+        self.assertGreater(ratio, 0.25, f"j_coupling.py comment ratio is critically low: {ratio*100:.1f}%. Please add more educational explanations.")

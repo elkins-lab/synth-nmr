@@ -25,16 +25,21 @@ import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 from synth_nmr.rdc import calculate_rdcs
 from synth_nmr.chemical_shifts import predict_chemical_shifts
-from synth_nmr.j_coupling import calculate_hn_ha_coupling
 from synth_nmr.trajectory import (
     TrajectoryEnsemble,
     load_trajectory,
     ensemble_average_shifts,
     ensemble_average_noes,
     ensemble_average_rdcs,
+    ensemble_average_j_couplings,
     compute_s2_from_trajectory,
 )
 from synth_nmr.nmr import calculate_synthetic_noes
+from synth_nmr.j_coupling import (
+    calculate_hn_ha_coupling,
+    calculate_ha_hb_coupling,
+    calculate_c_cg_coupling,
+)
 
 structure: Optional[struc.AtomArray] = None
 ensemble: Optional[TrajectoryEnsemble] = None
@@ -183,6 +188,14 @@ def process_commands(args: List[str]) -> None:
                     print(f"ResID {res_id:4d}  D_NH = {rdc:.3f} Hz")
                 i += 2
 
+            elif sub == "j-coupling":
+                per_frame_j = [calculate_hn_ha_coupling(f) for f in ensemble]
+                avg_j = ensemble_average_j_couplings(per_frame_j)
+                for chain_id, res_couplings in sorted(avg_j.items()):
+                    for res_id, j_val in sorted(res_couplings.items()):
+                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {j_val:.3f} Hz")
+                i += 2
+
             elif sub == "s2":
                 s2_map = compute_s2_from_trajectory(ensemble)
                 for res_id, s2_val in sorted(s2_map.items()):
@@ -237,10 +250,20 @@ def process_commands(args: List[str]) -> None:
                 print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
                 i += 2
                 continue
+            
+            # Backbone
             j_couplings = calculate_hn_ha_coupling(structure)
-            for chain_id, res_couplings in j_couplings.items():
-                for res_id, coupling in res_couplings.items():
-                    print(f"Chain: {chain_id}, ResID: {res_id}, J-coupling: {coupling}")
+            # Side-chains
+            j_hahb = calculate_ha_hb_coupling(structure)
+            j_ccg = calculate_c_cg_coupling(structure)
+            
+            for chain_id, res_couplings in sorted(j_couplings.items()):
+                for res_id, coupling in sorted(res_couplings.items()):
+                    print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {coupling:.3f} Hz")
+                    if chain_id in j_hahb and res_id in j_hahb[chain_id]:
+                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz")
+                    if chain_id in j_ccg and res_id in j_ccg[chain_id]:
+                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz")
             i += 2
         else:
             print(f"Error: Unknown command: {command}")
@@ -366,6 +389,13 @@ def interactive_mode() -> None:
                     for res_id, rdc in sorted(avg_rdcs.items()):
                         print(f"ResID {res_id:4d}  D_NH = {rdc:.3f} Hz")
 
+                elif sub == "j-coupling":
+                    per_frame_j = [calculate_hn_ha_coupling(f) for f in ensemble]
+                    avg_j = ensemble_average_j_couplings(per_frame_j)
+                    for chain_id, res_couplings in sorted(avg_j.items()):
+                        for res_id, j_val in sorted(res_couplings.items()):
+                            print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {j_val:.3f} Hz")
+
                 elif sub == "s2":
                     s2_map = compute_s2_from_trajectory(ensemble)
                     for res_id, s2_val in sorted(s2_map.items()):
@@ -409,10 +439,19 @@ def interactive_mode() -> None:
                 if structure is None:
                     print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
                     continue
+                # Backbone
                 j_couplings = calculate_hn_ha_coupling(structure)
-                for chain_id, res_couplings in j_couplings.items():
-                    for res_id, coupling in res_couplings.items():
-                        print(f"Chain: {chain_id}, ResID: {res_id}, J-coupling: {coupling}")
+                # Side-chains
+                j_hahb = calculate_ha_hb_coupling(structure)
+                j_ccg = calculate_c_cg_coupling(structure)
+                
+                for chain_id, res_couplings in sorted(j_couplings.items()):
+                    for res_id, coupling in sorted(res_couplings.items()):
+                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {coupling:.3f} Hz")
+                        if chain_id in j_hahb and res_id in j_hahb[chain_id]:
+                            print(f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz")
+                        if chain_id in j_ccg and res_id in j_ccg[chain_id]:
+                            print(f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz")
             else:
                 print(f"Error: Unknown command: {command}")
         except (EOFError, KeyboardInterrupt):

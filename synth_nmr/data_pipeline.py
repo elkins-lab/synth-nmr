@@ -171,6 +171,76 @@ def parse_bmrb_shifts(filepath: str) -> Dict[int, Dict[str, float]]:
     return experimental_shifts
 
 
+def parse_bmrb_j_couplings(filepath: str) -> Dict[int, Dict[str, float]]:
+    """
+    Parses an NMR-STAR file and extracts actual experimental scalar J-couplings.
+
+    Returns:
+        A dictionary mapping: {seq_id: {coupling_code: value_hz}}
+        Common codes: '3JHNHA', '3JHAHB', '3JCCG'
+    """
+    experimental_couplings: Dict[int, Dict[str, float]] = {}
+
+    try:
+        with open(filepath, "r") as f:
+            lines = f.readlines()
+    except IOError:
+        logger.error(f"Could not read {filepath}")
+        return experimental_couplings
+
+    in_coupling_loop = False
+    loop_headers: List[str] = []
+
+    for line in lines:
+        line = line.strip()
+        if line == "loop_":
+            in_coupling_loop = False
+            loop_headers = []
+
+        elif line.startswith("_Coupling_constant.") and not in_coupling_loop:
+            loop_headers.append(line.split(".")[-1].strip())
+
+        elif line == "stop_":
+            in_coupling_loop = False
+
+        elif (
+            len(loop_headers) > 0
+            and not in_coupling_loop
+            and not line.startswith("save_")
+            and not line.startswith("data_")
+        ):
+            in_coupling_loop = True
+
+        if (
+            in_coupling_loop
+            and not (
+                line.startswith("save_")
+                or line.startswith("loop_")
+                or line.startswith("stop_")
+                or line.startswith("data_")
+            )
+            and len(line) > 0
+        ):
+            parts = re.split(r"\s+", line)
+            if len(parts) == len(loop_headers):
+                data = dict(zip(loop_headers, parts))
+
+                try:
+                    # Some files use Seq_ID_1, others use Seq_ID
+                    seq_id = int(data.get("Seq_ID_1", data.get("Seq_ID", 0)))
+                    code = data.get("Code", "UNKNOWN").upper().replace("-", "").replace("_", "")
+                    val = float(data["Val"])
+                except (ValueError, KeyError):
+                    continue
+
+                if seq_id > 0:
+                    if seq_id not in experimental_couplings:
+                        experimental_couplings[seq_id] = {}
+                    experimental_couplings[seq_id][code] = val
+
+    return experimental_couplings
+
+
 def load_matched_dataset(
     data_dir: str = "data",
 ) -> List[Tuple[struc.AtomArray, Dict[int, Dict[str, float]]]]:

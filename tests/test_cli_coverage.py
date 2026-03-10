@@ -1,6 +1,7 @@
 import pytest
 import sys
 import io
+import biotite.structure as struc
 from unittest.mock import patch, MagicMock
 from synth_nmr.synth_nmr_cli import main, process_commands, interactive_mode
 import synth_nmr.synth_nmr_cli as cli_module
@@ -73,13 +74,21 @@ def test_process_commands_predict_shifts_no_structure(mock_stdout):
 
 
 @patch("synth_nmr.synth_nmr_cli.calculate_hn_ha_coupling")
+@patch("synth_nmr.synth_nmr_cli.calculate_ha_hb_coupling")
+@patch("synth_nmr.synth_nmr_cli.calculate_c_cg_coupling")
 @patch("sys.stdout", new_callable=io.StringIO)
-def test_process_commands_calculate_j_coupling(mock_stdout, mock_calc_j, mock_pdb_file):
+def test_process_commands_calculate_j_coupling(
+    mock_stdout, mock_ccg, mock_hahb, mock_calc_j, mock_pdb_file
+):
     cli_module.structure = None
     mock_calc_j.return_value = {"A": {1: 8.5}}
+    mock_hahb.return_value = {"A": {1: 3.5}}
+    mock_ccg.return_value = {"A": {1: 1.2}}
     process_commands(["read", "pdb", mock_pdb_file, "calculate", "j-coupling"])
     output = mock_stdout.getvalue()
-    assert "J-coupling:" in output
+    assert "3J_HNHa = 8.500 Hz" in output
+    assert "3J_HaHb = 3.500 Hz" in output
+    assert "3J_C'Cg = 1.200 Hz" in output
 
 
 @patch("sys.stdout", new_callable=io.StringIO)
@@ -326,6 +335,8 @@ def test_interactive_mode_jcoupling_valid(capsys, mocker):
     mocker.patch("biotite.structure.io.pdb.PDBFile.get_structure", return_value=mock_struct)
 
     mocker.patch("synth_nmr.synth_nmr_cli.calculate_hn_ha_coupling", return_value={"A": {1: 8.5}})
+    mocker.patch("synth_nmr.synth_nmr_cli.calculate_ha_hb_coupling", return_value={})
+    mocker.patch("synth_nmr.synth_nmr_cli.calculate_c_cg_coupling", return_value={})
 
     mocker.patch(
         "sys.stdin.readline",
@@ -334,7 +345,23 @@ def test_interactive_mode_jcoupling_valid(capsys, mocker):
     interactive_mode()
 
     out = capsys.readouterr().out
-    assert "Chain: A, ResID: 1, J-coupling: 8.5" in out
+    assert "Chain A ResID    1  3J_HNHa = 8.500 Hz" in out
+
+
+def test_process_commands_ensemble_j_coupling(capsys, mocker):
+    """Test the ensemble j-coupling command."""
+    # Mock ensemble and frames
+    mock_frame = MagicMock(spec=struc.AtomArray)
+    mock_ensemble = cli_module.TrajectoryEnsemble(frames=[mock_frame, mock_frame])
+    cli_module.ensemble = mock_ensemble
+    
+    # Mock calculation return
+    mocker.patch("synth_nmr.synth_nmr_cli.calculate_hn_ha_coupling", return_value={"A": {1: 7.0}})
+    
+    process_commands(["ensemble", "j-coupling"])
+    
+    out = capsys.readouterr().out
+    assert "Chain A ResID    1  3J_HNHa = 7.000 Hz" in out
 
 
 def test_process_commands_invalid():

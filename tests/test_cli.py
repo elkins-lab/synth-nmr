@@ -51,7 +51,7 @@ def test_cli_calculate_j_coupling():
     stdout, stderr = run_cli_commands(commands)
     assert "Chain" in stdout
     assert "ResID" in stdout
-    assert "J-coupling" in stdout
+    assert "3J_HNHa" in stdout
     assert "Error" not in stderr
 
 

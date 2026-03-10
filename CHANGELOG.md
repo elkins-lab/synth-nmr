@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-03-10
+
+### Changed
+
+- **Breaking Change**: Renamed the `coupling` module to `j_coupling` to better
+  reflect its purpose and avoid ambiguity.  Integration points using
+  `synth_nmr.coupling` must now use `synth_nmr.j_coupling`.
+- **`synth_nmr/j_coupling.py`**: Refactored the module with significantly expanded
+  J-coupling capabilities.
+    - Added `calculate_ha_hb_coupling()` — side-chain chi1-dependent 3J(Ha, Hb)
+      prediction using Karplus constants.
+    - Added `calculate_c_cg_coupling()` — chi1-dependent 3J(C', Cg) prediction
+      providing an unambiguous probe for side-chain rotamers.
+    - Added extensive educational documentation on the physics of J-coupling, the
+      Karplus curve, and the importance of side-chain rotamer distributions.
+    - Standardized internal dihedral calculation logic to ensure consistency across
+      backbone and side-chain measurements.
+
 ## [0.7.2] - 2026-03-04
 
 ### Fixed

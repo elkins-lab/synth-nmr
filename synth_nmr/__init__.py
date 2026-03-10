@@ -15,7 +15,7 @@ Originally extracted from the synth-pdb package to provide a lightweight,
 standalone NMR toolkit that works with any protein structure source.
 """
 
-__version__ = "0.7.1"
+__version__ = "0.8.0"
 
 from .nmr import calculate_synthetic_noes
 from .relaxation import calculate_relaxation_rates, predict_order_parameters
@@ -28,6 +28,7 @@ from .trajectory import (
     ensemble_average_shifts,
     ensemble_average_noes,
     ensemble_average_rdcs,
+    ensemble_average_j_couplings,
     compute_s2_from_trajectory,
 )
 
@@ -45,5 +46,6 @@ __all__ = [
     "ensemble_average_shifts",
     "ensemble_average_noes",
     "ensemble_average_rdcs",
+    "ensemble_average_j_couplings",
     "compute_s2_from_trajectory",
 ]

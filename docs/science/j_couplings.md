@@ -38,20 +38,54 @@ By measuring the J-coupling, spectroscopists can firmly establish the local back
 
 ## `synth-nmr` Implementation
 
-`synth-nmr` mathematically applies the Vuister-Bax parameterized Karplus equation to any input 3D coordinates.
+`synth-nmr` mathematically applies the Karplus equation to any input 3D coordinates.
 
-### Function: `calculate_hn_ha_coupling`
+### Backbone Couplings: $^3J_{\text{HN-H}\alpha}$
+
+The backbone coupling is calculated using the Vuister-Bax parameters.
 
 ```python
-from synth_nmr import calculate_hn_ha_coupling
+from synth_nmr.j_coupling import calculate_hn_ha_coupling
 
 # Calculate the backbone phi angles from coordinates and apply Karplus
+# Returns: {chain_id: {res_id: j_val}}
 j_couplings = calculate_hn_ha_coupling(structure)
 
-print(j_couplings[12]) # Output: 4.8 Hz (Likely an alpha-helix!)
+print(j_couplings["A"][12]) # Output: 4.8 Hz (Likely an alpha-helix!)
+```
+
+### Side-Chain Couplings
+
+`synth-nmr` also supports side-chain couplings that depend on the $\chi_1$ (chi1) dihedral angle:
+- **$^3J_{\text{H}\alpha\text{-H}\beta}$**: Sensitive to the rotameric state of the side-chain.
+- **$^3J_{\text{C'-C}\gamma}$**: Carbon-Carbon coupling that provides an unambiguous readout of $\chi_1$.
+
+```python
+from synth_nmr.j_coupling import calculate_ha_hb_coupling, calculate_c_cg_coupling
+
+j_hahb = calculate_ha_hb_coupling(structure)
+j_ccg = calculate_c_cg_coupling(structure)
+```
+
+### Ensemble Averaging
+
+In the fast-exchange limit, J-couplings are averaged using the arithmetic mean over multiple structures (e.g., from an MD trajectory).
+
+```python
+from synth_nmr.trajectory import load_trajectory, ensemble_average_j_couplings
+from synth_nmr.j_coupling import calculate_hn_ha_coupling
+
+# Load a trajectory
+ensemble = load_trajectory(["frame1.pdb", "frame2.pdb", ...])
+
+# Calculate J-couplings for each frame
+per_frame_j = [calculate_hn_ha_coupling(f) for f in ensemble]
+
+# Compute the ensemble-averaged J-couplings
+avg_j = ensemble_average_j_couplings(per_frame_j)
 ```
 
 **Key Steps in the Algorithm**:
-1.  **Iterative Dihedral Extraction**: The algorithm walks down the peptide backbone. For each residue, it isolates the `C'` (previous carbonyl), `N`, `CA`, and `C` coordinates.
-2.  **Angle Calculation**: It calculates the precise atomic torsion angle, $\phi$.
-3.  **Karplus Application**: The angle is shifted by $-60^\circ$ to adjust for the specific geometry of the H-N-C$\alpha$-H$\alpha$ system, and evaluated against the Vuister-Bax $A, B, C$ coefficients.
+1.  **Iterative Dihedral Extraction**: The algorithm walks down the peptide backbone or side-chain.
+2.  **Angle Calculation**: It calculates the precise atomic torsion angle ($\phi$ or $\chi_1$).
+3.  **Karplus Application**: The angle is adjusted for the specific coupling geometry and evaluated against empirical $A, B, C$ coefficients.

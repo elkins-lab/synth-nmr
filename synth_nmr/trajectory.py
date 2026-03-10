@@ -100,6 +100,9 @@ FrameNoes = Dict[Tuple[int, int], float]
 # A single frame's RDC data: {res_id: rdc_hz}
 FrameRdcs = Dict[int, float]
 
+# A single frame's J-coupling data: {chain_id: {res_id: j_hz}}
+FrameJCouplings = Dict[str, Dict[int, float]]
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TrajectoryEnsemble
@@ -806,5 +809,70 @@ def compute_s2_from_trajectory(
             f"compute_s2_from_trajectory: computed S² for {len(result)} residues "
             f"over {len(ensemble)} frames."
         )
+
+    return result
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# ensemble_average_j_couplings
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+def ensemble_average_j_couplings(
+    per_frame_j: List[FrameJCouplings],
+) -> FrameJCouplings:
+    """
+    Compute time-averaged J-couplings from a list of per-frame dictionaries.
+
+    PHYSICS — Fast-exchange averaging of J-couplings:
+    ================================================
+    Like chemical shifts and RDCs, J-couplings are averaged by the arithmetic
+    mean in the fast-exchange limit:
+
+        J_obs = <J(theta(t))>_t = (1/N) Σ J(theta_i)
+
+    This is valid because the Fermi contact interaction (which dominates
+    J-coupling) depends on the electron spin density, which averages
+    instantaneously over nuclear positions.
+
+    Note on Chi1 averaging:
+    =======================
+    For side-chain couplings (Ha-Hb, C'-Cg) that depend on the chi1 angle,
+    this averaging correctly handles rotameric interconversion. If a
+    side-chain jumps between -60, 180, and +60, the observed J-coupling
+    will be the weighted average of the J-couplings for those three states.
+
+    Parameters
+    ----------
+    per_frame_j : list of dict
+        Each element is {chain_id: {res_id: j_hz}}.
+
+    Returns
+    -------
+    dict
+        {chain_id: {res_id: mean_j_hz}}
+    """
+    if not per_frame_j:
+        raise ValueError("per_frame_j must contain at least one frame.")
+
+    n_frames = len(per_frame_j)
+
+    # {(chain_id, res_id): list of float}
+    accumulator: Dict[Tuple[str, int], List[float]] = {}
+
+    for frame_dict in per_frame_j:
+        for chain_id, res_dict in frame_dict.items():
+            for res_id, j_val in res_dict.items():
+                key = (chain_id, res_id)
+                if key not in accumulator:
+                    accumulator[key] = []
+                accumulator[key].append(float(j_val))
+
+    result: FrameJCouplings = {}
+    for (chain_id, res_id), values in accumulator.items():
+        if len(values) == n_frames:
+            if chain_id not in result:
+                result[chain_id] = {}
+            result[chain_id][res_id] = float(np.mean(values))
 
     return result

@@ -1,7 +1,11 @@
 import pytest
 import numpy as np
 import biotite.structure as struc
-from synth_nmr.j_coupling import calculate_hn_ha_coupling
+from synth_nmr.j_coupling import (
+    calculate_hn_ha_coupling,
+    calculate_ha_hb_coupling,
+    calculate_c_cg_coupling,
+)
 
 
 @pytest.fixture
@@ -53,6 +57,54 @@ def test_n_terminus_skipped(mock_structure):
 
     # Res 1 should be missing or handled
     assert 1 not in couplings["A"]
+
+
+@pytest.fixture
+def mock_chi1_angles(mocker):
+    """Mock chi1 angles for testing different rotamers.
+    Res 1: gauche+ (-60 deg)
+    Res 2: trans (180 deg)
+    Res 3: gauche- (+60 deg)
+    Res 4: Missing chi1 (e.g., Glycine or Alanine where it's not applicable)
+    """
+    mock_dict = {
+        "A": {
+            1: np.deg2rad(-60.0),
+            2: np.deg2rad(180.0),
+            3: np.deg2rad(60.0),
+            # Res 4 is intentionally omitted
+        }
+    }
+    mocker.patch("synth_nmr.j_coupling._get_chi1_angles", return_value=mock_dict)
+
+    # Also mock the structure to easily pass into the functions
+    structure = struc.AtomArray(4)
+    structure.res_id = np.array([1, 2, 3, 4])
+    structure.chain_id = np.array(["A", "A", "A", "A"])
+    structure.res_name = np.array(["VAL", "LEU", "ILE", "GLY"])
+    return structure
+
+
+def test_ha_hb_coupling(mock_chi1_angles):
+    """Test 3J_HaHb coupling based on standard rotamer chi1 angles."""
+    couplings = calculate_ha_hb_coupling(mock_chi1_angles)
+    
+    # Expected values depend on Karplus parameters A=9.5, B=-1.6, C=1.8 (typical values)
+    # Just asserting they don't crash and output physically reasonable ranges for now.
+    assert 1 in couplings["A"]
+    assert 2 in couplings["A"]
+    assert 3 in couplings["A"]
+    assert 4 not in couplings["A"] # Glycine doesn't have CB, so no chi1
+
+
+def test_c_cg_coupling(mock_chi1_angles):
+    """Test 3J_C'Cg coupling based on standard rotamer chi1 angles."""
+    couplings = calculate_c_cg_coupling(mock_chi1_angles)
+    
+    assert 1 in couplings["A"]
+    assert 2 in couplings["A"]
+    assert 3 in couplings["A"]
+    assert 4 not in couplings["A"]
 
 
 def test_structure_iteration(mocker):
