@@ -794,10 +794,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-calculate_hn_ha_coupling" class="md-nav__link">
+  <a href="#backbone-couplings-3j_texthn-halpha" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function: calculate_hn_ha_coupling
+        Backbone Couplings: \(^3J_{\text{HN-H}\alpha}\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#side-chain-couplings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Side-Chain Couplings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ensemble-averaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ensemble Averaging
       
     </span>
   </a>
@@ -1350,10 +1372,32 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-calculate_hn_ha_coupling" class="md-nav__link">
+  <a href="#backbone-couplings-3j_texthn-halpha" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Function: calculate_hn_ha_coupling
+        Backbone Couplings: \(^3J_{\text{HN-H}\alpha}\)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#side-chain-couplings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Side-Chain Couplings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ensemble-averaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ensemble Averaging
       
     </span>
   </a>
@@ -1409,19 +1453,44 @@
 <p>By measuring the J-coupling, spectroscopists can firmly establish the local backbone geometry of the protein chain.</p>
 <hr />
 <h2 id="synth-nmr-implementation"><code>synth-nmr</code> Implementation</h2>
-<p><code>synth-nmr</code> mathematically applies the Vuister-Bax parameterized Karplus equation to any input 3D coordinates.</p>
-<h3 id="function-calculate_hn_ha_coupling">Function: <code>calculate_hn_ha_coupling</code></h3>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_hn_ha_coupling</span>
+<p><code>synth-nmr</code> mathematically applies the Karplus equation to any input 3D coordinates.</p>
+<h3 id="backbone-couplings-3j_texthn-halpha">Backbone Couplings: <span class="arithmatex">\(^3J_{\text{HN-H}\alpha}\)</span></h3>
+<p>The backbone coupling is calculated using the Vuister-Bax parameters.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.j_coupling</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_hn_ha_coupling</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Calculate the backbone phi angles from coordinates and apply Karplus</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">j_couplings</span> <span class="o">=</span> <span class="n">calculate_hn_ha_coupling</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">print</span><span class="p">(</span><span class="n">j_couplings</span><span class="p">[</span><span class="mi">12</span><span class="p">])</span> <span class="c1"># Output: 4.8 Hz (Likely an alpha-helix!)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Returns: {chain_id: {res_id: j_val}}</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">j_couplings</span> <span class="o">=</span> <span class="n">calculate_hn_ha_coupling</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="nb">print</span><span class="p">(</span><span class="n">j_couplings</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">][</span><span class="mi">12</span><span class="p">])</span> <span class="c1"># Output: 4.8 Hz (Likely an alpha-helix!)</span>
+</span></code></pre></div>
+<h3 id="side-chain-couplings">Side-Chain Couplings</h3>
+<p><code>synth-nmr</code> also supports side-chain couplings that depend on the <span class="arithmatex">\(\chi_1\)</span> (chi1) dihedral angle:
+- <strong><span class="arithmatex">\(^3J_{\text{H}\alpha\text{-H}\beta}\)</span></strong>: Sensitive to the rotameric state of the side-chain.
+- <strong><span class="arithmatex">\(^3J_{\text{C'-C}\gamma}\)</span></strong>: Carbon-Carbon coupling that provides an unambiguous readout of <span class="arithmatex">\(\chi_1\)</span>.</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.j_coupling</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_ha_hb_coupling</span><span class="p">,</span> <span class="n">calculate_c_cg_coupling</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">j_hahb</span> <span class="o">=</span> <span class="n">calculate_ha_hb_coupling</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">j_ccg</span> <span class="o">=</span> <span class="n">calculate_c_cg_coupling</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="ensemble-averaging">Ensemble Averaging</h3>
+<p>In the fast-exchange limit, J-couplings are averaged using the arithmetic mean over multiple structures (e.g., from an MD trajectory).</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_trajectory</span><span class="p">,</span> <span class="n">ensemble_average_j_couplings</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.j_coupling</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_hn_ha_coupling</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># Load a trajectory</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">ensemble</span> <span class="o">=</span> <span class="n">load_trajectory</span><span class="p">([</span><span class="s2">&quot;frame1.pdb&quot;</span><span class="p">,</span> <span class="s2">&quot;frame2.pdb&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Calculate J-couplings for each frame</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="n">per_frame_j</span> <span class="o">=</span> <span class="p">[</span><span class="n">calculate_hn_ha_coupling</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">]</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1"># Compute the ensemble-averaged J-couplings</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">avg_j</span> <span class="o">=</span> <span class="n">ensemble_average_j_couplings</span><span class="p">(</span><span class="n">per_frame_j</span><span class="p">)</span>
 </span></code></pre></div>
 <p><strong>Key Steps in the Algorithm</strong>:
-1.  <strong>Iterative Dihedral Extraction</strong>: The algorithm walks down the peptide backbone. For each residue, it isolates the <code>C'</code> (previous carbonyl), <code>N</code>, <code>CA</code>, and <code>C</code> coordinates.
-2.  <strong>Angle Calculation</strong>: It calculates the precise atomic torsion angle, <span class="arithmatex">\(\phi\)</span>.
-3.  <strong>Karplus Application</strong>: The angle is shifted by <span class="arithmatex">\(-60^\circ\)</span> to adjust for the specific geometry of the H-N-C<span class="arithmatex">\(\alpha\)</span>-H<span class="arithmatex">\(\alpha\)</span> system, and evaluated against the Vuister-Bax <span class="arithmatex">\(A, B, C\)</span> coefficients.</p>
+1.  <strong>Iterative Dihedral Extraction</strong>: The algorithm walks down the peptide backbone or side-chain.
+2.  <strong>Angle Calculation</strong>: It calculates the precise atomic torsion angle (<span class="arithmatex">\(\phi\)</span> or <span class="arithmatex">\(\chi_1\)</span>).
+3.  <strong>Karplus Application</strong>: The angle is adjusted for the specific coupling geometry and evaluated against empirical <span class="arithmatex">\(A, B, C\)</span> coefficients.</p>
 
 
 
