@@ -82,7 +82,7 @@ class TestDocumentationIntegrity(unittest.TestCase):
             "J = A * cos^2(theta) + B * cos(theta) + C",
             "depends heavily on the torsion angle",
             "EDUCATIONAL NOTE: Chi1 Dihedral",
-            "identifying the dominant \"rotamer\" state",
+            'identifying the dominant "rotamer" state',
             "EDUCATIONAL NOTE: 3J(Ha, Hb) Couplings",
             "trans rotamers (chi1 ~ 180) lead to larger, antiperiplanar couplings",
             "EDUCATIONAL NOTE: 3J(C', Cg) Couplings",
@@ -129,11 +129,17 @@ class TestDocumentationIntegrity(unittest.TestCase):
         # which acts as a proxy for "the code is the textbook"
         with open(self.j_coupling_path, "r", encoding="utf-8") as f:
             lines = f.readlines()
-            
+
         total_lines = len(lines)
-        comment_lines = sum(1 for line in lines if line.strip().startswith("#") or '"""' in line or "'''" in line)
-        
+        comment_lines = sum(
+            1 for line in lines if line.strip().startswith("#") or '"""' in line or "'''" in line
+        )
+
         ratio = comment_lines / total_lines if total_lines > 0 else 0
-        
+
         # Expecting at least 25% of the file to be comments/docstrings
-        self.assertGreater(ratio, 0.25, f"j_coupling.py comment ratio is critically low: {ratio*100:.1f}%. Please add more educational explanations.")
+        self.assertGreater(
+            ratio,
+            0.25,
+            f"j_coupling.py comment ratio is critically low: {ratio*100:.1f}%. Please add more educational explanations.",
+        )

@@ -354,12 +354,12 @@ def test_process_commands_ensemble_j_coupling(capsys, mocker):
     mock_frame = MagicMock(spec=struc.AtomArray)
     mock_ensemble = cli_module.TrajectoryEnsemble(frames=[mock_frame, mock_frame])
     cli_module.ensemble = mock_ensemble
-    
+
     # Mock calculation return
     mocker.patch("synth_nmr.synth_nmr_cli.calculate_hn_ha_coupling", return_value={"A": {1: 7.0}})
-    
+
     process_commands(["ensemble", "j-coupling"])
-    
+
     out = capsys.readouterr().out
     assert "Chain A ResID    1  3J_HNHa = 7.000 Hz" in out
 

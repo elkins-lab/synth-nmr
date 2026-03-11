@@ -250,20 +250,24 @@ def process_commands(args: List[str]) -> None:
                 print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
                 i += 2
                 continue
-            
+
             # Backbone
             j_couplings = calculate_hn_ha_coupling(structure)
             # Side-chains
             j_hahb = calculate_ha_hb_coupling(structure)
             j_ccg = calculate_c_cg_coupling(structure)
-            
+
             for chain_id, res_couplings in sorted(j_couplings.items()):
                 for res_id, coupling in sorted(res_couplings.items()):
                     print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {coupling:.3f} Hz")
                     if chain_id in j_hahb and res_id in j_hahb[chain_id]:
-                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz")
+                        print(
+                            f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz"
+                        )
                     if chain_id in j_ccg and res_id in j_ccg[chain_id]:
-                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz")
+                        print(
+                            f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz"
+                        )
             i += 2
         else:
             print(f"Error: Unknown command: {command}")
@@ -444,14 +448,18 @@ def interactive_mode() -> None:
                 # Side-chains
                 j_hahb = calculate_ha_hb_coupling(structure)
                 j_ccg = calculate_c_cg_coupling(structure)
-                
+
                 for chain_id, res_couplings in sorted(j_couplings.items()):
                     for res_id, coupling in sorted(res_couplings.items()):
                         print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {coupling:.3f} Hz")
                         if chain_id in j_hahb and res_id in j_hahb[chain_id]:
-                            print(f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz")
+                            print(
+                                f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz"
+                            )
                         if chain_id in j_ccg and res_id in j_ccg[chain_id]:
-                            print(f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz")
+                            print(
+                                f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz"
+                            )
             else:
                 print(f"Error: Unknown command: {command}")
         except (EOFError, KeyboardInterrupt):

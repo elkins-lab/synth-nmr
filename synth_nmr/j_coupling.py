@@ -36,7 +36,7 @@
 import numpy as np
 import biotite.structure as struc
 import logging
-from typing import Dict, Any, cast
+from typing import Dict
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +70,7 @@ KARPLUS_C_CG_PARAMS = {"A": 4.5, "B": -1.2, "C": 0.1}
 # 2. Solvent effects: Hydrogen bonding to the amide proton can shift the curve.
 # 3. Electronic effects: Neighboring electronegative atoms (like Oxygen)
 #    can perturb the electron distribution and thus the coupling.
+
 
 def calculate_hn_ha_coupling_from_phi(phi_degrees: float) -> float:
     """
@@ -182,6 +183,7 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
 
     return results
 
+
 # EDUCATIONAL NOTE: Chi1 Dihedral
 # ===============================
 # The chi1 angle describes the rotation of the side chain around the Ca-Cb bond.
@@ -196,29 +198,30 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
 # hydrophobic core) or interconverting rapidly between multiple rotameric states
 # on the NMR timescale.
 #
-# Different amino acids have different preferred chi1 distributions based on 
+# Different amino acids have different preferred chi1 distributions based on
 # their steric bulk. For example, Valine is highly constrained compared to Leucine.
+
 
 def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     """
     Extracts the chi1 (x1) dihedral angle for all valid residues.
     """
     results: Dict[str, Dict[int, float]] = {}
-    
+
     res_starts = struc.get_residue_starts(structure)
     for i, start_idx in enumerate(res_starts):
         end_idx = res_starts[i + 1] if i + 1 < len(res_starts) else len(structure)
         res_atoms = structure[start_idx:end_idx]
-        
+
         chain_id = str(res_atoms.chain_id[0])
         res_id = int(res_atoms.res_id[0])
-        
+
         # We need N, CA, CB, and a CG (or equivalent gamma heavy atom)
         try:
             n_idx = np.where(res_atoms.atom_name == "N")[0][0] + start_idx
             ca_idx = np.where(res_atoms.atom_name == "CA")[0][0] + start_idx
             cb_idx = np.where(res_atoms.atom_name == "CB")[0][0] + start_idx
-            
+
             # Find a gamma atom: CG, CG1, CG2, SG, OG, OG1
             gamma_atoms = ["CG", "CG1", "CG2", "SG", "OG", "OG1"]
             cg_idx = -1
@@ -227,27 +230,30 @@ def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
                 if len(matches) > 0:
                     cg_idx = matches[0] + start_idx
                     break
-                    
+
             if cg_idx == -1:
-                continue # No valid gamma atom found (e.g., Glycine, Alanine)
-                
+                continue  # No valid gamma atom found (e.g., Glycine, Alanine)
+
             # Compute dihedral in radians
-            angle = float(struc.dihedral(
-                structure.coord[n_idx], 
-                structure.coord[ca_idx], 
-                structure.coord[cb_idx], 
-                structure.coord[cg_idx]
-            ))
-            
+            angle = float(
+                struc.dihedral(
+                    structure.coord[n_idx],
+                    structure.coord[ca_idx],
+                    structure.coord[cb_idx],
+                    structure.coord[cg_idx],
+                )
+            )
+
             if chain_id not in results:
                 results[chain_id] = {}
             results[chain_id][res_id] = angle
-            
+
         except IndexError:
             # Missing backbone or CB atoms
             continue
-            
+
     return results
+
 
 # EDUCATIONAL NOTE: 3J(Ha, Hb) Couplings
 # ======================================
@@ -273,15 +279,15 @@ def calculate_ha_hb_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
     logger.info("Calculating 3J_HaHb side-chain couplings...")
     chi1_angles = _get_chi1_angles(structure)
     results: Dict[str, Dict[int, float]] = {}
-    
+
     for chain_id, residues in chi1_angles.items():
         results[chain_id] = {}
         for res_id, chi1_rad in residues.items():
-            
+
             # Phase shifts depend exactly on pro-R/pro-S proton alignments,
             # but we use a simplified idealized theta relation for this implementation.
             theta = float(chi1_rad - np.deg2rad(120.0))
-            
+
             cos_theta = float(np.cos(theta))
             j_val = float(
                 (KARPLUS_HA_HB_PARAMS["A"] * (cos_theta**2))
@@ -289,8 +295,9 @@ def calculate_ha_hb_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
                 + KARPLUS_HA_HB_PARAMS["C"]
             )
             results[chain_id][res_id] = float(round(j_val, 2))
-            
+
     return results
+
 
 # EDUCATIONAL NOTE: 3J(C', Cg) Couplings
 # ======================================
@@ -309,6 +316,7 @@ def calculate_ha_hb_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
 # pro-chiral ambiguity that plagues Ha-Hb measurements. The C' and Cg atoms
 # are unique, providing a direct, unambiguous readout of the chi1 angle.
 
+
 def calculate_c_cg_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     """
     Calculate 3J_C'Cg coupling constants dependent on the chi1 angle.
@@ -316,14 +324,14 @@ def calculate_c_cg_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, f
     logger.info("Calculating 3J_C'Cg side-chain couplings...")
     chi1_angles = _get_chi1_angles(structure)
     results: Dict[str, Dict[int, float]] = {}
-    
+
     for chain_id, residues in chi1_angles.items():
         results[chain_id] = {}
         for res_id, chi1_rad in residues.items():
-            
+
             # The dihedral angle pathway for C' - CA - CB - CG intersects chi1
             theta = float(chi1_rad)
-            
+
             cos_theta = float(np.cos(theta))
             j_val = float(
                 (KARPLUS_C_CG_PARAMS["A"] * (cos_theta**2))
@@ -331,5 +339,5 @@ def calculate_c_cg_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, f
                 + KARPLUS_C_CG_PARAMS["C"]
             )
             results[chain_id][res_id] = float(round(j_val, 2))
-            
+
     return results

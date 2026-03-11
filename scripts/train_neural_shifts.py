@@ -59,9 +59,7 @@ def generate_synthetic_structures(n_samples: int, random_state: int = 42):
         from synth_pdb.generator import generate_pdb_content
         import biotite.structure.io.pdb as pdb_io
         import io
-        HAS_SYNTH_PDB = True
     except ImportError:
-        HAS_SYNTH_PDB = False
         logger.warning(
             "synth-pdb not installed — cannot generate synthetic structures. "
             "Install with: pip install synth-pdb, or use --pdb-dir."
@@ -190,7 +188,7 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
     """
     import torch
     import torch.nn as nn
-    from synth_nmr.neural_shifts import _make_mlp, NUCLEUS_ORDER
+    from synth_nmr.neural_shifts import _make_mlp
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logger.info("Training device: %s", device)
@@ -298,9 +296,8 @@ def main():
     )
     args = parser.parse_args()
 
-    try:
-        import torch
-    except ImportError:
+    import importlib.util
+    if importlib.util.find_spec("torch") is None:
         print("ERROR: torch is required. Install with: pip install synth-nmr[ml]")
         sys.exit(1)
 

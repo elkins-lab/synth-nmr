@@ -88,19 +88,19 @@ def mock_chi1_angles(mocker):
 def test_ha_hb_coupling(mock_chi1_angles):
     """Test 3J_HaHb coupling based on standard rotamer chi1 angles."""
     couplings = calculate_ha_hb_coupling(mock_chi1_angles)
-    
+
     # Expected values depend on Karplus parameters A=9.5, B=-1.6, C=1.8 (typical values)
     # Just asserting they don't crash and output physically reasonable ranges for now.
     assert 1 in couplings["A"]
     assert 2 in couplings["A"]
     assert 3 in couplings["A"]
-    assert 4 not in couplings["A"] # Glycine doesn't have CB, so no chi1
+    assert 4 not in couplings["A"]  # Glycine doesn't have CB, so no chi1
 
 
 def test_c_cg_coupling(mock_chi1_angles):
     """Test 3J_C'Cg coupling based on standard rotamer chi1 angles."""
     couplings = calculate_c_cg_coupling(mock_chi1_angles)
-    
+
     assert 1 in couplings["A"]
     assert 2 in couplings["A"]
     assert 3 in couplings["A"]

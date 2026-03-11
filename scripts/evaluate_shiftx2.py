@@ -269,7 +269,7 @@ def main():
         
     try:
         plot_comparison(aligned_data_dict, args.plot)
-    except Exception as e:
+    except Exception:
         import traceback
         traceback.print_exc()
 

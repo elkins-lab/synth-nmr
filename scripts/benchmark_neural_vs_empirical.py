@@ -48,7 +48,6 @@ Key observations:
 import time
 import sys
 import os
-import io
 import logging
 import numpy as np
 

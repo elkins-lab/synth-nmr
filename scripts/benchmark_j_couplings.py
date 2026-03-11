@@ -4,7 +4,6 @@ Uses gold-standard experimental data for Ubiquitin (1D3Z) and Protein G (1GB1).
 """
 
 import numpy as np
-import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 import logging
 import os
@@ -83,7 +82,7 @@ def print_metrics(name: str, metrics: Dict):
     # Print top 5 deviations
     devs = metrics["deviations"]
     top_devs = sorted(devs.items(), key=lambda x: abs(x[1]), reverse=True)[:5]
-    print(f"  - Largest deviations (Predicted - Exp):")
+    print("  - Largest deviations (Predicted - Exp):")
     for res_id, dev in top_devs:
         print(f"    Res {res_id:2d}: {dev:+.2f} Hz")
 
