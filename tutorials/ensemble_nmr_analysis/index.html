@@ -2436,8 +2436,10 @@ If they scatter in all directions, the mean vector cancels and $S^2 \approx 0$ (
            <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">73</span><span class="p">)))</span>                                  <span class="c1"># β5</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">alpha_res</span><span class="p">:</span> <span class="k">return</span> <span class="s1">'#e74c3c'</span>
-    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">beta_res</span><span class="p">:</span>  <span class="k">return</span> <span class="s1">'#2980b9'</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">alpha_res</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'#e74c3c'</span>
+    <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">beta_res</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">'#2980b9'</span>
     <span class="k">return</span> <span class="s1">'#7f8c8d'</span>
 
 <span class="n">residues</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s2_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -2489,8 +2491,10 @@ beta_res  = (set(range(1, 8))   | set(range(10, 18))             # β1, β2
            | set(range(64, 73)))                                  # β5
 
 def ss_color(r):
-    if r in alpha_res: return '#e74c3c'
-    if r in beta_res:  return '#2980b9'
+    if r in alpha_res:
+        return '#e74c3c'
+    if r in beta_res:
+        return '#2980b9'
     return '#7f8c8d'
 
 residues = sorted(s2_map.keys())
@@ -2941,7 +2945,6 @@ conformational variation — wider spread = more dynamic region.</p>
 <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue RDC Variability Across Conformers</span><span class="se">\n</span><span class="s1">'</span>
               <span class="s1">'Higher = more conformational diversity at this site'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
 <span class="n">patches2</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-Helix'</span><span class="p">),</span>
     <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-Strands'</span><span class="p">),</span>
@@ -2997,7 +3000,6 @@ ax2.set_ylabel('\u03c3(D_NH)  (Hz)', fontsize=12)
 ax2.set_title('Per-Residue RDC Variability Across Conformers\n'
               'Higher = more conformational diversity at this site', fontsize=12)
 ax2.grid(axis='y', ls='--', alpha=0.35)
-import matplotlib.patches as mpatches
 patches2 = [
     mpatches.Patch(color='#e74c3c', alpha=0.82, label='\u03b1-Helix'),
     mpatches.Patch(color='#2980b9', alpha=0.82, label='\u03b2-Strands'),
