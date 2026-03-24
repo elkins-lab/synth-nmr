@@ -137,6 +137,26 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
         Dict keyed by Chain ID -> Residue ID -> J-coupling value (Hz)
     """
     logger.info("Calculating 3J_HNHa scalar couplings...")
+    # Filter for amino acids to avoid mismatches with HETATMs (waters/ions)
+    protein_mask = struc.filter_amino_acids(structure)
+    structure = structure[protein_mask]
+    if structure.array_length() == 0:
+        return {}
+
+    # ── J-Coupling Physics and Structural Biology ────────────────────────
+    # The 3J_HNHa coupling constant is a measure of the scalar (through-bond)
+    # magnetic interaction between the amide proton (HN) and the alpha
+    # proton (Ha). This interaction is mediated by the intervening bonds
+    # (HN-N, N-CA, CA-Ha).
+    #
+    # Crucially, the magnitude of this coupling depends on the dihedral
+    # angle Phi (φ) according to the Karplus equation:
+    #   J(φ) = A cos²(θ) + B cos(θ) + C
+    # where θ is the H-N-C-H dihedral angle (related to Phi).
+    #
+    # Large 3J_HNHa values (~8-10 Hz) typically indicate beta-sheet regions,
+    # while small values (~3-5 Hz) indicate alpha-helical regions.
+    # ─────────────────────────────────────────────────────────────────────
 
     phi, psi, omega = struc.dihedral_backbone(structure)
 
@@ -207,6 +227,12 @@ def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     Extracts the chi1 (x1) dihedral angle for all valid residues.
     """
     results: Dict[str, Dict[int, float]] = {}
+
+    # Filter for amino acids to ensure chi1 angles map correctly to residues
+    protein_mask = struc.filter_amino_acids(structure)
+    structure = structure[protein_mask]
+    if structure.array_length() == 0:
+        return {}
 
     res_starts = struc.get_residue_starts(structure)
     for i, start_idx in enumerate(res_starts):

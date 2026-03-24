@@ -261,6 +261,12 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
         logger.warning("Input 'structure' is empty. Cannot predict chemical shifts.")
         return {}
 
+    # Filter for amino acids to avoid mismatches with HETATMs (waters/ions)
+    protein_mask = struc.filter_amino_acids(structure)
+    structure = structure[protein_mask]
+    if structure.array_length() == 0:
+        return {}
+
     try:
         # 2. Get Secondary Structure and Aromatic Ring Info
         ss_list = get_secondary_structure(structure)

@@ -194,6 +194,12 @@ def build_residue_features(structure: Any) -> np.ndarray:
     from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
     from synth_nmr.structure_utils import get_secondary_structure
 
+    # Filter for amino acids to ensure residue features match backbone-complete protein
+    protein_mask = struc.filter_amino_acids(structure)
+    structure = structure[protein_mask]
+    if structure.array_length() == 0:
+        return np.zeros((0, 74), dtype=np.float32)
+
     # ── Collect per-residue data ──────────────────────────────────────────
     res_starts = struc.get_residue_starts(structure)
     n_res = len(res_starts)
@@ -328,6 +334,12 @@ def build_graph_data(structure: Any) -> Any:
 
     import biotite.structure as struc
     from scipy.spatial import KDTree
+
+    # Ensure consistency by filtering for amino acids here too
+    protein_mask = struc.filter_amino_acids(structure)
+    structure = structure[protein_mask]
+    if structure.array_length() == 0:
+        return None
 
     X = build_residue_features(structure)
     x = torch.tensor(X, dtype=torch.float32)

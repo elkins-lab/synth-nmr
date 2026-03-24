@@ -10,37 +10,69 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
     """
     Determine the secondary structure of each residue based on Phi/Psi angles.
 
-    Returns a list of strings: 'alpha', 'beta', or 'coil'.
-    Matches the residue indices in the structure.
-    """
-    # Calculate dihedrals
-    # Note: struc.dihedral_backbone returns phi, psi, omega arrays
-    # length equals number of residues
-    try:
-        phi, psi, omega = struc.dihedral_backbone(structure)
-    except struc.BadStructureError:
-        # Fallback for incomplete backbones (e.g. in tests)
-        return ["coil"] * struc.get_residue_count(structure)
+    EDUCATIONAL BACKGROUND — Secondary Structure and Chemical Shifts
+    ───────────────────────────────────────────────────────────────────
+    Protein secondary structure (alpha-helices, beta-sheets, and loops/coils)
+    is primarily defined by the hydrogen-bonding patterns between backbone
+    amide and carbonyl groups. These patterns correlate strongly with the
+    backbone dihedral angles:
+      • Phi (φ): torsion around the N-CA bond.
+      • Psi (ψ): torsion around the CA-C bond.
 
-    # We need to iterate over residues to match the output list
-    # get_residue_starts is useful
+    Measuring these angles accurately in 3D structures allows us to predict
+    how local electronic environments around nuclei (like 1H, 13C, 15N)
+    shift from their "random coil" baseline values. This is the physical
+    basis for structure determination by NMR.
+
+    Returns:
+        List of strings: 'alpha', 'beta', or 'coil', one for each residue
+        in the input structure (matching the order of get_residue_starts).
+    """
+    # ── 1. Preparation and Filtering ──────────────────────────────────────
+    # We must calculate dihedrals only on amino acids. However, the output list
+    # must match the length of the original residue count (including HETATMs).
+    original_res_count = struc.get_residue_count(structure)
+
+    # Filter for amino acids to ensure reliable Phi/Psi calculations
+    protein_mask = struc.filter_amino_acids(structure)
+    protein_structure = structure[protein_mask]
+
+    # If no protein is present, return all coils (standard NMR default)
+    if protein_structure.array_length() == 0:
+        return ["coil"] * original_res_count
+
+    try:
+        # Calculate backbone dihedrals for the protein portion
+        phi, psi, _ = struc.dihedral_backbone(protein_structure)
+    except struc.BadStructureError:
+        # Fallback if backbone is incomplete or disconnected (e.g. in tests)
+        return ["coil"] * original_res_count
+
+    # ── 2. Mapping and Classification ─────────────────────────────────────
+    # We iterate over all original residues. For protein residues, we look
+    # up their dihedral angles. For others (ions, water), we default to 'coil'.
     res_starts = struc.get_residue_starts(structure)
     ss_list = []
 
-    for i, _ in enumerate(res_starts):
-        # Safety check: if phi array is shorter than residue count (e.g. due to ions/HETATM)
-        # The "coil" secondary structure assignment is a safe fallback and will not
-        # negatively impact other functionality.
-        if i >= len(phi) or i >= len(psi):
-            ss_list.append("coil")
-            continue
+    # Map protein residue indices back to their dihedrals
+    # (Since protein_structure is a subset, we need to track indices carefully)
+    protein_res_indices = np.where(protein_mask[struc.get_residue_starts(structure)])[0]
+    phi_map = {idx: phi[i] for i, idx in enumerate(protein_res_indices) if i < len(phi)}
+    psi_map = {idx: psi[i] for i, idx in enumerate(protein_res_indices) if i < len(psi)}
 
-        # Get Angles (degrees)
-        p = np.rad2deg(phi[i])
-        s = np.rad2deg(psi[i])
+    for i in range(len(res_starts)):
+        # Get Angles
+        p_rad = phi_map.get(i, np.nan)
+        s_rad = psi_map.get(i, np.nan)
 
+        # Convert to degrees for standard Ramachandran classification
+        p = np.rad2deg(p_rad)
+        s = np.rad2deg(s_rad)
+
+        # Default to coil for non-protein or missing angles
         ss_state = "coil"
 
+        # ── 3. Ramachandran Filtering ─────────────────────────────────────
         # Determine Secondary Structure State based on broader Ramachandran regions.
         # The ranges used here are slightly wider than strict textbook definitions
         # to accommodate potential variations from structure generation algorithms
@@ -54,11 +86,10 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
         #   Word, J. M., Prisant, M. G., ... & Richardson, D. C. (2003).
         #   "Structure validation by Calpha geometry: phi,psi and Cbeta deviation."
         #   Proteins: Structure, Function, and Bioinformatics, 50(3), 437-450.
-
         if not np.isnan(p) and not np.isnan(s):
             logger.debug(f"Res {i}: Phi={p:.1f}, Psi={s:.1f}")
 
-            # Right-handed Alpha-helix region
+            # Canonical Right-handed Alpha-helix region
             if (-90 < p < -30) and (-90 < s < -10):
                 ss_state = "alpha"
             # Beta-sheet / Extended region
@@ -71,24 +102,31 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
 
         ss_list.append(ss_state)
 
-    # SMOOTHING PASS
-    # Real secondary structure elements are usually contiguous.
-    # We filter out isolated "coil" residues within helices/sheets.
-    # Example: alpha-coil-alpha -> alpha-alpha-alpha
+        # ── 4. Smoothing Pass ─────────────────────────────────────────────────
+        # Local context matters: secondary structure elements are typically
+        # at least 3-4 residues long. We remove isolated single-residue "coil"
+        # interruptions within established helices or sheets.
+        # Example: alpha-coil-alpha -> alpha-alpha-alpha
+        #
+        # A common artifact in structural biology is the "staccato" secondary
+        # structure assignments, where a single residue is assigned as coil
+        # despite being part of a larger, well-defined helix or sheet.
+        #
+        # 1. Filter single-residue interruptions
+        # The loop intentionally excludes the first and last residues (range from 1 to len-1),
+        # as these termini are often intrinsically flexible and their secondary structure
+        # is less reliably defined or less critical for local context smoothing.
+        #
+        # This smoothing pass helps to create more biologically realistic
+        # and continuous secondary structure elements.
+        for i in range(1, len(ss_list) - 1):
+            prev_s = ss_list[i - 1]
+            curr_s = ss_list[i]
+            next_s = ss_list[i + 1]
 
-    # 1. Filter single-residue interruptions
-    # The loop intentionally excludes the first and last residues (range from 1 to len-1),
-    # as these termini are often intrinsically flexible and their secondary structure
-    # is less reliably defined or less critical for local context smoothing.
-    for i in range(1, len(ss_list) - 1):
-        prev_s = ss_list[i - 1]
-        curr_s = ss_list[i]
-        next_s = ss_list[i + 1]
-
-        if curr_s == "coil" and prev_s == next_s and prev_s != "coil":
-            logger.debug(f"Smoothing residue {i}: coil -> {prev_s}")
-            ss_list[i] = prev_s
-
-    # 2. Filter 2-residue interruptions? (Optional, maybe too aggressive)
+            if curr_s == "coil" and prev_s == next_s and prev_s != "coil":
+                logger.debug(f"Smoothing residue {i}: coil -> {prev_s}")
+                # Only smooth if both neighbors agree on a non-coil state
+                ss_list[i] = prev_s
 
     return ss_list
