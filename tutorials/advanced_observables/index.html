@@ -2179,33 +2179,35 @@ when protein flexibility is taken into account.</p>
 
 <span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin</span><span class="o">.</span><span class="n">pdb</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">'figure.dpi'</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s1">'font.size'</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-                     <span class="s1">'axes.spines.top'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">'axes.spines.right'</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+<span class="p">)</span>
 
 <span class="c1"># 1D3Z has 10 NMR conformers; use model 1 for single-structure analyses</span>
-<span class="n">stack</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s1">'ubiquitin.pdb'</span><span class="p">)</span>
+<span class="n">stack</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">"ubiquitin.pdb"</span><span class="p">)</span>
 <span class="n">structure</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loaded 1D3Z: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span><span class="si">}</span><span class="s1"> conformers — using model 1 for static analyses.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded 1D3Z: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span><span class="si">}</span><span class="s2"> conformers — using model 1 for static analyses."</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1">!pip install -q synth-nmr biotite matplotlib
 
 !wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin.pdb
 
-import numpy as np
-import matplotlib.pyplot as plt
 import biotite.structure.io as strucio
+import matplotlib.pyplot as plt
+import numpy as np
 
-plt.rcParams.update({'figure.dpi': 110, 'font.size': 11,
-                     'axes.spines.top': False, 'axes.spines.right': False})
+plt.rcParams.update(
+    {"figure.dpi": 110, "font.size": 11, "axes.spines.top": False, "axes.spines.right": False}
+)
 
 # 1D3Z has 10 NMR conformers; use model 1 for single-structure analyses
-stack = strucio.load_structure('ubiquitin.pdb')
+stack = strucio.load_structure("ubiquitin.pdb")
 structure = stack[0]
-print(f'Loaded 1D3Z: {len(stack)} conformers — using model 1 for static analyses.')</div>
+print(f"Loaded 1D3Z: {len(stack)} conformers — using model 1 for static analyses.")</div>
 </div>
 </div>
 </div>
@@ -2248,26 +2250,26 @@ structure of our models.  Let's calculate them for our Ubiquitin structure.</p>
 
 <span class="n">j_couplings</span> <span class="o">=</span> <span class="n">calculate_hn_ha_coupling</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span>
 
-<span class="n">chain_a_couplings</span> <span class="o">=</span> <span class="n">j_couplings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span> <span class="p">{})</span>
+<span class="n">chain_a_couplings</span> <span class="o">=</span> <span class="n">j_couplings</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"A"</span><span class="p">,</span> <span class="p">{})</span>
 <span class="n">residues</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chain_a_couplings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">j_vals</span>   <span class="o">=</span> <span class="p">[</span><span class="n">chain_a_couplings</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
+<span class="n">j_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">chain_a_couplings</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
 
 <span class="c1"># Colour by secondary structure context (values around 4 Hz = helix; ~9 Hz = sheet)</span>
-<span class="n">j_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'#e74c3c'</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">5.5</span> <span class="k">else</span> <span class="s1">'#2980b9'</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mf">7.5</span> <span class="k">else</span> <span class="s1">'#7f8c8d'</span>
-            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">j_vals</span><span class="p">]</span>
+<span class="n">j_colors</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"#e74c3c"</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mf">5.5</span> <span class="k">else</span> <span class="s2">"#2980b9"</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mf">7.5</span> <span class="k">else</span> <span class="s2">"#7f8c8d"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">j_vals</span><span class="p">]</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">residues</span><span class="p">,</span> <span class="n">j_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">j_colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.84</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-helix threshold (~4 Hz)'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-sheet threshold (~9 Hz)'</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'</span><span class="se">\u00b3</span><span class="s1">J(HN-H</span><span class="se">\u03b1</span><span class="s1">) Coupling (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Predicted Scalar Couplings across Ubiquitin Backbone</span><span class="se">\n</span><span class="s1">'</span>
-          <span class="s1">'Red = helix-like, Blue = sheet-like, Grey = intermediate'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#e74c3c"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="se">\u03b1</span><span class="s2">-helix threshold (~4 Hz)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#2980b9"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="se">\u03b2</span><span class="s2">-sheet threshold (~9 Hz)"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"</span><span class="se">\u00b3</span><span class="s2">J(HN-H</span><span class="se">\u03b1</span><span class="s2">) Coupling (Hz)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+    <span class="s2">"Predicted Scalar Couplings across Ubiquitin Backbone</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Red = helix-like, Blue = sheet-like, Grey = intermediate"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -2275,26 +2277,26 @@ structure of our models.  Let's calculate them for our Ubiquitin structure.</p>
 
 j_couplings = calculate_hn_ha_coupling(structure)
 
-chain_a_couplings = j_couplings.get('A', {})
+chain_a_couplings = j_couplings.get("A", {})
 residues = sorted(chain_a_couplings.keys())
-j_vals   = [chain_a_couplings[r] for r in residues]
+j_vals = [chain_a_couplings[r] for r in residues]
 
 # Colour by secondary structure context (values around 4 Hz = helix; ~9 Hz = sheet)
-j_colors = ['#e74c3c' if v &lt; 5.5 else '#2980b9' if v &gt; 7.5 else '#7f8c8d'
-            for v in j_vals]
+j_colors = ["#e74c3c" if v &lt; 5.5 else "#2980b9" if v &gt; 7.5 else "#7f8c8d" for v in j_vals]
 
 plt.figure(figsize=(11, 4))
 plt.bar(residues, j_vals, color=j_colors, alpha=0.84, width=0.9)
-plt.axhline(5.5, color='#e74c3c', ls='--', lw=1, alpha=0.5,
-            label='\u03b1-helix threshold (~4 Hz)')
-plt.axhline(7.5, color='#2980b9', ls='--', lw=1, alpha=0.5,
-            label='\u03b2-sheet threshold (~9 Hz)')
-plt.xlabel('Residue Number', fontsize=12)
-plt.ylabel('\u00b3J(HN-H\u03b1) Coupling (Hz)', fontsize=12)
-plt.title('Predicted Scalar Couplings across Ubiquitin Backbone\n'
-          'Red = helix-like, Blue = sheet-like, Grey = intermediate', fontsize=12)
+plt.axhline(5.5, color="#e74c3c", ls="--", lw=1, alpha=0.5, label="\u03b1-helix threshold (~4 Hz)")
+plt.axhline(7.5, color="#2980b9", ls="--", lw=1, alpha=0.5, label="\u03b2-sheet threshold (~9 Hz)")
+plt.xlabel("Residue Number", fontsize=12)
+plt.ylabel("\u00b3J(HN-H\u03b1) Coupling (Hz)", fontsize=12)
+plt.title(
+    "Predicted Scalar Couplings across Ubiquitin Backbone\n"
+    "Red = helix-like, Blue = sheet-like, Grey = intermediate",
+    fontsize=12,
+)
 plt.legend(fontsize=10)
-plt.grid(axis='y', linestyle='--', alpha=0.4)
+plt.grid(axis="y", linestyle="--", alpha=0.4)
 plt.tight_layout()
 plt.show()</div>
 </div>
@@ -2360,104 +2362,152 @@ are rarer, because $r^{-6}$ amplifies short distances enormously.</li>
 <span class="c1"># calculate_synthetic_noes returns a list of dicts, each with keys:</span>
 <span class="c1"># 'index_1', 'atom_name_1', 'res_name_1', 'index_2', 'atom_name_2',</span>
 <span class="c1"># 'res_name_2', 'distance', 'upper_limit'</span>
-<span class="n">noes</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                                <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">noes</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Generated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noes</span><span class="p">)</span><span class="si">}</span><span class="s1"> inter-residue synthetic NOE distance restraints.</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Generated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noes</span><span class="p">)</span><span class="si">}</span><span class="s2"> inter-residue synthetic NOE distance restraints.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">noes</span><span class="p">])</span>
-<span class="n">signal_r6</span> <span class="o">=</span> <span class="n">distances</span> <span class="o">**</span> <span class="o">-</span><span class="mf">6.0</span>   <span class="c1"># NOE intensity proportional to r^{-6}</span>
+<span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">n</span><span class="p">[</span><span class="s2">"distance"</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">noes</span><span class="p">])</span>
+<span class="n">signal_r6</span> <span class="o">=</span> <span class="n">distances</span><span class="o">**-</span><span class="mf">6.0</span>  <span class="c1"># NOE intensity proportional to r^{-6}</span>
 
 <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">distances</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">31</span><span class="p">)</span>
 <span class="n">bin_centers</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
 
-<span class="n">counts</span><span class="p">,</span>     <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+<span class="n">counts</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
 <span class="n">signal_sum</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">signal_r6</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
 
 <span class="c1"># Left: pair count per distance bin (increases with distance — geometric effect)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">bin_centers</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mf">0.9</span><span class="p">,</span>
-       <span class="n">color</span><span class="o">=</span><span class="s1">'#16a085'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Distance (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Number of NOE Pairs'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Pair Count per Distance Bin</span><span class="se">\n</span><span class="s1">'</span>
-             <span class="s1">'Increases with distance (geometric shell volume </span><span class="se">\u221d</span><span class="s1"> r</span><span class="se">\u00b2</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">bin_centers</span><span class="p">,</span>
+    <span class="n">counts</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"#16a085"</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Distance (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Number of NOE Pairs"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s2">"Pair Count per Distance Bin</span><span class="se">\n</span><span class="s2">Increases with distance (geometric shell volume </span><span class="se">\u221d</span><span class="s2"> r</span><span class="se">\u00b2</span><span class="s2">)"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 
 <span class="c1"># Right: cumulative r^{-6} signal power (decreases steeply — the real physics)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">bin_centers</span><span class="p">,</span> <span class="n">signal_sum</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mf">0.9</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s1">'#c0392b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Distance (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Cumulative NOE Signal Power  (</span><span class="se">\u03a3</span><span class="s1"> r</span><span class="se">\u207b\u2076</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'NOE Signal Power per Distance Bin</span><span class="se">\n</span><span class="s1">'</span>
-             <span class="s1">'Steep falloff: short contacts completely dominate  (r</span><span class="se">\u207b\u2076</span><span class="s1"> effect)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">bin_centers</span><span class="p">,</span>
+    <span class="n">signal_sum</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"#c0392b"</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span>
+    <span class="n">lw</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Distance (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Cumulative NOE Signal Power  (</span><span class="se">\u03a3</span><span class="s2"> r</span><span class="se">\u207b\u2076</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s2">"NOE Signal Power per Distance Bin</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Steep falloff: short contacts completely dominate  (r</span><span class="se">\u207b\u2076</span><span class="s2"> effect)"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 
-<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">'The r</span><span class="se">\u207b\u2076</span><span class="s1"> Effect: More Pairs at Long Range, but Short Contacts Drive the Signal'</span><span class="p">,</span>
-             <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">'bold'</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+    <span class="s2">"The r</span><span class="se">\u207b\u2076</span><span class="s2"> Effect: More Pairs at Long Range, but Short Contacts Drive the Signal"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+    <span class="n">fontweight</span><span class="o">=</span><span class="s2">"bold"</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Sample NOE Restraints:'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Sample NOE Restraints:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">noe</span> <span class="ow">in</span> <span class="n">noes</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_1'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; "</span>
-          <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_2'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: "</span>
-          <span class="sa">f</span><span class="s2">"Distance </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2"> (Upper Limit: </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'upper_limit'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_1'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; "</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_2'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: "</span>
+        <span class="sa">f</span><span class="s2">"Distance </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2"> (Upper Limit: </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'upper_limit'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">)"</span>
+    <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">from synth_nmr.nmr import calculate_synthetic_noes
 
 # calculate_synthetic_noes returns a list of dicts, each with keys:
 # 'index_1', 'atom_name_1', 'res_name_1', 'index_2', 'atom_name_2',
 # 'res_name_2', 'distance', 'upper_limit'
-noes = calculate_synthetic_noes(structure, cutoff=5.0, buffer=0.5,
-                                exclude_intra_residue=True)
+noes = calculate_synthetic_noes(structure, cutoff=5.0, buffer=0.5, exclude_intra_residue=True)
 
-print(f'Generated {len(noes)} inter-residue synthetic NOE distance restraints.\n')
+print(f"Generated {len(noes)} inter-residue synthetic NOE distance restraints.\n")
 
-distances = np.array([n['distance'] for n in noes])
-signal_r6 = distances ** -6.0   # NOE intensity proportional to r^{-6}
+distances = np.array([n["distance"] for n in noes])
+signal_r6 = distances**-6.0  # NOE intensity proportional to r^{-6}
 
 bins = np.linspace(distances.min(), distances.max(), 31)
 bin_centers = 0.5 * (bins[:-1] + bins[1:])
 
-counts,     _ = np.histogram(distances, bins=bins)
+counts, _ = np.histogram(distances, bins=bins)
 signal_sum, _ = np.histogram(distances, bins=bins, weights=signal_r6)
 
 fig, axes = plt.subplots(1, 2, figsize=(13, 4.5))
 
 # Left: pair count per distance bin (increases with distance — geometric effect)
 ax = axes[0]
-ax.bar(bin_centers, counts, width=(bins[1]-bins[0])*0.9,
-       color='#16a085', alpha=0.82, edgecolor='white', lw=0.3)
-ax.set_xlabel('Distance (\u00c5)', fontsize=12)
-ax.set_ylabel('Number of NOE Pairs', fontsize=12)
-ax.set_title('Pair Count per Distance Bin\n'
-             'Increases with distance (geometric shell volume \u221d r\u00b2)', fontsize=11)
-ax.grid(axis='y', ls='--', alpha=0.4)
+ax.bar(
+    bin_centers,
+    counts,
+    width=(bins[1] - bins[0]) * 0.9,
+    color="#16a085",
+    alpha=0.82,
+    edgecolor="white",
+    lw=0.3,
+)
+ax.set_xlabel("Distance (\u00c5)", fontsize=12)
+ax.set_ylabel("Number of NOE Pairs", fontsize=12)
+ax.set_title(
+    "Pair Count per Distance Bin\nIncreases with distance (geometric shell volume \u221d r\u00b2)",
+    fontsize=11,
+)
+ax.grid(axis="y", ls="--", alpha=0.4)
 
 # Right: cumulative r^{-6} signal power (decreases steeply — the real physics)
 ax2 = axes[1]
-ax2.bar(bin_centers, signal_sum, width=(bins[1]-bins[0])*0.9,
-        color='#c0392b', alpha=0.82, edgecolor='white', lw=0.3)
-ax2.set_xlabel('Distance (\u00c5)', fontsize=12)
-ax2.set_ylabel('Cumulative NOE Signal Power  (\u03a3 r\u207b\u2076)', fontsize=12)
-ax2.set_title('NOE Signal Power per Distance Bin\n'
-             'Steep falloff: short contacts completely dominate  (r\u207b\u2076 effect)', fontsize=11)
-ax2.grid(axis='y', ls='--', alpha=0.4)
+ax2.bar(
+    bin_centers,
+    signal_sum,
+    width=(bins[1] - bins[0]) * 0.9,
+    color="#c0392b",
+    alpha=0.82,
+    edgecolor="white",
+    lw=0.3,
+)
+ax2.set_xlabel("Distance (\u00c5)", fontsize=12)
+ax2.set_ylabel("Cumulative NOE Signal Power  (\u03a3 r\u207b\u2076)", fontsize=12)
+ax2.set_title(
+    "NOE Signal Power per Distance Bin\n"
+    "Steep falloff: short contacts completely dominate  (r\u207b\u2076 effect)",
+    fontsize=11,
+)
+ax2.grid(axis="y", ls="--", alpha=0.4)
 
-fig.suptitle('The r\u207b\u2076 Effect: More Pairs at Long Range, but Short Contacts Drive the Signal',
-             fontsize=13, fontweight='bold', y=1.01)
+fig.suptitle(
+    "The r\u207b\u2076 Effect: More Pairs at Long Range, but Short Contacts Drive the Signal",
+    fontsize=13,
+    fontweight="bold",
+    y=1.01,
+)
 plt.tight_layout()
 plt.show()
 
-print('Sample NOE Restraints:')
+print("Sample NOE Restraints:")
 for noe in noes[:5]:
-    print(f"  {noe['res_name_1']}{noe['index_1']} {noe['atom_name_1']} &lt;--&gt; "
-          f"{noe['res_name_2']}{noe['index_2']} {noe['atom_name_2']}: "
-          f"Distance {noe['distance']:.2f} \u00c5 (Upper Limit: {noe['upper_limit']:.2f} \u00c5)")</div>
+    print(
+        f"  {noe['res_name_1']}{noe['index_1']} {noe['atom_name_1']} &lt;--&gt; "
+        f"{noe['res_name_2']}{noe['index_2']} {noe['atom_name_2']}: "
+        f"Distance {noe['distance']:.2f} \u00c5 (Upper Limit: {noe['upper_limit']:.2f} \u00c5)"
+    )</div>
 </div>
 </div>
 </div>
@@ -2508,23 +2558,30 @@ complementary.</p>
 
 <span class="n">rdcs</span> <span class="o">=</span> <span class="n">calculate_rdcs</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">Da</span><span class="o">=</span><span class="n">Da</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">rhombicity</span><span class="p">)</span>
 
-<span class="n">res_rdc</span>  <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rdcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">res_rdc</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">rdcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 <span class="n">rdc_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">rdcs</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_rdc</span><span class="p">]</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_rdc</span><span class="p">,</span> <span class="n">rdc_vals</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s1">'#e74c3c'</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">'#2980b9'</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rdc_vals</span><span class="p">],</span>
-        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'-'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'D_NH (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Predicted N-H RDCs across Ubiquitin (Da = </span><span class="si">{</span><span class="n">Da</span><span class="si">}</span><span class="s1"> Hz, R = </span><span class="si">{</span><span class="n">rhombicity</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">'</span>
-          <span class="s1">'Red = positive coupling, Blue = negative coupling'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span>
+    <span class="n">res_rdc</span><span class="p">,</span>
+    <span class="n">rdc_vals</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="p">[</span><span class="s2">"#e74c3c"</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"#2980b9"</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rdc_vals</span><span class="p">],</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"-"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">"D_NH (Hz)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"Predicted N-H RDCs across Ubiquitin (Da = </span><span class="si">{</span><span class="n">Da</span><span class="si">}</span><span class="s2"> Hz, R = </span><span class="si">{</span><span class="n">rhombicity</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Red = positive coupling, Blue = negative coupling"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Calculated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rdcs</span><span class="p">)</span><span class="si">}</span><span class="s1"> backbone N-H RDCs.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Calculated </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">rdcs</span><span class="p">)</span><span class="si">}</span><span class="s2"> backbone N-H RDCs."</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-4">from synth_nmr.rdc import calculate_rdcs
 
@@ -2533,23 +2590,30 @@ rhombicity = 0.2
 
 rdcs = calculate_rdcs(structure, Da=Da, R=rhombicity)
 
-res_rdc  = sorted(rdcs.keys())
+res_rdc = sorted(rdcs.keys())
 rdc_vals = [rdcs[r] for r in res_rdc]
 
 plt.figure(figsize=(11, 4))
-plt.bar(res_rdc, rdc_vals,
-        color=['#e74c3c' if v &gt; 0 else '#2980b9' for v in rdc_vals],
-        alpha=0.82, width=0.9)
-plt.axhline(0, color='black', lw=0.8, ls='-', alpha=0.4)
-plt.xlabel('Residue Number', fontsize=12)
-plt.ylabel('D_NH (Hz)', fontsize=12)
-plt.title(f'Predicted N-H RDCs across Ubiquitin (Da = {Da} Hz, R = {rhombicity})\n'
-          'Red = positive coupling, Blue = negative coupling', fontsize=12)
-plt.grid(axis='y', ls='--', alpha=0.4)
+plt.bar(
+    res_rdc,
+    rdc_vals,
+    color=["#e74c3c" if v &gt; 0 else "#2980b9" for v in rdc_vals],
+    alpha=0.82,
+    width=0.9,
+)
+plt.axhline(0, color="black", lw=0.8, ls="-", alpha=0.4)
+plt.xlabel("Residue Number", fontsize=12)
+plt.ylabel("D_NH (Hz)", fontsize=12)
+plt.title(
+    f"Predicted N-H RDCs across Ubiquitin (Da = {Da} Hz, R = {rhombicity})\n"
+    "Red = positive coupling, Blue = negative coupling",
+    fontsize=12,
+)
+plt.grid(axis="y", ls="--", alpha=0.4)
 plt.tight_layout()
 plt.show()
 
-print(f'Calculated {len(rdcs)} backbone N-H RDCs.')</div>
+print(f"Calculated {len(rdcs)} backbone N-H RDCs.")</div>
 </div>
 </div>
 </div>
@@ -2595,27 +2659,26 @@ single-model distances, revealing which residues are most affected by flexibilit
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">load_trajectory</span><span class="p">,</span>
     <span class="n">ensemble_average_noes</span><span class="p">,</span>
+    <span class="n">load_trajectory</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Load all 10 conformers into a TrajectoryEnsemble</span>
-<span class="n">frames</span>       <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">))]</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">))]</span>
 <span class="n">noe_ensemble</span> <span class="o">=</span> <span class="n">load_trajectory</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s1">-conformer TrajectoryEnsemble for NOE analysis.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s2">-conformer TrajectoryEnsemble for NOE analysis."</span><span class="p">)</span>
 
 <span class="c1"># Build per-frame flat dicts: {(res_i, atom_i, res_j, atom_j): distance}</span>
 <span class="c1"># Note: calculate_synthetic_noes returns a LIST of dicts (one per atom pair),</span>
 <span class="c1"># not a nested dict — we build the flat dict by iterating that list.</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Calculating NOEs for each conformer...'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Calculating NOEs for each conformer..."</span><span class="p">)</span>
 <span class="n">per_frame_noes</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">noe_ensemble</span><span class="p">:</span>
-    <span class="n">raw</span>  <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">],</span>
-               <span class="n">entry</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">])</span>
-        <span class="n">flat</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"index_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"index_2"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_2"</span><span class="p">])</span>
+        <span class="n">flat</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"distance"</span><span class="p">]</span>
     <span class="n">per_frame_noes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
 
 <span class="c1"># r⁻⁶-averaged effective distances across the ensemble</span>
@@ -2629,34 +2692,33 @@ single-model distances, revealing which residues are most affected by flexibilit
         <span class="n">r_arith</span><span class="p">[</span><span class="n">pair</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span>
 
 <span class="n">common</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r_arith</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">eff_noes</span><span class="p">]</span>
-<span class="n">x</span>   <span class="o">=</span> <span class="p">[</span><span class="n">r_arith</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>  <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>   <span class="c1"># arithmetic mean  (overestimates)</span>
-<span class="n">y</span>   <span class="o">=</span> <span class="p">[</span><span class="n">eff_noes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>   <span class="c1"># r⁻⁶ average   (physically correct)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_arith</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>  <span class="c1"># arithmetic mean  (overestimates)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">eff_noes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>  <span class="c1"># r⁻⁶ average   (physically correct)</span>
 <span class="n">gap</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">e</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> NOE pairs present in all </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s1"> conformers.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s2"> NOE pairs present in all </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s2"> conformers."</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">from synth_nmr.trajectory import (
-    load_trajectory,
     ensemble_average_noes,
+    load_trajectory,
 )
 
 # Load all 10 conformers into a TrajectoryEnsemble
-frames       = [stack[i] for i in range(len(stack))]
+frames = [stack[i] for i in range(len(stack))]
 noe_ensemble = load_trajectory(frames)
-print(f'Loaded {len(noe_ensemble)}-conformer TrajectoryEnsemble for NOE analysis.')
+print(f"Loaded {len(noe_ensemble)}-conformer TrajectoryEnsemble for NOE analysis.")
 
 # Build per-frame flat dicts: {(res_i, atom_i, res_j, atom_j): distance}
 # Note: calculate_synthetic_noes returns a LIST of dicts (one per atom pair),
 # not a nested dict — we build the flat dict by iterating that list.
-print('Calculating NOEs for each conformer...')
+print("Calculating NOEs for each conformer...")
 per_frame_noes = []
 for frame in noe_ensemble:
-    raw  = calculate_synthetic_noes(frame, cutoff=5.5, exclude_intra_residue=True)
+    raw = calculate_synthetic_noes(frame, cutoff=5.5, exclude_intra_residue=True)
     flat = {}
     for entry in raw:
-        key = (entry['index_1'], entry['atom_name_1'],
-               entry['index_2'], entry['atom_name_2'])
-        flat[key] = entry['distance']
+        key = (entry["index_1"], entry["atom_name_1"], entry["index_2"], entry["atom_name_2"])
+        flat[key] = entry["distance"]
     per_frame_noes.append(flat)
 
 # r⁻⁶-averaged effective distances across the ensemble
@@ -2670,11 +2732,11 @@ for pair in eff_noes:
         r_arith[pair] = float(np.mean(vals))
 
 common = [p for p in r_arith if p in eff_noes]
-x   = [r_arith[p]  for p in common]   # arithmetic mean  (overestimates)
-y   = [eff_noes[p] for p in common]   # r⁻⁶ average   (physically correct)
+x = [r_arith[p] for p in common]  # arithmetic mean  (overestimates)
+y = [eff_noes[p] for p in common]  # r⁻⁶ average   (physically correct)
 gap = [a - e for a, e in zip(x, y)]
 
-print(f'{len(common)} NOE pairs present in all {len(noe_ensemble)} conformers.')</div>
+print(f"{len(common)} NOE pairs present in all {len(noe_ensemble)} conformers.")</div>
 </div>
 </div>
 </div>
@@ -2703,17 +2765,18 @@ print(f'{len(common)} NOE pairs present in all {len(noe_ensemble)} conformers.')
 
 <span class="c1"># Left: scatter r_arith vs r_eff — all points at or below the diagonal</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">gap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'YlOrRd'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span>
-                <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'r_arith </span><span class="se">\u2212</span><span class="s1"> r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">)</span>
-<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.1</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s1">'r_eff = r_arith (no difference)'</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Arithmetic Mean Distance  (</span><span class="se">\u00c5</span><span class="s1">)</span><span class="se">\n</span><span class="s1">(simple average </span><span class="se">\u2014</span><span class="s1"> ignores r</span><span class="se">\u207b\u2076</span><span class="s1"> physics)'</span><span class="p">,</span>
-              <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'r</span><span class="se">\u207b\u2076</span><span class="s1">-Averaged Distance r_eff  (</span><span class="se">\u00c5</span><span class="s1">)</span><span class="se">\n</span><span class="s1">(physically correct for NOEs)'</span><span class="p">,</span>
-              <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'NOE Averaging Error:</span><span class="se">\n</span><span class="s1">All points lie BELOW or ON the diagonal'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">gap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrRd"</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"r_arith </span><span class="se">\u2212</span><span class="s2"> r_eff  (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">)</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.1</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"r_eff = r_arith (no difference)"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
+    <span class="s2">"Arithmetic Mean Distance  (</span><span class="se">\u00c5</span><span class="s2">)</span><span class="se">\n</span><span class="s2">(simple average </span><span class="se">\u2014</span><span class="s2"> ignores r</span><span class="se">\u207b\u2076</span><span class="s2"> physics)"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span>
+    <span class="s2">"r</span><span class="se">\u207b\u2076</span><span class="s2">-Averaged Distance r_eff  (</span><span class="se">\u00c5</span><span class="s2">)</span><span class="se">\n</span><span class="s2">(physically correct for NOEs)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"NOE Averaging Error:</span><span class="se">\n</span><span class="s2">All points lie BELOW or ON the diagonal"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># Right: per-residue maximum averaging error</span>
@@ -2725,37 +2788,41 @@ print(f'{len(common)} NOE pairs present in all {len(noe_ensemble)} conformers.')
     <span class="n">res_gap</span><span class="p">[</span><span class="n">rj</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">res_gap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rj</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="n">g</span><span class="p">)</span>
 
 <span class="n">res_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">res_gap</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">max_gap</span>    <span class="o">=</span> <span class="p">[</span><span class="n">res_gap</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_sorted</span><span class="p">]</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_sorted</span><span class="p">,</span> <span class="n">max_gap</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#c0392b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Max. distance overestimate  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue NOE Error from Simple Averaging</span><span class="se">\n</span><span class="s1">'</span>
-              <span class="s1">'Peaks = residues most affected by conformational flexibility'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+<span class="n">max_gap</span> <span class="o">=</span> <span class="p">[</span><span class="n">res_gap</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_sorted</span><span class="p">]</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_sorted</span><span class="p">,</span> <span class="n">max_gap</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#c0392b"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Max. distance overestimate  (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s2">"Per-Residue NOE Error from Simple Averaging</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Peaks = residues most affected by conformational flexibility"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="n">n_sig</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gap</span> <span class="k">if</span> <span class="n">g</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_sig</span><span class="si">}</span><span class="s1"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> NOE pairs: arithmetic mean overestimates by &gt; 0.1 </span><span class="se">\u00c5</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_sig</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s2"> NOE pairs: arithmetic mean overestimates by &gt; 0.1 </span><span class="se">\u00c5</span><span class="s2">"</span><span class="p">)</span>
 <span class="n">worst_res</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">res_gap</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">res_gap</span><span class="o">.</span><span class="n">get</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Worst residue: </span><span class="si">{</span><span class="n">worst_res</span><span class="si">}</span><span class="s1">  (max overestimate </span><span class="si">{</span><span class="n">res_gap</span><span class="p">[</span><span class="n">worst_res</span><span class="p">]</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Worst residue: </span><span class="si">{</span><span class="n">worst_res</span><span class="si">}</span><span class="s2">  (max overestimate </span><span class="si">{</span><span class="n">res_gap</span><span class="p">[</span><span class="n">worst_res</span><span class="p">]</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-6">fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
 # Left: scatter r_arith vs r_eff — all points at or below the diagonal
 ax = axes[0]
-sc = ax.scatter(x, y, c=gap, cmap='YlOrRd', s=18, alpha=0.65,
-                edgecolors='none', vmin=0, zorder=3)
-cb = plt.colorbar(sc, ax=ax, label='r_arith \u2212 r_eff  (\u00c5)')
-hi = max(max(x), max(y)) + 0.1
-ax.plot([1.5, hi], [1.5, hi], 'k--', lw=1.2, alpha=0.5,
-        label='r_eff = r_arith (no difference)')
-ax.set_xlabel('Arithmetic Mean Distance  (\u00c5)\n(simple average \u2014 ignores r\u207b\u2076 physics)',
-              fontsize=11)
-ax.set_ylabel('r\u207b\u2076-Averaged Distance r_eff  (\u00c5)\n(physically correct for NOEs)',
-              fontsize=11)
-ax.set_title('NOE Averaging Error:\nAll points lie BELOW or ON the diagonal', fontsize=12)
+sc = ax.scatter(x, y, c=gap, cmap="YlOrRd", s=18, alpha=0.65, edgecolors="none", vmin=0, zorder=3)
+cb = plt.colorbar(sc, ax=ax, label="r_arith \u2212 r_eff  (\u00c5)")
+hi = max(*x, *y) + 0.1
+ax.plot([1.5, hi], [1.5, hi], "k--", lw=1.2, alpha=0.5, label="r_eff = r_arith (no difference)")
+ax.set_xlabel(
+    "Arithmetic Mean Distance  (\u00c5)\n(simple average \u2014 ignores r\u207b\u2076 physics)",
+    fontsize=11,
+)
+ax.set_ylabel(
+    "r\u207b\u2076-Averaged Distance r_eff  (\u00c5)\n(physically correct for NOEs)", fontsize=11
+)
+ax.set_title("NOE Averaging Error:\nAll points lie BELOW or ON the diagonal", fontsize=12)
 ax.legend(fontsize=10)
 
 # Right: per-residue maximum averaging error
@@ -2767,21 +2834,24 @@ for (ri, _ai, rj, _aj), g in zip(common, gap):
     res_gap[rj] = max(res_gap.get(rj, 0.0), g)
 
 res_sorted = sorted(res_gap.keys())
-max_gap    = [res_gap[r] for r in res_sorted]
-ax2.bar(res_sorted, max_gap, color='#c0392b', alpha=0.78, width=0.9)
-ax2.set_xlabel('Residue Number', fontsize=12)
-ax2.set_ylabel('Max. distance overestimate  (\u00c5)', fontsize=12)
-ax2.set_title('Per-Residue NOE Error from Simple Averaging\n'
-              'Peaks = residues most affected by conformational flexibility', fontsize=12)
-ax2.grid(axis='y', ls='--', alpha=0.35)
+max_gap = [res_gap[r] for r in res_sorted]
+ax2.bar(res_sorted, max_gap, color="#c0392b", alpha=0.78, width=0.9)
+ax2.set_xlabel("Residue Number", fontsize=12)
+ax2.set_ylabel("Max. distance overestimate  (\u00c5)", fontsize=12)
+ax2.set_title(
+    "Per-Residue NOE Error from Simple Averaging\n"
+    "Peaks = residues most affected by conformational flexibility",
+    fontsize=12,
+)
+ax2.grid(axis="y", ls="--", alpha=0.35)
 
 plt.tight_layout()
 plt.show()
 
 n_sig = sum(1 for g in gap if g &gt; 0.1)
-print(f'{n_sig} of {len(common)} NOE pairs: arithmetic mean overestimates by &gt; 0.1 \u00c5')
+print(f"{n_sig} of {len(common)} NOE pairs: arithmetic mean overestimates by &gt; 0.1 \u00c5")
 worst_res = max(res_gap, key=res_gap.get)
-print(f'Worst residue: {worst_res}  (max overestimate {res_gap[worst_res]:.3f} \u00c5)')</div>
+print(f"Worst residue: {worst_res}  (max overestimate {res_gap[worst_res]:.3f} \u00c5)")</div>
 </div>
 </div>
 </div>

@@ -2246,19 +2246,21 @@ physically meaningful set of conformations sampled by the real protein in soluti
 <span class="c1"># Download the Ubiquitin NMR solution ensemble — 10 conformers from NOE-restrained MD</span>
 <span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin_ensemble</span><span class="o">.</span><span class="n">pdb</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-    <span class="s1">'figure.dpi'</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
-    <span class="s1">'font.size'</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-    <span class="s1">'axes.titlesize'</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
-    <span class="s1">'axes.spines.top'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s1">'axes.spines.right'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="p">})</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Environment ready.'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
+        <span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+        <span class="s2">"axes.titlesize"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
+        <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Environment ready."</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-1"># Install synth-nmr and its dependencies
 !pip install -q synth-nmr biotite matplotlib numpy
@@ -2266,19 +2268,21 @@ physically meaningful set of conformations sampled by the real protein in soluti
 # Download the Ubiquitin NMR solution ensemble — 10 conformers from NOE-restrained MD
 !wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin_ensemble.pdb
 
-import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import biotite.structure.io as strucio
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import numpy as np
 
-plt.rcParams.update({
-    'figure.dpi': 120,
-    'font.size': 11,
-    'axes.titlesize': 13,
-    'axes.spines.top': False,
-    'axes.spines.right': False,
-})
-print('Environment ready.')</div>
+plt.rcParams.update(
+    {
+        "figure.dpi": 120,
+        "font.size": 11,
+        "axes.titlesize": 13,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+    }
+)
+print("Environment ready.")</div>
 </div>
 </div>
 </div>
@@ -2321,47 +2325,47 @@ and returns an <strong>AtomArrayStack</strong> — a 3-D array indexed <code>[mo
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.trajectory</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">load_trajectory</span><span class="p">,</span>
     <span class="n">compute_s2_from_trajectory</span><span class="p">,</span>
-    <span class="n">ensemble_average_shifts</span><span class="p">,</span>
     <span class="n">ensemble_average_noes</span><span class="p">,</span>
     <span class="n">ensemble_average_rdcs</span><span class="p">,</span>
+    <span class="n">ensemble_average_shifts</span><span class="p">,</span>
+    <span class="n">load_trajectory</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="c1"># Load all NMR conformers from the PDB file</span>
-<span class="n">stack</span>    <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s1">'ubiquitin_ensemble.pdb'</span><span class="p">)</span>
+<span class="n">stack</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">"ubiquitin_ensemble.pdb"</span><span class="p">)</span>
 <span class="n">n_models</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span>
 
 <span class="c1"># Each stack[i] is a single AtomArray (one conformer)</span>
-<span class="n">frames</span>   <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_models</span><span class="p">)]</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_models</span><span class="p">)]</span>
 
 <span class="c1"># Wrap into a TrajectoryEnsemble container</span>
 <span class="n">ensemble</span> <span class="o">=</span> <span class="n">load_trajectory</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Loaded PDB 1D3Z (</span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s1"> NMR conformers, </span><span class="si">{</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span><span class="si">}</span><span class="s1"> atoms each)'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'TrajectoryEnsemble: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span><span class="si">}</span><span class="s1"> frames'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded PDB 1D3Z (</span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s2"> NMR conformers, </span><span class="si">{</span><span class="n">frames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">array_length</span><span class="p">()</span><span class="si">}</span><span class="s2"> atoms each)"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"TrajectoryEnsemble: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span><span class="si">}</span><span class="s2"> frames"</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">ensemble</span><span class="p">))</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-2">from synth_nmr.trajectory import (
-    load_trajectory,
     compute_s2_from_trajectory,
-    ensemble_average_shifts,
     ensemble_average_noes,
     ensemble_average_rdcs,
+    ensemble_average_shifts,
+    load_trajectory,
 )
 
 # Load all NMR conformers from the PDB file
-stack    = strucio.load_structure('ubiquitin_ensemble.pdb')
+stack = strucio.load_structure("ubiquitin_ensemble.pdb")
 n_models = len(stack)
 
 # Each stack[i] is a single AtomArray (one conformer)
-frames   = [stack[i] for i in range(n_models)]
+frames = [stack[i] for i in range(n_models)]
 
 # Wrap into a TrajectoryEnsemble container
 ensemble = load_trajectory(frames)
 
-print(f'Loaded PDB 1D3Z ({n_models} NMR conformers, {frames[0].array_length()} atoms each)')
-print(f'TrajectoryEnsemble: {len(ensemble)} frames')
+print(f"Loaded PDB 1D3Z ({n_models} NMR conformers, {frames[0].array_length()} atoms each)")
+print(f"TrajectoryEnsemble: {len(ensemble)} frames")
 print(repr(ensemble))</div>
 </div>
 </div>
@@ -2427,113 +2431,149 @@ If they scatter in all directions, the mean vector cancels and $S^2 \approx 0$ (
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Compute S² = |&lt;μ̂&gt;|² for every backbone amide in the ensemble</span>
 <span class="n">s2_map</span> <span class="o">=</span> <span class="n">compute_s2_from_trajectory</span><span class="p">(</span><span class="n">ensemble</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'S² computed for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">s2_map</span><span class="p">)</span><span class="si">}</span><span class="s1"> backbone amide sites</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"S² computed for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">s2_map</span><span class="p">)</span><span class="si">}</span><span class="s2"> backbone amide sites</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
 <span class="c1"># ---------- Secondary structure of Ubiquitin (1D3Z) ----------------------------</span>
-<span class="n">alpha_res</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>                                    <span class="c1"># α-Helix</span>
-<span class="n">beta_res</span>  <span class="o">=</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>   <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>             <span class="c1"># β1, β2</span>
-           <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">46</span><span class="p">))</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">51</span><span class="p">))</span>             <span class="c1"># β3, β4</span>
-           <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">73</span><span class="p">)))</span>                                  <span class="c1"># β5</span>
+<span class="n">alpha_res</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="mi">35</span><span class="p">))</span>  <span class="c1"># α-Helix</span>
+<span class="n">beta_res</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>  <span class="c1"># β1, β2</span>
+    <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">46</span><span class="p">))</span>
+    <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">48</span><span class="p">,</span> <span class="mi">51</span><span class="p">))</span>  <span class="c1"># β3, β4</span>
+    <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">73</span><span class="p">))</span>
+<span class="p">)</span>  <span class="c1"># β5</span>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">alpha_res</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">'#e74c3c'</span>
+        <span class="k">return</span> <span class="s2">"#e74c3c"</span>
     <span class="k">if</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">beta_res</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">'#2980b9'</span>
-    <span class="k">return</span> <span class="s1">'#7f8c8d'</span>
+        <span class="k">return</span> <span class="s2">"#2980b9"</span>
+    <span class="k">return</span> <span class="s2">"#7f8c8d"</span>
+
 
 <span class="n">residues</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">s2_map</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-<span class="n">s2_vals</span>  <span class="o">=</span> <span class="p">[</span><span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
-<span class="n">colors</span>   <span class="o">=</span> <span class="p">[</span><span class="n">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
+<span class="n">s2_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">]</span>
 
 <span class="c1"># ---------- Plot ---------------------------------------------------------------</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">))</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">residues</span><span class="p">,</span> <span class="n">s2_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#2c3e50'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-           <span class="n">label</span><span class="o">=</span><span class="s1">'Typical rigid threshold  S² = 0.85'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span>
+    <span class="mf">0.85</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#2c3e50"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Typical rigid threshold  S² = 0.85"</span>
+<span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.15</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'S²  (order parameter)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"S²  (order parameter)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
-    <span class="s1">'Backbone S² from the 10-Conformer NMR Ensemble of Ubiquitin (1D3Z)</span><span class="se">\n</span><span class="s1">'</span>
-    <span class="s1">'S² = |</span><span class="se">\u27e8\u03bc\u0302\u27e9</span><span class="s1">|</span><span class="se">\u00b2</span><span class="s1">   (Lipari &amp; Szabo 1982; Clore et al. 1990)'</span><span class="p">,</span>
-    <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="s2">"Backbone S² from the 10-Conformer NMR Ensemble of Ubiquitin (1D3Z)</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"S² = |</span><span class="se">\u27e8\u03bc\u0302\u27e9</span><span class="s2">|</span><span class="se">\u00b2</span><span class="s2">   (Lipari &amp; Szabo 1982; Clore et al. 1990)"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">patches</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-Helix  (res</span><span class="se">\u2020</span><span class="s1">23</span><span class="se">\u2013</span><span class="s1">34)'</span><span class="p">),</span>
-    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-Strands'</span><span class="p">),</span>
-    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#7f8c8d'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Loops / Turns'</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#e74c3c"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="se">\u03b1</span><span class="s2">-Helix  (res</span><span class="se">\u2020</span><span class="s2">23</span><span class="se">\u2013</span><span class="s2">34)"</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#2980b9"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="se">\u03b2</span><span class="s2">-Strands"</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#7f8c8d"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.88</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Loops / Turns"</span><span class="p">),</span>
 <span class="p">]</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches</span> <span class="o">+</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">loc</span><span class="o">=</span><span class="s1">'lower left'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">'N-terminus</span><span class="se">\n</span><span class="s1">(disordered)'</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s2_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
-            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span>
-            <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s1">'-&gt;'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">))</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="s1">'C-terminus</span><span class="se">\n</span><span class="s1">(disordered)'</span><span class="p">,</span> <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="n">s2_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
-            <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">68</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span>
-            <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s1">'-&gt;'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#555'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches</span> <span class="o">+</span> <span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"lower left"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+    <span class="s2">"N-terminus</span><span class="se">\n</span><span class="s2">(disordered)"</span><span class="p">,</span>
+    <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">s2_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+    <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"#555"</span><span class="p">,</span>
+    <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s2">"-&gt;"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#555"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+    <span class="s2">"C-terminus</span><span class="se">\n</span><span class="s2">(disordered)"</span><span class="p">,</span>
+    <span class="n">xy</span><span class="o">=</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="n">s2_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">76</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)),</span>
+    <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">68</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"#555"</span><span class="p">,</span>
+    <span class="n">arrowprops</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arrowstyle</span><span class="o">=</span><span class="s2">"-&gt;"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#555"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
+<span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="n">flexible</span> <span class="o">=</span> <span class="p">[(</span><span class="n">r</span><span class="p">,</span> <span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">])</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">residues</span> <span class="k">if</span> <span class="n">s2_map</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.60</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">flexible</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">'Highly flexible residues (S² &lt; 0.60):'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Highly flexible residues (S² &lt; 0.60):"</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">s2</span> <span class="ow">in</span> <span class="n">flexible</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'  Res </span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s1">3d</span><span class="si">}</span><span class="s1">:  S² = </span><span class="si">{</span><span class="n">s2</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Res </span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">:  S² = </span><span class="si">{</span><span class="n">s2</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3"># Compute S² = |&lt;μ̂&gt;|² for every backbone amide in the ensemble
 s2_map = compute_s2_from_trajectory(ensemble)
-print(f'S² computed for {len(s2_map)} backbone amide sites\n')
+print(f"S² computed for {len(s2_map)} backbone amide sites\n")
 
 # ---------- Secondary structure of Ubiquitin (1D3Z) ----------------------------
-alpha_res = set(range(23, 35))                                    # α-Helix
-beta_res  = (set(range(1, 8))   | set(range(10, 18))             # β1, β2
-           | set(range(40, 46)) | set(range(48, 51))             # β3, β4
-           | set(range(64, 73)))                                  # β5
+alpha_res = set(range(23, 35))  # α-Helix
+beta_res = (
+    set(range(1, 8))
+    | set(range(10, 18))  # β1, β2
+    | set(range(40, 46))
+    | set(range(48, 51))  # β3, β4
+    | set(range(64, 73))
+)  # β5
+
 
 def ss_color(r):
     if r in alpha_res:
-        return '#e74c3c'
+        return "#e74c3c"
     if r in beta_res:
-        return '#2980b9'
-    return '#7f8c8d'
+        return "#2980b9"
+    return "#7f8c8d"
+
 
 residues = sorted(s2_map.keys())
-s2_vals  = [s2_map[r] for r in residues]
-colors   = [ss_color(r) for r in residues]
+s2_vals = [s2_map[r] for r in residues]
+colors = [ss_color(r) for r in residues]
 
 # ---------- Plot ---------------------------------------------------------------
 fig, ax = plt.subplots(figsize=(13, 4.5))
 ax.bar(residues, s2_vals, color=colors, alpha=0.88, width=0.9, zorder=3)
-ax.axhline(0.85, color='#2c3e50', ls='--', lw=1.2, alpha=0.5,
-           label='Typical rigid threshold  S² = 0.85')
+ax.axhline(
+    0.85, color="#2c3e50", ls="--", lw=1.2, alpha=0.5, label="Typical rigid threshold  S² = 0.85"
+)
 ax.set_ylim(0, 1.15)
-ax.set_xlabel('Residue Number', fontsize=12)
-ax.set_ylabel('S²  (order parameter)', fontsize=12)
+ax.set_xlabel("Residue Number", fontsize=12)
+ax.set_ylabel("S²  (order parameter)", fontsize=12)
 ax.set_title(
-    'Backbone S² from the 10-Conformer NMR Ensemble of Ubiquitin (1D3Z)\n'
-    'S² = |\u27e8\u03bc\u0302\u27e9|\u00b2   (Lipari &amp; Szabo 1982; Clore et al. 1990)',
-    fontsize=13)
-ax.grid(axis='y', linestyle='--', alpha=0.35, zorder=0)
+    "Backbone S² from the 10-Conformer NMR Ensemble of Ubiquitin (1D3Z)\n"
+    "S² = |\u27e8\u03bc\u0302\u27e9|\u00b2   (Lipari &amp; Szabo 1982; Clore et al. 1990)",
+    fontsize=13,
+)
+ax.grid(axis="y", linestyle="--", alpha=0.35, zorder=0)
 patches = [
-    mpatches.Patch(color='#e74c3c', alpha=0.88, label='\u03b1-Helix  (res\u202023\u201334)'),
-    mpatches.Patch(color='#2980b9', alpha=0.88, label='\u03b2-Strands'),
-    mpatches.Patch(color='#7f8c8d', alpha=0.88, label='Loops / Turns'),
+    mpatches.Patch(color="#e74c3c", alpha=0.88, label="\u03b1-Helix  (res\u202023\u201334)"),
+    mpatches.Patch(color="#2980b9", alpha=0.88, label="\u03b2-Strands"),
+    mpatches.Patch(color="#7f8c8d", alpha=0.88, label="Loops / Turns"),
 ]
-ax.legend(handles=patches + [ax.lines[0]], loc='lower left', fontsize=10)
-ax.annotate('N-terminus\n(disordered)', xy=(1, s2_map.get(1, 0.5)),
-            xytext=(4, 0.25), fontsize=9, color='#555',
-            arrowprops=dict(arrowstyle='-&gt;', color='#555', lw=0.8))
-ax.annotate('C-terminus\n(disordered)', xy=(76, s2_map.get(76, 0.5)),
-            xytext=(68, 0.25), fontsize=9, color='#555',
-            arrowprops=dict(arrowstyle='-&gt;', color='#555', lw=0.8))
+ax.legend(handles=patches + [ax.lines[0]], loc="lower left", fontsize=10)
+ax.annotate(
+    "N-terminus\n(disordered)",
+    xy=(1, s2_map.get(1, 0.5)),
+    xytext=(4, 0.25),
+    fontsize=9,
+    color="#555",
+    arrowprops=dict(arrowstyle="-&gt;", color="#555", lw=0.8),
+)
+ax.annotate(
+    "C-terminus\n(disordered)",
+    xy=(76, s2_map.get(76, 0.5)),
+    xytext=(68, 0.25),
+    fontsize=9,
+    color="#555",
+    arrowprops=dict(arrowstyle="-&gt;", color="#555", lw=0.8),
+)
 plt.tight_layout()
 plt.show()
 
 flexible = [(r, s2_map[r]) for r in residues if s2_map[r] &lt; 0.60]
 if flexible:
-    print('Highly flexible residues (S² &lt; 0.60):')
+    print("Highly flexible residues (S² &lt; 0.60):")
     for r, s2 in flexible:
-        print(f'  Res {r:3d}:  S² = {s2:.3f}')</div>
+        print(f"  Res {r:3d}:  S² = {s2:.3f}")</div>
 </div>
 </div>
 </div>
@@ -2580,6 +2620,7 @@ is important and should not be ignored.</p>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.chemical_shifts</span><span class="w"> </span><span class="kn">import</span> <span class="n">predict_chemical_shifts</span>
 
+
 <span class="k">def</span><span class="w"> </span><span class="nf">flatten_shifts</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Merge {method: {res_id: {atom: shift}}} → {res_id: {atom: shift}}."""</span>
     <span class="n">merged</span> <span class="o">=</span> <span class="p">{}</span>
@@ -2588,49 +2629,55 @@ is important and should not be ignored.</p>
             <span class="n">merged</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">res_id</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">merged</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Predicting chemical shifts for all 10 conformers...'</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Predicting chemical shifts for all 10 conformers..."</span><span class="p">)</span>
 <span class="n">per_frame_shifts</span> <span class="o">=</span> <span class="p">[</span><span class="n">flatten_shifts</span><span class="p">(</span><span class="n">predict_chemical_shifts</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">]</span>
-<span class="n">avg_shifts</span>       <span class="o">=</span> <span class="n">ensemble_average_shifts</span><span class="p">(</span><span class="n">per_frame_shifts</span><span class="p">)</span>
-<span class="n">model1_shifts</span>    <span class="o">=</span> <span class="n">per_frame_shifts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Done.  Ensemble-averaged shifts for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_shifts</span><span class="p">)</span><span class="si">}</span><span class="s1"> residues.'</span><span class="p">)</span>
+<span class="n">avg_shifts</span> <span class="o">=</span> <span class="n">ensemble_average_shifts</span><span class="p">(</span><span class="n">per_frame_shifts</span><span class="p">)</span>
+<span class="n">model1_shifts</span> <span class="o">=</span> <span class="n">per_frame_shifts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Done.  Ensemble-averaged shifts for </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">avg_shifts</span><span class="p">)</span><span class="si">}</span><span class="s2"> residues."</span><span class="p">)</span>
 
 <span class="c1"># ---------- Cα shifts: model 1 vs ensemble average ----------------------------</span>
-<span class="n">res_ca</span>   <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">avg_shifts</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s1">'CA'</span> <span class="ow">in</span> <span class="n">model1_shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">and</span> <span class="s1">'CA'</span> <span class="ow">in</span> <span class="n">avg_shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">{})]</span>
-<span class="n">ca_m1</span>    <span class="o">=</span> <span class="p">[</span><span class="n">model1_shifts</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="s1">'CA'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_ca</span><span class="p">]</span>
-<span class="n">ca_avg</span>   <span class="o">=</span> <span class="p">[</span><span class="n">avg_shifts</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="s1">'CA'</span><span class="p">]</span>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_ca</span><span class="p">]</span>
+<span class="n">res_ca</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">r</span>
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">avg_shifts</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"CA"</span> <span class="ow">in</span> <span class="n">model1_shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">and</span> <span class="s2">"CA"</span> <span class="ow">in</span> <span class="n">avg_shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">]</span>
+<span class="n">ca_m1</span> <span class="o">=</span> <span class="p">[</span><span class="n">model1_shifts</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="s2">"CA"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_ca</span><span class="p">]</span>
+<span class="n">ca_avg</span> <span class="o">=</span> <span class="p">[</span><span class="n">avg_shifts</span><span class="p">[</span><span class="n">r</span><span class="p">][</span><span class="s2">"CA"</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_ca</span><span class="p">]</span>
 <span class="n">diff_ppm</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span><span class="p">,</span> <span class="n">a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">,</span> <span class="n">ca_avg</span><span class="p">)]</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="c1"># Left: scatter model 1 vs ensemble</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">,</span> <span class="n">ca_avg</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">diff_ppm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'plasma'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span>
-                <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'|Model</span><span class="se">\u2020</span><span class="s1">01 </span><span class="se">\u2212</span><span class="s1"> Ensemble avg|  (ppm)'</span><span class="p">)</span>
-<span class="n">lo</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">ca_avg</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
-<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">ca_m1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">ca_avg</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Perfect agreement'</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'C</span><span class="se">\u03b1</span><span class="s1"> shift  </span><span class="se">\u2014</span><span class="s1"> Model</span><span class="se">\u2002</span><span class="s1">1  (ppm)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'C</span><span class="se">\u03b1</span><span class="s1"> shift  </span><span class="se">\u2014</span><span class="s1"> Ensemble average  (ppm)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'C</span><span class="se">\u03b1</span><span class="s1"> Chemical Shifts:</span><span class="se">\n</span><span class="s1">Model</span><span class="se">\u2002</span><span class="s1">1 vs. 10-Frame Ensemble Average'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">ca_m1</span><span class="p">,</span> <span class="n">ca_avg</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">diff_ppm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"plasma"</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">65</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.85</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span>
+<span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"|Model</span><span class="se">\u2020</span><span class="s2">01 </span><span class="se">\u2212</span><span class="s2"> Ensemble avg|  (ppm)"</span><span class="p">)</span>
+<span class="n">lo</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="o">*</span><span class="n">ca_m1</span><span class="p">,</span> <span class="o">*</span><span class="n">ca_avg</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">ca_m1</span><span class="p">,</span> <span class="o">*</span><span class="n">ca_avg</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.45</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Perfect agreement"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"C</span><span class="se">\u03b1</span><span class="s2"> shift  </span><span class="se">\u2014</span><span class="s2"> Model</span><span class="se">\u2002</span><span class="s2">1  (ppm)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"C</span><span class="se">\u03b1</span><span class="s2"> shift  </span><span class="se">\u2014</span><span class="s2"> Ensemble average  (ppm)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"C</span><span class="se">\u03b1</span><span class="s2"> Chemical Shifts:</span><span class="se">\n</span><span class="s2">Model</span><span class="se">\u2002</span><span class="s2">1 vs. 10-Frame Ensemble Average"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># Right: per-residue shift difference bar</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_ca</span><span class="p">,</span> <span class="n">diff_ppm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#8e44ad'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'|</span><span class="se">\u0394</span><span class="s1"> C</span><span class="se">\u03b1</span><span class="s1">|  (ppm)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue C</span><span class="se">\u03b1</span><span class="s1"> Shift Change</span><span class="se">\n</span><span class="s1">due to Ensemble Averaging'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_ca</span><span class="p">,</span> <span class="n">diff_ppm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#8e44ad"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"|</span><span class="se">\u0394</span><span class="s2"> C</span><span class="se">\u03b1</span><span class="s2">|  (ppm)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Per-Residue C</span><span class="se">\u03b1</span><span class="s2"> Shift Change</span><span class="se">\n</span><span class="s2">due to Ensemble Averaging"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Mean |</span><span class="se">\u0394</span><span class="s1">C</span><span class="se">\u03b1</span><span class="s1">| (model 1 vs ensemble): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff_ppm</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> ppm'</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Max  |</span><span class="se">\u0394</span><span class="s1">C</span><span class="se">\u03b1</span><span class="s1">| (model 1 vs ensemble): </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">diff_ppm</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> ppm'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Mean |</span><span class="se">\u0394</span><span class="s2">C</span><span class="se">\u03b1</span><span class="s2">| (model 1 vs ensemble): </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">diff_ppm</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ppm"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Max  |</span><span class="se">\u0394</span><span class="s2">C</span><span class="se">\u03b1</span><span class="s2">| (model 1 vs ensemble): </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">diff_ppm</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> ppm"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-4">from synth_nmr.chemical_shifts import predict_chemical_shifts
+
 
 def flatten_shifts(raw):
     """Merge {method: {res_id: {atom: shift}}} → {res_id: {atom: shift}}."""
@@ -2640,47 +2687,52 @@ def flatten_shifts(raw):
             merged.setdefault(res_id, {}).update(atoms)
     return merged
 
-print('Predicting chemical shifts for all 10 conformers...')
+
+print("Predicting chemical shifts for all 10 conformers...")
 per_frame_shifts = [flatten_shifts(predict_chemical_shifts(f)) for f in ensemble]
-avg_shifts       = ensemble_average_shifts(per_frame_shifts)
-model1_shifts    = per_frame_shifts[0]
-print(f'Done.  Ensemble-averaged shifts for {len(avg_shifts)} residues.')
+avg_shifts = ensemble_average_shifts(per_frame_shifts)
+model1_shifts = per_frame_shifts[0]
+print(f"Done.  Ensemble-averaged shifts for {len(avg_shifts)} residues.")
 
 # ---------- Cα shifts: model 1 vs ensemble average ----------------------------
-res_ca   = [r for r in sorted(avg_shifts)
-            if 'CA' in model1_shifts.get(r, {}) and 'CA' in avg_shifts.get(r, {})]
-ca_m1    = [model1_shifts[r]['CA'] for r in res_ca]
-ca_avg   = [avg_shifts[r]['CA']    for r in res_ca]
+res_ca = [
+    r
+    for r in sorted(avg_shifts)
+    if "CA" in model1_shifts.get(r, {}) and "CA" in avg_shifts.get(r, {})
+]
+ca_m1 = [model1_shifts[r]["CA"] for r in res_ca]
+ca_avg = [avg_shifts[r]["CA"] for r in res_ca]
 diff_ppm = [abs(m - a) for m, a in zip(ca_m1, ca_avg)]
 
 fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
 # Left: scatter model 1 vs ensemble
 ax = axes[0]
-sc = ax.scatter(ca_m1, ca_avg, c=diff_ppm, cmap='plasma', s=65,
-                alpha=0.85, edgecolors='none', zorder=3)
-cb = plt.colorbar(sc, ax=ax, label='|Model\u202001 \u2212 Ensemble avg|  (ppm)')
-lo = min(min(ca_m1), min(ca_avg)) - 1
-hi = max(max(ca_m1), max(ca_avg)) + 1
-ax.plot([lo, hi], [lo, hi], 'k--', lw=1.2, alpha=0.45, label='Perfect agreement')
-ax.set_xlabel('C\u03b1 shift  \u2014 Model\u20021  (ppm)', fontsize=12)
-ax.set_ylabel('C\u03b1 shift  \u2014 Ensemble average  (ppm)', fontsize=12)
-ax.set_title('C\u03b1 Chemical Shifts:\nModel\u20021 vs. 10-Frame Ensemble Average', fontsize=12)
+sc = ax.scatter(
+    ca_m1, ca_avg, c=diff_ppm, cmap="plasma", s=65, alpha=0.85, edgecolors="none", zorder=3
+)
+cb = plt.colorbar(sc, ax=ax, label="|Model\u202001 \u2212 Ensemble avg|  (ppm)")
+lo = min(*ca_m1, *ca_avg) - 1
+hi = max(*ca_m1, *ca_avg) + 1
+ax.plot([lo, hi], [lo, hi], "k--", lw=1.2, alpha=0.45, label="Perfect agreement")
+ax.set_xlabel("C\u03b1 shift  \u2014 Model\u20021  (ppm)", fontsize=12)
+ax.set_ylabel("C\u03b1 shift  \u2014 Ensemble average  (ppm)", fontsize=12)
+ax.set_title("C\u03b1 Chemical Shifts:\nModel\u20021 vs. 10-Frame Ensemble Average", fontsize=12)
 ax.legend(fontsize=10)
 
 # Right: per-residue shift difference bar
 ax2 = axes[1]
-ax2.bar(res_ca, diff_ppm, color='#8e44ad', alpha=0.78, width=0.9)
-ax2.set_xlabel('Residue Number', fontsize=12)
-ax2.set_ylabel('|\u0394 C\u03b1|  (ppm)', fontsize=12)
-ax2.set_title('Per-Residue C\u03b1 Shift Change\ndue to Ensemble Averaging', fontsize=12)
-ax2.grid(axis='y', ls='--', alpha=0.35)
+ax2.bar(res_ca, diff_ppm, color="#8e44ad", alpha=0.78, width=0.9)
+ax2.set_xlabel("Residue Number", fontsize=12)
+ax2.set_ylabel("|\u0394 C\u03b1|  (ppm)", fontsize=12)
+ax2.set_title("Per-Residue C\u03b1 Shift Change\ndue to Ensemble Averaging", fontsize=12)
+ax2.grid(axis="y", ls="--", alpha=0.35)
 
 plt.tight_layout()
 plt.show()
 
-print(f'Mean |\u0394C\u03b1| (model 1 vs ensemble): {np.mean(diff_ppm):.3f} ppm')
-print(f'Max  |\u0394C\u03b1| (model 1 vs ensemble): {max(diff_ppm):.3f} ppm')</div>
+print(f"Mean |\u0394C\u03b1| (model 1 vs ensemble): {np.mean(diff_ppm):.3f} ppm")
+print(f"Max  |\u0394C\u03b1| (model 1 vs ensemble): {max(diff_ppm):.3f} ppm")</div>
 </div>
 </div>
 </div>
@@ -2728,19 +2780,18 @@ error in structure determination from dynamic proteins.</p>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_synthetic_noes</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">'Calculating NOEs for each conformer (cutoff 5.5 </span><span class="se">\u00c5</span><span class="s1">) ...'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Calculating NOEs for each conformer (cutoff 5.5 </span><span class="se">\u00c5</span><span class="s2">) ..."</span><span class="p">)</span>
 
 <span class="c1"># calculate_synthetic_noes returns a LIST of dicts (one per atom pair).</span>
 <span class="c1"># Each dict has keys: 'index_1', 'atom_name_1', 'index_2', 'atom_name_2', 'distance', ...</span>
 <span class="c1"># We build a flat dict keyed by (res_i, atom_i, res_j, atom_j) for each frame.</span>
 <span class="n">per_frame_noes</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">:</span>
-    <span class="n">raw</span>  <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">raw</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">],</span>
-               <span class="n">entry</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">])</span>
-        <span class="n">flat</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"index_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"index_2"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_2"</span><span class="p">])</span>
+        <span class="n">flat</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"distance"</span><span class="p">]</span>
     <span class="n">per_frame_noes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
 
 <span class="n">eff_noes</span> <span class="o">=</span> <span class="n">ensemble_average_noes</span><span class="p">(</span><span class="n">per_frame_noes</span><span class="p">)</span>
@@ -2753,63 +2804,61 @@ error in structure determination from dynamic proteins.</p>
         <span class="n">r_arith</span><span class="p">[</span><span class="n">pair</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">vals</span><span class="p">))</span>
 
 <span class="n">common</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">r_arith</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">eff_noes</span><span class="p">]</span>
-<span class="n">x</span>      <span class="o">=</span> <span class="p">[</span><span class="n">r_arith</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>  <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>
-<span class="n">y</span>      <span class="o">=</span> <span class="p">[</span><span class="n">eff_noes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>
-<span class="n">gap</span>    <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">e</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_arith</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">eff_noes</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">common</span><span class="p">]</span>
+<span class="n">gap</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="o">-</span> <span class="n">e</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> NOE pairs present in all </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s1"> conformers.'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s2"> NOE pairs present in all </span><span class="si">{</span><span class="n">n_models</span><span class="si">}</span><span class="s2"> conformers."</span><span class="p">)</span>
 
 <span class="c1"># ---------- Plot ---------------------------------------------------------------</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
 <span class="c1"># Left: scatter r_arith vs r_eff</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">gap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">'YlOrRd'</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span>
-                <span class="n">edgecolors</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'r_arith </span><span class="se">\u2212</span><span class="s1"> r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">)</span>
-<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">+</span> <span class="mf">0.15</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s1">'k--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'r_eff = r_arith'</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Arithmetic Mean Distance  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'r</span><span class="se">\u207b\u2076</span><span class="s1">-Averaged Distance  r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'NOE Averaging:</span><span class="se">\n</span><span class="s1">All points at or BELOW the diagonal'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">gap</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrRd"</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.65</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s2">"none"</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">cb</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"r_arith </span><span class="se">\u2212</span><span class="s2"> r_eff  (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">)</span>
+<span class="n">hi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.15</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">hi</span><span class="p">],</span> <span class="s2">"k--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"r_eff = r_arith"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Arithmetic Mean Distance  (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"r</span><span class="se">\u207b\u2076</span><span class="s2">-Averaged Distance  r_eff  (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"NOE Averaging:</span><span class="se">\n</span><span class="s2">All points at or BELOW the diagonal"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># Right: histogram of gap (r_arith - r_eff)</span>
 <span class="n">ax2</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">gap</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#c0392b'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gap</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#2c3e50'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">'Mean gap = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\u00c5</span><span class="s1">'</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'r_arith </span><span class="se">\u2212</span><span class="s1"> r_eff  (</span><span class="se">\u00c5</span><span class="s1">)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'Count'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Distribution of Distance Overestimation</span><span class="se">\n</span><span class="s1">from Simple Averaging'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">gap</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#c0392b"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.78</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"white"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gap</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#2c3e50"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Mean gap = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">"</span>
+<span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"r_arith </span><span class="se">\u2212</span><span class="s2"> r_eff  (</span><span class="se">\u00c5</span><span class="s2">)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Count"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Distribution of Distance Overestimation</span><span class="se">\n</span><span class="s2">from Simple Averaging"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="n">n_biased</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">gap</span> <span class="k">if</span> <span class="n">g</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">n_biased</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s1"> pairs show r_arith overestimates r_eff by &gt; 0.05 </span><span class="se">\u00c5</span><span class="s1">'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">n_biased</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span><span class="si">}</span><span class="s2"> pairs show r_arith overestimates r_eff by &gt; 0.05 </span><span class="se">\u00c5</span><span class="s2">"</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">gap</span><span class="p">:</span>
     <span class="n">idx</span> <span class="o">=</span> <span class="n">gap</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">gap</span><span class="p">))</span>
     <span class="n">ri</span><span class="p">,</span> <span class="n">ai</span><span class="p">,</span> <span class="n">rj</span><span class="p">,</span> <span class="n">aj</span> <span class="o">=</span> <span class="n">common</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Largest overestimation: </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1"> </span><span class="se">\u00c5</span><span class="s1">  '</span>
-          <span class="sa">f</span><span class="s1">'(Res </span><span class="si">{</span><span class="n">ri</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">ai</span><span class="si">}</span><span class="s1"> </span><span class="se">\u2014</span><span class="s1"> Res </span><span class="si">{</span><span class="n">rj</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">aj</span><span class="si">}</span><span class="s1">)'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Largest overestimation: </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">gap</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">  (Res </span><span class="si">{</span><span class="n">ri</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">ai</span><span class="si">}</span><span class="s2"> </span><span class="se">\u2014</span><span class="s2"> Res </span><span class="si">{</span><span class="n">rj</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">aj</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">from synth_nmr.nmr import calculate_synthetic_noes
 
-print('Calculating NOEs for each conformer (cutoff 5.5 \u00c5) ...')
+print("Calculating NOEs for each conformer (cutoff 5.5 \u00c5) ...")
 
 # calculate_synthetic_noes returns a LIST of dicts (one per atom pair).
 # Each dict has keys: 'index_1', 'atom_name_1', 'index_2', 'atom_name_2', 'distance', ...
 # We build a flat dict keyed by (res_i, atom_i, res_j, atom_j) for each frame.
 per_frame_noes = []
 for frame in ensemble:
-    raw  = calculate_synthetic_noes(frame, cutoff=5.5, exclude_intra_residue=True)
+    raw = calculate_synthetic_noes(frame, cutoff=5.5, exclude_intra_residue=True)
     flat = {}
     for entry in raw:
-        key = (entry['index_1'], entry['atom_name_1'],
-               entry['index_2'], entry['atom_name_2'])
-        flat[key] = entry['distance']
+        key = (entry["index_1"], entry["atom_name_1"], entry["index_2"], entry["atom_name_2"])
+        flat[key] = entry["distance"]
     per_frame_noes.append(flat)
 
 eff_noes = ensemble_average_noes(per_frame_noes)
@@ -2822,47 +2871,46 @@ for pair in eff_noes:
         r_arith[pair] = float(np.mean(vals))
 
 common = [p for p in r_arith if p in eff_noes]
-x      = [r_arith[p]  for p in common]
-y      = [eff_noes[p] for p in common]
-gap    = [a - e for a, e in zip(x, y)]
+x = [r_arith[p] for p in common]
+y = [eff_noes[p] for p in common]
+gap = [a - e for a, e in zip(x, y)]
 
-print(f'{len(common)} NOE pairs present in all {n_models} conformers.')
+print(f"{len(common)} NOE pairs present in all {n_models} conformers.")
 
 # ---------- Plot ---------------------------------------------------------------
 fig, axes = plt.subplots(1, 2, figsize=(13, 5))
 
 # Left: scatter r_arith vs r_eff
 ax = axes[0]
-sc = ax.scatter(x, y, c=gap, cmap='YlOrRd', s=20, alpha=0.65,
-                edgecolors='none', vmin=0, zorder=3)
-cb = plt.colorbar(sc, ax=ax, label='r_arith \u2212 r_eff  (\u00c5)')
-hi = max(max(x), max(y)) + 0.15
-ax.plot([1.5, hi], [1.5, hi], 'k--', lw=1.2, alpha=0.5, label='r_eff = r_arith')
-ax.set_xlabel('Arithmetic Mean Distance  (\u00c5)', fontsize=12)
-ax.set_ylabel('r\u207b\u2076-Averaged Distance  r_eff  (\u00c5)', fontsize=12)
-ax.set_title('NOE Averaging:\nAll points at or BELOW the diagonal', fontsize=12)
+sc = ax.scatter(x, y, c=gap, cmap="YlOrRd", s=20, alpha=0.65, edgecolors="none", vmin=0, zorder=3)
+cb = plt.colorbar(sc, ax=ax, label="r_arith \u2212 r_eff  (\u00c5)")
+hi = max(*x, *y) + 0.15
+ax.plot([1.5, hi], [1.5, hi], "k--", lw=1.2, alpha=0.5, label="r_eff = r_arith")
+ax.set_xlabel("Arithmetic Mean Distance  (\u00c5)", fontsize=12)
+ax.set_ylabel("r\u207b\u2076-Averaged Distance  r_eff  (\u00c5)", fontsize=12)
+ax.set_title("NOE Averaging:\nAll points at or BELOW the diagonal", fontsize=12)
 ax.legend(fontsize=10)
 
 # Right: histogram of gap (r_arith - r_eff)
 ax2 = axes[1]
-ax2.hist(gap, bins=40, color='#c0392b', alpha=0.78, edgecolor='white', lw=0.4)
-ax2.axvline(np.mean(gap), color='#2c3e50', ls='--', lw=1.5,
-            label=f'Mean gap = {np.mean(gap):.3f} \u00c5')
-ax2.set_xlabel('r_arith \u2212 r_eff  (\u00c5)', fontsize=12)
-ax2.set_ylabel('Count', fontsize=12)
-ax2.set_title('Distribution of Distance Overestimation\nfrom Simple Averaging', fontsize=12)
+ax2.hist(gap, bins=40, color="#c0392b", alpha=0.78, edgecolor="white", lw=0.4)
+ax2.axvline(
+    np.mean(gap), color="#2c3e50", ls="--", lw=1.5, label=f"Mean gap = {np.mean(gap):.3f} \u00c5"
+)
+ax2.set_xlabel("r_arith \u2212 r_eff  (\u00c5)", fontsize=12)
+ax2.set_ylabel("Count", fontsize=12)
+ax2.set_title("Distribution of Distance Overestimation\nfrom Simple Averaging", fontsize=12)
 ax2.legend(fontsize=10)
 
 plt.tight_layout()
 plt.show()
 
 n_biased = sum(1 for g in gap if g &gt; 0.05)
-print(f'{n_biased}/{len(common)} pairs show r_arith overestimates r_eff by &gt; 0.05 \u00c5')
+print(f"{n_biased}/{len(common)} pairs show r_arith overestimates r_eff by &gt; 0.05 \u00c5")
 if gap:
     idx = gap.index(max(gap))
     ri, ai, rj, aj = common[idx]
-    print(f'Largest overestimation: {max(gap):.3f} \u00c5  '
-          f'(Res {ri} {ai} \u2014 Res {rj} {aj})')</div>
+    print(f"Largest overestimation: {max(gap):.3f} \u00c5  (Res {ri} {ai} \u2014 Res {rj} {aj})")</div>
 </div>
 </div>
 </div>
@@ -2906,10 +2954,10 @@ conformational variation — wider spread = more dynamic region.</p>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.rdc</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_rdcs</span>
 
-<span class="n">Da</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.2</span>   <span class="c1"># typical weak alignment tensor for Ubiquitin</span>
+<span class="n">Da</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">0.2</span>  <span class="c1"># typical weak alignment tensor for Ubiquitin</span>
 
 <span class="n">per_frame_rdcs</span> <span class="o">=</span> <span class="p">[</span><span class="n">calculate_rdcs</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Da</span><span class="o">=</span><span class="n">Da</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">ensemble</span><span class="p">]</span>
-<span class="n">avg_rdcs</span>       <span class="o">=</span> <span class="n">ensemble_average_rdcs</span><span class="p">(</span><span class="n">per_frame_rdcs</span><span class="p">)</span>
+<span class="n">avg_rdcs</span> <span class="o">=</span> <span class="n">ensemble_average_rdcs</span><span class="p">(</span><span class="n">per_frame_rdcs</span><span class="p">)</span>
 
 <span class="n">res_all</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">avg_rdcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
@@ -2919,16 +2967,20 @@ conformational variation — wider spread = more dynamic region.</p>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">fr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">per_frame_rdcs</span><span class="p">):</span>
     <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">fr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">]</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#bdc3c7'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">'Individual conformer'</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">''</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">res_all</span><span class="p">,</span>
+        <span class="n">vals</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s2">"#bdc3c7"</span><span class="p">,</span>
+        <span class="n">lw</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">"Individual conformer"</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="p">)</span>
 <span class="n">avg_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">avg_rdcs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">]</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">avg_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#1a6ea3'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.8</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-        <span class="n">label</span><span class="o">=</span><span class="s1">'Ensemble average'</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'#7f8c8d'</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'D_NH  (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">'N-H RDC: Conformer Spread vs. Ensemble Average</span><span class="se">\n</span><span class="s1">'</span>
-             <span class="sa">f</span><span class="s1">'Da = </span><span class="si">{</span><span class="n">Da</span><span class="si">}</span><span class="s1"> Hz, R = </span><span class="si">{</span><span class="n">R</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">avg_vals</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#1a6ea3"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">2.8</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Ensemble average"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"#7f8c8d"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"D_NH  (Hz)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"N-H RDC: Conformer Spread vs. Ensemble Average</span><span class="se">\n</span><span class="s2">Da = </span><span class="si">{</span><span class="n">Da</span><span class="si">}</span><span class="s2"> Hz, R = </span><span class="si">{</span><span class="n">R</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># Right: per-residue standard deviation across conformers</span>
@@ -2940,15 +2992,18 @@ conformational variation — wider spread = more dynamic region.</p>
 
 <span class="n">bar_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">ss_color</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">res_all</span><span class="p">]</span>
 <span class="n">ax2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">res_all</span><span class="p">,</span> <span class="n">rdc_std</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">bar_colors</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Residue Number'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'</span><span class="se">\u03c3</span><span class="s1">(D_NH)  (Hz)'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'Per-Residue RDC Variability Across Conformers</span><span class="se">\n</span><span class="s1">'</span>
-              <span class="s1">'Higher = more conformational diversity at this site'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">'--'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Residue Number"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"</span><span class="se">\u03c3</span><span class="s2">(D_NH)  (Hz)"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s2">"Per-Residue RDC Variability Across Conformers</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="s2">"Higher = more conformational diversity at this site"</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">"y"</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.35</span><span class="p">)</span>
 <span class="n">patches2</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#e74c3c'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b1</span><span class="s1">-Helix'</span><span class="p">),</span>
-    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#2980b9'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'</span><span class="se">\u03b2</span><span class="s1">-Strands'</span><span class="p">),</span>
-    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#7f8c8d'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'Loops'</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#e74c3c"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="se">\u03b1</span><span class="s2">-Helix"</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#2980b9"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"</span><span class="se">\u03b2</span><span class="s2">-Strands"</span><span class="p">),</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">"#7f8c8d"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.82</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Loops"</span><span class="p">),</span>
 <span class="p">]</span>
 <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">patches2</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
@@ -2956,15 +3011,14 @@ conformational variation — wider spread = more dynamic region.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="n">most_variable</span> <span class="o">=</span> <span class="n">res_all</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">rdc_std</span><span class="p">)]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Most variable RDC residue: </span><span class="si">{</span><span class="n">most_variable</span><span class="si">}</span><span class="s1">  '</span>
-      <span class="sa">f</span><span class="s1">'(</span><span class="se">\u03c3</span><span class="s1"> = </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">rdc_std</span><span class="p">)</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> Hz)'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Most variable RDC residue: </span><span class="si">{</span><span class="n">most_variable</span><span class="si">}</span><span class="s2">  (</span><span class="se">\u03c3</span><span class="s2"> = </span><span class="si">{</span><span class="nb">max</span><span class="p">(</span><span class="n">rdc_std</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Hz)"</span><span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-6">from synth_nmr.rdc import calculate_rdcs
 
-Da, R = 10.0, 0.2   # typical weak alignment tensor for Ubiquitin
+Da, R = 10.0, 0.2  # typical weak alignment tensor for Ubiquitin
 
 per_frame_rdcs = [calculate_rdcs(f, Da=Da, R=R) for f in ensemble]
-avg_rdcs       = ensemble_average_rdcs(per_frame_rdcs)
+avg_rdcs = ensemble_average_rdcs(per_frame_rdcs)
 
 res_all = sorted(avg_rdcs.keys())
 
@@ -2974,16 +3028,20 @@ fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 ax = axes[0]
 for i, fr in enumerate(per_frame_rdcs):
     vals = [fr.get(r, np.nan) for r in res_all]
-    ax.plot(res_all, vals, color='#bdc3c7', lw=0.9, alpha=0.75,
-            label='Individual conformer' if i == 0 else '')
+    ax.plot(
+        res_all,
+        vals,
+        color="#bdc3c7",
+        lw=0.9,
+        alpha=0.75,
+        label="Individual conformer" if i == 0 else "",
+    )
 avg_vals = [avg_rdcs.get(r, np.nan) for r in res_all]
-ax.plot(res_all, avg_vals, color='#1a6ea3', lw=2.8, zorder=4,
-        label='Ensemble average')
-ax.axhline(0, color='#7f8c8d', lw=0.8, ls='--', alpha=0.5)
-ax.set_xlabel('Residue Number', fontsize=12)
-ax.set_ylabel('D_NH  (Hz)', fontsize=12)
-ax.set_title(f'N-H RDC: Conformer Spread vs. Ensemble Average\n'
-             f'Da = {Da} Hz, R = {R}', fontsize=12)
+ax.plot(res_all, avg_vals, color="#1a6ea3", lw=2.8, zorder=4, label="Ensemble average")
+ax.axhline(0, color="#7f8c8d", lw=0.8, ls="--", alpha=0.5)
+ax.set_xlabel("Residue Number", fontsize=12)
+ax.set_ylabel("D_NH  (Hz)", fontsize=12)
+ax.set_title(f"N-H RDC: Conformer Spread vs. Ensemble Average\nDa = {Da} Hz, R = {R}", fontsize=12)
 ax.legend(fontsize=10)
 
 # Right: per-residue standard deviation across conformers
@@ -2995,15 +3053,18 @@ for r in res_all:
 
 bar_colors = [ss_color(r) for r in res_all]
 ax2.bar(res_all, rdc_std, color=bar_colors, alpha=0.82, width=0.9)
-ax2.set_xlabel('Residue Number', fontsize=12)
-ax2.set_ylabel('\u03c3(D_NH)  (Hz)', fontsize=12)
-ax2.set_title('Per-Residue RDC Variability Across Conformers\n'
-              'Higher = more conformational diversity at this site', fontsize=12)
-ax2.grid(axis='y', ls='--', alpha=0.35)
+ax2.set_xlabel("Residue Number", fontsize=12)
+ax2.set_ylabel("\u03c3(D_NH)  (Hz)", fontsize=12)
+ax2.set_title(
+    "Per-Residue RDC Variability Across Conformers\n"
+    "Higher = more conformational diversity at this site",
+    fontsize=12,
+)
+ax2.grid(axis="y", ls="--", alpha=0.35)
 patches2 = [
-    mpatches.Patch(color='#e74c3c', alpha=0.82, label='\u03b1-Helix'),
-    mpatches.Patch(color='#2980b9', alpha=0.82, label='\u03b2-Strands'),
-    mpatches.Patch(color='#7f8c8d', alpha=0.82, label='Loops'),
+    mpatches.Patch(color="#e74c3c", alpha=0.82, label="\u03b1-Helix"),
+    mpatches.Patch(color="#2980b9", alpha=0.82, label="\u03b2-Strands"),
+    mpatches.Patch(color="#7f8c8d", alpha=0.82, label="Loops"),
 ]
 ax2.legend(handles=patches2, fontsize=10)
 
@@ -3011,8 +3072,7 @@ plt.tight_layout()
 plt.show()
 
 most_variable = res_all[np.argmax(rdc_std)]
-print(f'Most variable RDC residue: {most_variable}  '
-      f'(\u03c3 = {max(rdc_std):.2f} Hz)')</div>
+print(f"Most variable RDC residue: {most_variable}  (\u03c3 = {max(rdc_std):.2f} Hz)")</div>
 </div>
 </div>
 </div>
