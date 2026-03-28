@@ -90,3 +90,12 @@ module = [
 ]
 ignore_missing_imports = true
 
+[tool.pyright]
+include = ["synth_nmr"]
+venvPath = "."
+venv = "venv"
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+reportMissingImports = true
+reportMissingTypeStubs = false
+

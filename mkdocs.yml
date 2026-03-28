@@ -68,6 +68,12 @@ nav:
 
 # Plugins
 plugins:
+  - mkdocs-jupyter:
+      theme: material
+      include_source: true
+      execute: false
+      allow_errors: false
+      kernel_name: python3
   - search:
       separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
   - mkdocstrings:
@@ -88,11 +94,6 @@ plugins:
             inherited_members: false
             filters:
               - "!^_"  # Exclude private members
-  - mkdocs-jupyter:
-      include_source: true
-      execute: false  # Don't execute notebooks during build
-      allow_errors: false
-      kernel_name: python3
 
 # Markdown extensions
 markdown_extensions:
