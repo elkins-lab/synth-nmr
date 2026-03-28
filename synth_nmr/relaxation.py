@@ -187,7 +187,6 @@ def _calculate_csa_constant(csa_n: float, omega_n: float) -> float:
     return csa_const**2
 
 
-
 def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
     """
     Predict Generalized Order Parameters (S2) based on secondary structure,
