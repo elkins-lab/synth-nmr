@@ -349,7 +349,7 @@ def handle_interactive_command(line: str) -> bool:
                 for frame in ensemble:
                     try:
                         raw = predict_chemical_shifts(frame)
-                        merged = {}
+                        merged: Dict[int, Dict[str, float]] = {}
                         for method_dict in raw.values():
                             for res_id, atoms in method_dict.items():
                                 if res_id not in merged:

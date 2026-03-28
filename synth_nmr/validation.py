@@ -3,7 +3,7 @@ Validation and comparison utilities for chemical shift predictions.
 """
 
 import logging
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 def compare_chemical_shifts(
     predicted: Dict[str, Dict[int, Dict[str, float]]],
     reference: Dict[str, Dict[int, Dict[str, float]]],
-    atom_types: List[str] = None,
+    atom_types: Optional[List[str]] = None,
 ) -> Dict[str, Dict[str, float]]:
     """
     Compare two sets of chemical shifts and calculate validation metrics.

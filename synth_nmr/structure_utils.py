@@ -1,5 +1,5 @@
 import logging
-from typing import List
+from typing import List, Tuple
 
 import biotite.structure as struc
 import numpy as np
@@ -7,7 +7,9 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-def get_residue_info(structure: struc.AtomArray):
+def get_residue_info(
+    structure: struc.AtomArray,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Unified utility to extract residue-level metadata (Chain ID, Res ID, Res Name).
 

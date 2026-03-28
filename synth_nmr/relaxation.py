@@ -187,19 +187,6 @@ def _calculate_csa_constant(csa_n: float, omega_n: float) -> float:
     return csa_const**2
 
 
-def _apply_termini_effects(pos: int, start_res: int, end_res: int, current_s2: float) -> float:
-    """Apply S2 reduction to N and C termini residues."""
-    if pos <= start_res + 1 or pos >= end_res - 1:
-        return 0.50
-    return current_s2
-
-
-def _predict_s2_from_sasa(rel_sasa: float, base_s2: float) -> float:
-    """Modulate S2 based on relative SASA."""
-    # rel_sasa 0.0 (buried) -> +0.05
-    # rel_sasa 1.0 (exposed) -> -0.15
-    return base_s2 + 0.05 * (1.0 - rel_sasa) - 0.15 * rel_sasa
-
 
 def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
     """
