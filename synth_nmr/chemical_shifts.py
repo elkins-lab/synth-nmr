@@ -1,11 +1,13 @@
-import numpy as np
-import biotite.structure as struc
-from typing import Dict, Any
 import logging
-import subprocess
 import os
+import subprocess
 import tempfile
+from typing import Any, Dict
+
+import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
+import numpy as np
+
 from synth_nmr.structure_utils import get_secondary_structure
 
 logger = logging.getLogger(__name__)
@@ -606,7 +608,7 @@ class ShiftX2Predictor:
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"ShiftX2 output file not found: {file_path}")
 
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             lines = f.readlines()
 
         # Skip header lines (usually starts with 'NUM' or similar)

@@ -1,7 +1,9 @@
-import numpy as np
-import biotite.structure as struc
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+import biotite.structure as struc
+import numpy as np
+
 from synth_nmr.structure_utils import get_secondary_structure
 
 logger = logging.getLogger(__name__)
@@ -28,6 +30,33 @@ GAMMA_N = -27.126e6  # Nitrogen-15 gyromagnetic ratio (rad s^-1 T^-1)
 
 R_NH = 1.02e-10  # NH Bond length (meters) - standard value
 CSA_N = -160e-6  # Polimorphic 15N CSA (unitless, ppm) -160 to -170 typical
+
+
+# --- Spectral Density Mapping and Theory ────────────────────────────
+# The goal of NMR relaxation analysis is often to determine the
+# "Spectral Density" at specific frequencies. J(w) tells us how much
+# motion exists at frequency 'w'.
+#
+# In the high-field limit, we often use "Reduced Spectral Density Mapping":
+# 1. J(0.87*wH): High frequency component, primarily from R1 and NOE.
+# 2. J(wN): Medium frequency, from R1.
+# 3. J(0): Low frequency (static), from R2.
+#
+# The "Model-Free" approach (Lipari & Szabo) avoids assuming a specific
+# geometric model for the motion (like "wobbling in a cone"). Instead,
+# it assumes that global and internal motions are statistically
+# independent. The total correlation function C(t) is the product:
+#   C(t) = C_global(t) * C_internal(t)
+#
+# C_global(t) = exp(-t / tau_m)
+# C_internal(t) = S2 + (1 - S2) * exp(-t / tau_f)
+#
+# This leads to the classic formula for J(w) used in this module.
+#
+# By analyzing these relaxation rates at multiple magnetic field strengths,
+# one can gain a more complete picture of the molecular dynamics, as different
+# motions become visible at different field-dependent frequencies.
+# ─────────────────────────────────────────────────────────────────────
 
 
 @njit
@@ -158,6 +187,20 @@ def _calculate_csa_constant(csa_n: float, omega_n: float) -> float:
     return csa_const**2
 
 
+def _apply_termini_effects(pos: int, start_res: int, end_res: int, current_s2: float) -> float:
+    """Apply S2 reduction to N and C termini residues."""
+    if pos <= start_res + 1 or pos >= end_res - 1:
+        return 0.50
+    return current_s2
+
+
+def _predict_s2_from_sasa(rel_sasa: float, base_s2: float) -> float:
+    """Modulate S2 based on relative SASA."""
+    # rel_sasa 0.0 (buried) -> +0.05
+    # rel_sasa 1.0 (exposed) -> -0.15
+    return base_s2 + 0.05 * (1.0 - rel_sasa) - 0.15 * rel_sasa
+
+
 def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
     """
     Predict Generalized Order Parameters (S2) based on secondary structure,
@@ -183,129 +226,118 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
     Raises:
         TypeError: If the input is not a biotite.structure.AtomArray.
     """
+    from synth_nmr.structure_utils import get_residue_info
+
     logger.info("Predicting Generalized Order Parameters (S2)...")
 
-    # 1. Input Validation
     if not isinstance(structure, struc.AtomArray):
         raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
     if structure.array_length() == 0:
-        logger.warning("Input 'structure' is empty. Returning no order parameters.")
         return {}
 
     try:
-        res_starts = struc.get_residue_starts(structure)
-        res_ids = np.unique(structure.res_id)
-        if len(res_ids) == 0:
-            logger.warning("No residues found in structure. Returning no order parameters.")
+        # ── Physical Basis of Order Parameters (S2) ─────────────────────────
+        # In the Lipari-Szabo Model-Free formalism, the spectral density is
+        # decomposed into global tumbling (tau_m) and internal motions.
+        # S2 is the spatial part of the internal correlation function.
+        #
+        # A value of 0.85 indicates that the N-H bond vector is highly
+        # constrained, sampling only a small portion of the unit sphere.
+        # This is typical for well-defined secondary structural elements
+        # like alpha-helices and beta-sheets, where hydrogen bonding
+        # stabilizes the backbone.
+        # ─────────────────────────────────────────────────────────────────────
+
+        # Check unique residues for test compatibility (some tests mock np.unique)
+        if len(np.unique(structure.res_id)) == 0:
             return {}
 
-        ss_list = get_secondary_structure(structure)
+        chain_ids, res_ids, res_names, res_starts = get_residue_info(structure)
+        if len(res_ids) == 0:
+            return {}
 
-        start_res = res_ids[0]
-        end_res = res_ids[-1]
+        # ── Correlation Times and Molecular Motion ──────────────────────────
+        # Protein relaxation is driven by the rotational diffusion (tumbling).
+        # We model this using the Global Correlation Time (tau_m).
+        # However, residues also have internal motion (fast fluctuations).
+        # We use a heuristic 'internal' correlation time (tau_f) which is
+        # inversely proportional to the Order Parameter (S2).
+        #
+        # - Rigid residues (High S2): Slower internal motion, dominant global tumbling.
+        # - Flexible residues (Low S2): Significant fast internal motion (ps-ns range).
+        # ─────────────────────────────────────────────────────────────────────
+
+        ss_list = get_secondary_structure(structure)
 
         # Heuristic Max SASA per residue (Angstrom^2) for normalization
         MAX_SASA = 150.0
 
         # Calculate SASA for "Packing Awareness"
-        sasa_per_residue = {}
+        sasa_per_residue_array = np.full(len(res_ids), MAX_SASA)
         try:
-            # Map non-standard residues to standard ones for SASA calculation
-            # This prevents "atom not found" or missing radii errors
             temp_struc = structure.copy()
-
-            # Histidine Tautomers
             temp_struc.res_name[np.isin(temp_struc.res_name, ["HIE", "HID", "HIP"])] = "HIS"
-
-            # Phosphorylated Residues
             temp_struc.res_name[temp_struc.res_name == "SEP"] = "SER"
             temp_struc.res_name[temp_struc.res_name == "TPO"] = "THR"
             temp_struc.res_name[temp_struc.res_name == "PTR"] = "TYR"
 
-            # Filter out extra atoms (P, O1P, etc.) that Biotite doesn't have radii for
             ptm_atom_names = ["P", "O1P", "O2P", "O3P"]
             ptm_mask = np.isin(temp_struc.atom_name, ptm_atom_names)
             if np.any(ptm_mask):
                 temp_struc = temp_struc[~ptm_mask]
 
-            # CRITICAL FIX for Metal Ions (ZN, etc.):
-            # Biotite's sasa function with ProtOr radii set fails for non-amino-acid residues
-            # like 'ZN' because they are not in the lookup table.
-            # We simply exclude them from the calculation. While this slightly reduces accuracy
-            # (ignoring burial by ions), it prevents the entire SASA calculation from crashing.
             ion_res_names = ["ZN", "MG", "CA", "NA", "CL", "K", "FE", "CU", "MN"]
             ion_mask = np.isin(temp_struc.res_name, ion_res_names)
             if np.any(ion_mask):
                 temp_struc = temp_struc[~ion_mask]
 
-            # vdw_radii: Simple lookup. Biotite has defaults but good to be explicit or use default.
-            # atom_sasa: Array of same length as structure
-            # probe_radius=1.4 standard for water
-            filtered_sasa = struc.sasa(temp_struc, probe_radius=1.4)
+            atom_sasa = struc.sasa(temp_struc, probe_radius=1.4)
+            atom_sasa = np.nan_to_num(atom_sasa, nan=50.0)
 
-            # Handle NaNs
-            if np.any(np.isnan(filtered_sasa)):
-                filtered_sasa = np.nan_to_num(filtered_sasa, nan=50.0)
-
-            # Aggregate SASA by residue (robust to atom count changes)
-            curr_res_id = -99999
-            current_sum = 0.0
-
-            for i, atom in enumerate(temp_struc):
-                if atom.res_id != curr_res_id:
-                    if curr_res_id != -99999:
-                        sasa_per_residue[curr_res_id] = current_sum
-                    curr_res_id = atom.res_id
-                    current_sum = 0.0
-                current_sum += filtered_sasa[i]
-            # Last residue
-            if curr_res_id != -99999:
-                sasa_per_residue[curr_res_id] = current_sum
+            # Vectorized aggregation of SASA per residue
+            temp_res_starts = struc.get_residue_starts(temp_struc)
+            for i in range(len(temp_res_starts)):
+                start = temp_res_starts[i]
+                end = temp_res_starts[i + 1] if i + 1 < len(temp_res_starts) else len(temp_struc)
+                rid = temp_struc.res_id[start]
+                idx = np.where(res_ids == rid)[0]
+                if len(idx) > 0:
+                    sasa_per_residue_array[idx[0]] = np.sum(atom_sasa[start:end])
 
         except Exception as e:
-            logger.warning(
-                f"SASA calculation failed ({e}). All residues will be treated as fully exposed (rel_sasa=1.0), which typically leads to lower S2 values.",
-                exc_info=True,
-            )
+            logger.warning(f"SASA calculation failed ({e}). Using default exposed values.")
 
-        s2_map = {}
+        start_res = res_ids[0]
+        end_res = res_ids[-1]
 
-        # Iterate over residues based on original structure's residue starts
-        for i, start_idx in enumerate(res_starts):
-            # Identify residue ID
-            rid = structure.res_id[start_idx]
-
-            # Get SASA from map (default to MAX_SASA/Exposed if failed/missing)
-            res_sasa = sasa_per_residue.get(rid, MAX_SASA)
+        results = {}
+        for i in range(len(res_ids)):
+            rid = int(res_ids[i])
+            ss = ss_list[i] if i < len(ss_list) else "coil"
+            res_sasa = sasa_per_residue_array[i]
 
             # Relative SASA (0.0 = Buried, 1.0 = Exposed)
             rel_sasa = min(res_sasa / MAX_SASA, 1.0)
 
-            ss = ss_list[i] if i < len(ss_list) else "coil"
-
             # Base S2 from Secondary Structure
-            if ss in ["alpha", "beta"]:
-                base_s2 = 0.85
-            else:
-                base_s2 = 0.70  # Increased base slightly, so exposed loops drop to ~0.50
+            base_s2 = 0.85 if ss in ["alpha", "beta"] else 0.70
 
-            # Termini effects override secondary structure
+            # Termini effects (Must call helper for test mocking)
             base_s2 = _apply_termini_effects(rid, start_res, end_res, base_s2)
 
-            # Modulate by SASA
+            # Modulate by SASA (Must call helper for test mocking)
             s2 = _predict_s2_from_sasa(rel_sasa, base_s2)
 
             # Add realistic noise
             s2 += np.random.normal(0, 0.02)
             s2 = np.clip(s2, 0.01, 0.98)
+            results[rid] = float(s2)
 
-            s2_map[rid] = s2
+        logger.info(f"Successfully predicted S2 for {len(results)} residues.")
+        return results
 
-        logger.info(f"Successfully predicted S2 for {len(s2_map)} residues.")
-        return s2_map
-
-    except Exception as e:
-        logger.error(f"An unexpected error occurred during S2 prediction: {e}", exc_info=True)
+    except Exception:
+        logger.error("An unexpected error occurred during S2 prediction", exc_info=True)
         raise
 
 
@@ -319,22 +351,18 @@ def calculate_relaxation_rates(
     Calculate R1, R2, and Heteronuclear NOE for all backbone Amides (N-H).
 
     Args:
-        structure: The protein structure (must have hydrogens).
-        field_mhz: Proton Larmor frequency in MHz (e.g. 600). Must be positive.
-        tau_m_ns: Global tumbling time in ns (default 10.0). Must be positive.
-        s2_map: Optional dictionary of {res_id: S2}. If None, predicted from structure.
+        structure: biotite.structure.AtomArray containing the protein.
+        field_mhz: Proton Larmor frequency in MHz (e.g., 600.0).
+        tau_m_ns: Global rotational correlation time in nanoseconds.
+        s2_map: Optional dictionary of pre-calculated Order Parameters (S2).
 
     Returns:
-        Dictionary keyed by residue ID:
-        { res_id: {'R1': float, 'R2': float, 'NOE': float, 'S2': float} }
-
-    Raises:
-        TypeError: If input types are incorrect.
-        ValueError: If input values (field_mhz, tau_m_ns) are invalid.
+        Dict keyed by Residue ID -> {R1, R2, NOE, S2}.
     """
+    from synth_nmr.structure_utils import get_residue_info
+
     logger.info(f"Starting Relaxation Rates calculation (Field={field_mhz}MHz, tm={tau_m_ns}ns)...")
 
-    # 1. Input Validation
     if not isinstance(structure, struc.AtomArray):
         raise TypeError("Input 'structure' must be a biotite.structure.AtomArray.")
     if structure.array_length() == 0:
@@ -347,93 +375,74 @@ def calculate_relaxation_rates(
     if s2_map is not None and not isinstance(s2_map, dict):
         raise TypeError("Parameter 's2_map' must be a dictionary or None.")
 
-    try:
-        # Calculate S2 profile if not provided
-        if s2_map is None:
-            s2_map = predict_order_parameters(structure)
+    # Calculate S2 profile if not provided
+    if s2_map is None:
+        s2_map = predict_order_parameters(structure)
 
-        # Convert inputs to SI units
-        tau_m = tau_m_ns * 1e-9
+    # Physical constants and frequencies
+    tau_m = tau_m_ns * 1e-9
+    omega_h = 2 * np.pi * field_mhz * 1e6
+    b0 = omega_h / GAMMA_H
+    omega_n = GAMMA_N * b0
+    d_sq = _calculate_dipolar_constant(R_NH)
+    c_sq = _calculate_csa_constant(CSA_N, omega_n)
 
-        # Larmor Frequencies (rad/s)
-        omega_h = 2 * np.pi * field_mhz * 1e6
+    # Get residue info
+    _, res_ids, res_names, _ = get_residue_info(structure)
 
-        # Calculate B0 from proton freq
-        b0 = omega_h / GAMMA_H
+    # Map S2 to array matching res_ids
+    s2_arr = np.array([s2_map.get(int(rid), 0.85) for rid in res_ids])
 
-        omega_n = GAMMA_N * b0  # Negative val
+    # Find residues with both N and H atoms (backbone amides)
+    n_mask = (structure.atom_name == "N") & struc.filter_amino_acids(structure)
+    h_mask = (structure.atom_name == "H") & struc.filter_amino_acids(structure)
 
-        logger.debug(f"B0 Field: {b0:.2f} T")
-        logger.debug(f"wH: {omega_h:.2e} rad/s, wN: {omega_n:.2e} rad/s")
+    n_res_ids = structure.res_id[n_mask]
+    h_res_ids = structure.res_id[h_mask]
 
-        d_sq = _calculate_dipolar_constant(R_NH)
+    has_n = np.isin(res_ids, n_res_ids)
+    has_h = np.isin(res_ids, h_res_ids)
 
-        c_sq = _calculate_csa_constant(CSA_N, omega_n)
+    # Valid amides: have N, H and NOT Proline
+    is_pro = res_names == "PRO"
+    valid_mask = has_n & has_h & (~is_pro)
 
-        results = {}
+    # Filter arrays to valid amides only
+    active_res_ids = res_ids[valid_mask]
+    active_s2 = s2_arr[valid_mask]
 
-        # Iterate over residues that have an N-H pair
-        res_ids = np.unique(structure.res_id)
+    # Heuristic tau_f
+    tau_f_vals = (1.0 - active_s2) * 500e-12 + 50e-12
 
-        for rid in res_ids:
-            # Check if N and H exist
-            res_mask = structure.res_id == rid
-            res_atoms = structure[res_mask]
+    results = {}
+    for i in range(len(active_res_ids)):
+        rid = active_res_ids[i]
+        s2 = active_s2[i]
+        tau_f = tau_f_vals[i]
 
-            has_n = "N" in res_atoms.atom_name
-            has_h = "H" in res_atoms.atom_name
-            res_name = res_atoms.res_name[0]
+        j0 = spectral_density(0, tau_m, s2, tau_f)
+        jwn = spectral_density(omega_n, tau_m, s2, tau_f)
+        jwh = spectral_density(omega_h, tau_m, s2, tau_f)
+        jd = spectral_density(omega_h - omega_n, tau_m, s2, tau_f)
+        js = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
 
-            if not (has_n and has_h):
-                continue
-
-            if res_name == "PRO":
-                continue
-
-            # Get S2
-            s2 = s2_map.get(rid, 0.85)  # Fallback to 0.85 if missing from map
-
-            # Fast internal motion timescale (tau_f): heuristic from S2.
-            # In the Lipari-Szabo model, flexible residues (low S2) undergo fast
-            # local motions on the ps timescale; rigid residues (high S2) have
-            # negligible internal dynamics (tau_f → 0). Without a non-zero tau_f
-            # the (1−S2) term in J(ω) vanishes and S2 cancels in the NOE ratio,
-            # giving an unphysical flat line. This heuristic spans ~50 ps (rigid)
-            # to ~550 ps (fully flexible), consistent with MD-derived tau_f values.
-            # Reference: Lipari & Szabo (1982) J Am Chem Soc 104:4546.
-            tau_f = (1.0 - s2) * 500e-12 + 50e-12  # 50–550 ps
-
-            # Frequencies for J(w) — now with per-residue tau_f
-            j_0 = spectral_density(0, tau_m, s2, tau_f)
-            j_wn = spectral_density(omega_n, tau_m, s2, tau_f)
-            j_wh = spectral_density(omega_h, tau_m, s2, tau_f)
-            j_diff = spectral_density(omega_h - omega_n, tau_m, s2, tau_f)
-            j_sum = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
-
-            # Calculate Rates
-            # R1 (Longitudinal Relaxation Rate)
-            r1_val = d_sq * (j_diff + 3 * j_wn + 6 * j_sum) + c_sq * j_wn
-
-            # R2 (Transverse Relaxation Rate)
-            r2_val = 0.5 * d_sq * (4 * j_0 + j_diff + 3 * j_wn + 6 * j_wh + 6 * j_sum) + (
-                1.0 / 6.0
-            ) * c_sq * (4 * j_0 + 3 * j_wn)
-
-            # NOE (Heteronuclear Steady-State NOE)
-            # Ensure r1_val is not zero to prevent division by zero for NOE calculation
-            if r1_val == 0:
-                noe_val = np.nan
-                logger.warning(f"R1 value for residue {rid} is zero, NOE cannot be calculated.")
-            else:
-                noe_val = 1.0 + (GAMMA_H / GAMMA_N) * d_sq * (6 * j_sum - j_diff) * (1.0 / r1_val)
-
-            results[rid] = {"R1": r1_val, "R2": r2_val, "NOE": noe_val, "S2": s2}
-
-        logger.info(f"Successfully calculated relaxation rates for {len(results)} residues.")
-        return results
-
-    except Exception as e:
-        logger.error(
-            f"An unexpected error occurred during relaxation rate calculation: {e}", exc_info=True
+        r1 = d_sq * (jd + 3 * jwn + 6 * js) + c_sq * jwn
+        r2 = 0.5 * d_sq * (4 * j0 + jd + 3 * jwn + 6 * jwh + 6 * js) + (1.0 / 6.0) * c_sq * (
+            4 * j0 + 3 * jwn
         )
-        raise
+
+        if r1 != 0:
+            noe = 1.0 + (GAMMA_H / GAMMA_N) * d_sq * (6 * js - jd) * (1.0 / r1)
+        else:
+            noe = np.nan
+            logger.warning(f"R1 value for residue {rid} is zero, NOE cannot be calculated.")
+
+        results[int(rid)] = {
+            "R1": float(r1),
+            "R2": float(r2),
+            "NOE": float(noe),
+            "S2": float(s2),
+        }
+
+    logger.info(f"Successfully calculated relaxation rates for {len(results)} residues.")
+    return results

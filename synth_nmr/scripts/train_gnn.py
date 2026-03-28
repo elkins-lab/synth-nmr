@@ -2,12 +2,13 @@
 Training script for the NeuralShiftPredictor (GNN architecture).
 """
 
-import logging
 import argparse
-import sys
-import numpy as np
+import logging
 import os
+import sys
 from typing import Any, List
+
+import numpy as np
 
 try:
     import torch
@@ -21,9 +22,9 @@ except ImportError:
 
 import biotite.structure as struc
 
-from synth_nmr.data_pipeline import load_matched_dataset
-from synth_nmr.neural_shifts import NeuralShiftPredictor, NUCLEUS_ORDER, build_graph_data
 from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
+from synth_nmr.data_pipeline import load_matched_dataset
+from synth_nmr.neural_shifts import NUCLEUS_ORDER, NeuralShiftPredictor, build_graph_data
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)

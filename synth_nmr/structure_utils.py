@@ -1,9 +1,27 @@
-import numpy as np
-import biotite.structure as struc
-from typing import List
 import logging
+from typing import List
+
+import biotite.structure as struc
+import numpy as np
 
 logger = logging.getLogger(__name__)
+
+
+def get_residue_info(structure: struc.AtomArray):
+    """
+    Unified utility to extract residue-level metadata (Chain ID, Res ID, Res Name).
+
+    Returns:
+        tuple: (chain_ids, res_ids, res_names, res_starts)
+        All as NumPy arrays.
+    """
+    res_starts = struc.get_residue_starts(structure)
+    # Extract identifiers at each start index
+    chain_ids = structure.chain_id[res_starts]
+    res_ids = structure.res_id[res_starts]
+    res_names = structure.res_name[res_starts]
+
+    return chain_ids, res_ids, res_names, res_starts
 
 
 def get_secondary_structure(structure: struc.AtomArray) -> List[str]:

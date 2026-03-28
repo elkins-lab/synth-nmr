@@ -1,7 +1,8 @@
-import numpy as np
 import biotite.structure as struc
-from synth_nmr.nmr import calculate_synthetic_noes
+import numpy as np
+
 from synth_nmr.nef_io import write_nef_file
+from synth_nmr.nmr import calculate_synthetic_noes
 
 
 def test_calculate_noes_simple_dimer():
@@ -62,7 +63,7 @@ def test_write_nef_structure(tmp_path):
     write_nef_file(str(output_file), sequence, restraints)
 
     # Check content
-    with open(output_file, "r") as f:
+    with open(output_file) as f:
         content = f.read()
 
     # Headers

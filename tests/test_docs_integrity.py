@@ -1,5 +1,5 @@
-import unittest
 import os
+import unittest
 
 
 class TestDocumentationIntegrity(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestDocumentationIntegrity(unittest.TestCase):
 
     def _check_file_contains(self, filepath, substrings):
         """Helper to assert file contains list of substrings."""
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             content = " ".join(f.read().split())
 
         for substring in substrings:
@@ -127,7 +127,7 @@ class TestDocumentationIntegrity(unittest.TestCase):
         """Verify that the codebase maintains a high ratio of educational comments."""
         # A simple check to ensure that the j_coupling.py file is at least roughly 30% comments
         # which acts as a proxy for "the code is the textbook"
-        with open(self.j_coupling_path, "r", encoding="utf-8") as f:
+        with open(self.j_coupling_path, encoding="utf-8") as f:
             lines = f.readlines()
 
         total_lines = len(lines)
@@ -141,5 +141,5 @@ class TestDocumentationIntegrity(unittest.TestCase):
         self.assertGreater(
             ratio,
             0.25,
-            f"j_coupling.py comment ratio is critically low: {ratio*100:.1f}%. Please add more educational explanations.",
+            f"j_coupling.py comment ratio is critically low: {ratio * 100:.1f}%. Please add more educational explanations.",
         )

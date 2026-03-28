@@ -2,18 +2,20 @@
 Tests for the robustness and validation of the relaxation module.
 """
 
-import pytest
+import logging
+import os
+from unittest.mock import patch
+
 import biotite.structure as struc
 import biotite.structure.io as strucio
 import numpy as np
-import os
+import pytest
+
 from synth_nmr.relaxation import (
-    spectral_density,
-    predict_order_parameters,
     calculate_relaxation_rates,
+    predict_order_parameters,
+    spectral_density,
 )
-import logging
-from unittest.mock import patch
 
 # Get the directory of the current test file
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -205,5 +207,5 @@ def test_calc_rates_r1_zero_noe_nan_logging(sample_structure, caplog):
         assert "R1 value for residue 2 is zero, NOE cannot be calculated." in caplog.text
 
         # All NOE values should be NaN
-        for res_id, res_rates in rates.items():
+        for _res_id, res_rates in rates.items():
             assert np.isnan(res_rates["NOE"])

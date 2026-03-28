@@ -1,10 +1,11 @@
-import pytest
-import numpy as np
 import biotite.structure as struc
+import numpy as np
+import pytest
+
 from synth_nmr.j_coupling import (
-    calculate_hn_ha_coupling,
-    calculate_ha_hb_coupling,
     calculate_c_cg_coupling,
+    calculate_ha_hb_coupling,
+    calculate_hn_ha_coupling,
 )
 
 

@@ -2,11 +2,13 @@
 Unit and functional tests for the nmr module.
 """
 
-import pytest
+import os
+
 import biotite.structure as struc
 import biotite.structure.io as strucio
 import numpy as np
-import os
+import pytest
+
 from synth_nmr.nmr import calculate_synthetic_noes
 
 # Get the directory of the current test file
@@ -198,9 +200,9 @@ def test_calculate_synthetic_noes_geminal_exclusion():
             found_geminal_noe = True
             break
 
-    assert (
-        not found_geminal_noe
-    ), "Geminal HBx-HBx NOE was found, but should have been excluded by dist < 2.0 Å filter."
+    assert not found_geminal_noe, (
+        "Geminal HBx-HBx NOE was found, but should have been excluded by dist < 2.0 Å filter."
+    )
 
     # Ensure other, longer intra-residue NOEs might still be present (e.g., HA-HBx)
     found_ha_hb_noe = False
@@ -233,9 +235,10 @@ def test_logging_for_empty_structure(caplog):
 
 
 def test_calculate_synthetic_noes_dist_under_1():
-    from synth_nmr.nmr import calculate_synthetic_noes
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.nmr import calculate_synthetic_noes
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
@@ -252,10 +255,11 @@ def test_calculate_synthetic_noes_dist_under_1():
 
 
 def test_calculate_synthetic_noes_exception(mocker):
-    from synth_nmr.nmr import calculate_synthetic_noes
     import biotite.structure as struc
     import numpy as np
     import pytest
+
+    from synth_nmr.nmr import calculate_synthetic_noes
 
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])

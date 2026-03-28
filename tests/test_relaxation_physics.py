@@ -3,10 +3,10 @@ import math
 # These imports will fail initially because the helper functions do not exist yet.
 # This follows strict TDD methodology.
 from synth_nmr.relaxation import (
-    _predict_s2_from_sasa,
     _apply_termini_effects,
-    _calculate_dipolar_constant,
     _calculate_csa_constant,
+    _calculate_dipolar_constant,
+    _predict_s2_from_sasa,
 )
 
 
@@ -72,8 +72,9 @@ def test_calculate_dipolar_constant():
 
 
 def test_calculate_spectral_density_tau_f():
-    from synth_nmr.relaxation import spectral_density
     import numpy as np
+
+    from synth_nmr.relaxation import spectral_density
 
     omega = 600e6 * 2 * np.pi
     tau_m = 10e-9

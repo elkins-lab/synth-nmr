@@ -21,10 +21,11 @@
 #    This provides long-range orientational information, which is a powerful restraint
 #    for structure determination, complementary to short-range NOEs.
 
-import numpy as np
-import biotite.structure as struc
-from typing import Dict
 import logging
+from typing import Dict
+
+import biotite.structure as struc
+import numpy as np
 
 logger = logging.getLogger(__name__)
 

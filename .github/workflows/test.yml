@@ -27,9 +27,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install -e ".[dev]"
         
-    - name: Check code formatting (Black)
+    - name: Check code formatting (Ruff)
       run: |
-        black --check synth_nmr tests/
+        ruff format --check synth_nmr tests/
         
     - name: Lint code (Ruff)
       run: |

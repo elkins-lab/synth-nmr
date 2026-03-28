@@ -7,9 +7,10 @@ inter-proton distances.
 """
 
 import logging
-import numpy as np
+from typing import Dict, List
+
 import biotite.structure as struc
-from typing import List, Dict
+import numpy as np
 
 logger = logging.getLogger(__name__)
 

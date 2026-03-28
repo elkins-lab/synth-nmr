@@ -5,14 +5,15 @@ This module provides functions to download NMR-STAR files from BMRB and PDB file
 from RCSB, and parse them into a format suitable for training the Neural Shift Predictor.
 """
 
+import logging
 import os
 import re
 import urllib.request
-import logging
 from typing import Dict, List, Optional, Tuple
-import numpy as np
+
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb_io
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -85,9 +86,9 @@ def parse_bmrb_shifts(filepath: str) -> Dict[int, Dict[str, float]]:
     experimental_shifts: Dict[int, Dict[str, float]] = {}
 
     try:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             lines = f.readlines()
-    except IOError:
+    except OSError:
         logger.error(f"Could not read {filepath}")
         return experimental_shifts
 
@@ -182,9 +183,9 @@ def parse_bmrb_j_couplings(filepath: str) -> Dict[int, Dict[str, float]]:
     experimental_couplings: Dict[int, Dict[str, float]] = {}
 
     try:
-        with open(filepath, "r") as f:
+        with open(filepath) as f:
             lines = f.readlines()
-    except IOError:
+    except OSError:
         logger.error(f"Could not read {filepath}")
         return experimental_couplings
 

@@ -1,6 +1,8 @@
-import pytest
 import os
 import tempfile
+
+import pytest
+
 from synth_nmr.nef_io import read_nef_restraints, write_nef_file
 
 

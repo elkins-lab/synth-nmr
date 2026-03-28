@@ -1,14 +1,16 @@
-import unittest
-from unittest.mock import patch
-import numpy as np
-import biotite.structure as struc
-from synth_nmr.relaxation import (
-    spectral_density,
-    predict_order_parameters,
-    calculate_relaxation_rates,
-)
 import importlib
 import sys
+import unittest
+from unittest.mock import patch
+
+import biotite.structure as struc
+import numpy as np
+
+from synth_nmr.relaxation import (
+    calculate_relaxation_rates,
+    predict_order_parameters,
+    spectral_density,
+)
 
 
 class TestRelaxation(unittest.TestCase):
@@ -56,7 +58,7 @@ class TestRelaxation(unittest.TestCase):
 
         rates = calculate_relaxation_rates(helix)
         self.assertEqual(len(rates), res_count)
-        for res_id, res_rates in rates.items():
+        for _res_id, res_rates in rates.items():
             self.assertIn("R1", res_rates)
             self.assertIn("R2", res_rates)
             self.assertIn("NOE", res_rates)
@@ -206,8 +208,8 @@ def test_spectral_density_tau_f():
 
 def test_njit_fallback(mocker):
     # Test the exception branch where numba is not installed
-    import sys
     import importlib
+    import sys
 
     # Force reload of relaxation module with numba missing
     mocker.patch.dict(sys.modules, {"numba": None})
@@ -239,9 +241,10 @@ def test_calculate_internal_correlation_time_zero_s2():
 
 def test_calculate_relaxation_rates_zero_s2():
     # Test when calculate_relaxation_rates is given s2=0
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
@@ -256,9 +259,10 @@ def test_calculate_relaxation_rates_zero_s2():
 
 
 def test_predict_order_parameters_no_res_ids(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
@@ -269,17 +273,19 @@ def test_predict_order_parameters_no_res_ids(mocker):
 
 
 def test_predict_order_parameters_typeerror():
-    from synth_nmr.relaxation import predict_order_parameters
     import pytest
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     with pytest.raises(TypeError):
         predict_order_parameters("Not an AtomArray")
 
 
 def test_predict_order_parameters_alpha(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 2])
@@ -300,9 +306,10 @@ def test_predict_order_parameters_alpha(mocker):
 
 
 def test_calculate_relaxation_rates_pro():
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
@@ -314,9 +321,10 @@ def test_calculate_relaxation_rates_pro():
 
 
 def test_predict_relaxation_from_structure_no_sasa_fallback(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(3)
     structure.res_id = np.array([1, 1, 1])
@@ -340,9 +348,10 @@ def test_predict_s2_from_sasa_invalid_value():
 
 
 def test_predict_relaxation_multichain(mocker):
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(4)
     structure.res_id = np.array([1, 1, 2, 2])
@@ -377,18 +386,20 @@ def test_spectral_density_tau_f_branch():
 
 
 def test_predict_order_parameters_empty_structure():
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(0)
     assert predict_order_parameters(structure) == {}
 
 
 def test_calculate_relaxation_rates_type_errors():
-    from synth_nmr.relaxation import calculate_relaxation_rates
-    import pytest
     import biotite.structure as struc
     import numpy as np
+    import pytest
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
@@ -408,8 +419,9 @@ def test_calculate_relaxation_rates_type_errors():
 
 
 def test_calculate_relaxation_rates_empty_structure(caplog):
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(0)
     rates = calculate_relaxation_rates(structure)
@@ -418,9 +430,10 @@ def test_calculate_relaxation_rates_empty_structure(caplog):
 
 
 def test_calculate_relaxation_rates_divide_by_zero_r1(mocker, caplog):
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
@@ -437,10 +450,11 @@ def test_calculate_relaxation_rates_divide_by_zero_r1(mocker, caplog):
 
 
 def test_calculate_relaxation_rates_exception(mocker):
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
     import pytest
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])
@@ -456,10 +470,11 @@ def test_calculate_relaxation_rates_exception(mocker):
 
 
 def test_predict_order_parameters_exception(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
     import pytest
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
@@ -473,9 +488,10 @@ def test_predict_order_parameters_exception(mocker):
 
 
 def test_predict_order_parameters_proline():
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 2])
@@ -489,9 +505,10 @@ def test_predict_order_parameters_proline():
 
 
 def test_calculate_relaxation_rates_proline():
-    from synth_nmr.relaxation import calculate_relaxation_rates
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import calculate_relaxation_rates
 
     structure = struc.AtomArray(3)
     structure.res_id = np.array([1, 1, 2])
@@ -506,9 +523,10 @@ def test_calculate_relaxation_rates_proline():
 
 
 def test_sasa_fallback_nan(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(1)
     structure.res_id = np.array([1])
@@ -524,9 +542,10 @@ def test_sasa_fallback_nan(mocker):
 
 
 def test_sasa_fallback_ion(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 2])
@@ -541,9 +560,10 @@ def test_sasa_fallback_ion(mocker):
 
 
 def test_sasa_fallback_ptm(mocker):
-    from synth_nmr.relaxation import predict_order_parameters
     import biotite.structure as struc
     import numpy as np
+
+    from synth_nmr.relaxation import predict_order_parameters
 
     structure = struc.AtomArray(2)
     structure.res_id = np.array([1, 1])

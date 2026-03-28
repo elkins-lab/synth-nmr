@@ -1,5 +1,5 @@
-import numpy as np
 import biotite.structure as struc
+import numpy as np
 import pytest
 
 # This import will fail until the rdc module is created

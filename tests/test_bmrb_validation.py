@@ -3,14 +3,15 @@ Validation tests for comparing predicted chemical shifts against BMRB experiment
 """
 
 import os
+import re
 import urllib.request
-import pytest
-import numpy as np
+
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
-import re
-from synth_nmr.chemical_shifts import predict_chemical_shifts
+import numpy as np
+import pytest
 
+from synth_nmr.chemical_shifts import predict_chemical_shifts
 
 # Placeholder for BMRB experimental data (to be populated by parsing bmr17769.str)
 # Format: { (residue_number, three_letter_res_name, atom_name): chemical_shift_value }
@@ -22,7 +23,7 @@ def parse_bmrb_nmr_star_file(filepath):
     Parses an NMR-STAR file (BMRB format) and extracts chemical shift data.
     Focuses on the _Atom_chem_shift loop.
     """
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         lines = f.readlines()
 
     in_atom_chem_shift_loop = False
@@ -240,7 +241,6 @@ def test_bmrb_chemical_shift_validation(
                 res_id in predicted_shifts
                 and mapped_atom_name_for_comparison in predicted_shifts[res_id]
             ):
-
                 pred_val = predicted_shifts[res_id][mapped_atom_name_for_comparison]
 
                 # Retrieve the experimental value using the new format of BMRB_EXPERIMENTAL_SHIFTS
@@ -313,10 +313,10 @@ def test_bmrb_chemical_shift_validation(
             # We don't assert HA correlation, as it's known to be less accurate
             min_pearson_corr = 0.0  # Effectively disables this check
 
-        assert (
-            rmsd < tolerance_rmsd
-        ), f"RMSD for {atom_type_key} shifts is {rmsd:.2f} ppm, which is too high (tolerance: {tolerance_rmsd} ppm)."
+        assert rmsd < tolerance_rmsd, (
+            f"RMSD for {atom_type_key} shifts is {rmsd:.2f} ppm, which is too high (tolerance: {tolerance_rmsd} ppm)."
+        )
         if min_pearson_corr > 0.0:  # Only assert correlation for atom types where it's expected
-            assert (
-                pearson_corr > min_pearson_corr
-            ), f"Pearson correlation for {atom_type_key} shifts is {pearson_corr:.2f}, which is too low (minimum: {min_pearson_corr})."
+            assert pearson_corr > min_pearson_corr, (
+                f"Pearson correlation for {atom_type_key} shifts is {pearson_corr:.2f}, which is too low (minimum: {min_pearson_corr})."
+            )

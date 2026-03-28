@@ -1,4 +1,4 @@
-from typing import List, Dict, Set, Any, Tuple
+from typing import Any, Dict, List, Set, Tuple
 
 """
 This module contains data definitions for the synth_nmr package, starting

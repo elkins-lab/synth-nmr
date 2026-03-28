@@ -10,10 +10,11 @@ import sys
 import tempfile
 import unittest
 
+import biotite.structure as struc
 import numpy as np
 import pytest
-import biotite.structure as struc
-from synth_nmr.neural_shifts import build_residue_features, NeuralShiftPredictor, _make_mlp
+
+from synth_nmr.neural_shifts import NeuralShiftPredictor, _make_mlp, build_residue_features
 
 # ---------------------------------------------------------------------------
 # Helpers — minimal synthetic biotite structure
@@ -166,6 +167,7 @@ class TestNeuralShiftModel(unittest.TestCase):
     def test_forward_pass_output_shape(self):
         """Model output must be [N_residues, 6]."""
         import torch
+
         from synth_nmr.neural_shifts import build_residue_features
 
         X = build_residue_features(self.structure)
@@ -180,6 +182,7 @@ class TestNeuralShiftModel(unittest.TestCase):
     def test_forward_pass_produces_finite_values(self):
         """Model output must not contain NaN or Inf."""
         import torch
+
         from synth_nmr.neural_shifts import build_residue_features
 
         X = build_residue_features(self.structure)
@@ -222,7 +225,7 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
         """Each residue dict must have a subset of [HA, CA, CB, C, N, H]."""
         result = self.predictor.predict(self.structure)
         valid_keys = {"HA", "CA", "CB", "C", "N", "H"}
-        for chain, chain_data in result.items():
+        for _chain, chain_data in result.items():
             for res_id, atom_shifts in chain_data.items():
                 for key in atom_shifts:
                     self.assertIn(
@@ -232,8 +235,8 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
     def test_predict_values_are_floats_in_plausible_range(self):
         """Predicted shifts must be in a physically plausible range (0–220 ppm)."""
         result = self.predictor.predict(self.structure)
-        for chain, chain_data in result.items():
-            for res_id, atom_shifts in chain_data.items():
+        for _chain, chain_data in result.items():
+            for _res_id, atom_shifts in chain_data.items():
                 for atom, val in atom_shifts.items():
                     self.assertIsInstance(val, float)
                     self.assertTrue(
@@ -266,7 +269,6 @@ class TestNeuralShiftPredictorAPI(unittest.TestCase):
 
 
 class TestNeuralShiftCheckpoint(unittest.TestCase):
-
     def setUp(self):
         import importlib.util
 
@@ -283,8 +285,9 @@ class TestNeuralShiftCheckpoint(unittest.TestCase):
         We compare the raw model output (not the full predict() output) to
         avoid non-determinism from the empirical predictor's Gaussian noise.
         """
-        from synth_nmr.neural_shifts import NeuralShiftPredictor, build_residue_features
         import torch
+
+        from synth_nmr.neural_shifts import NeuralShiftPredictor, build_residue_features
 
         X = build_residue_features(self.structure)
         x = torch.tensor(X, dtype=torch.float32)
@@ -317,7 +320,6 @@ class TestNeuralShiftCheckpoint(unittest.TestCase):
 
 
 class TestImportSafety(unittest.TestCase):
-
     def test_module_imports_without_torch(self):
         """
         `synth_nmr.neural_shifts` must be importable even when torch is absent.
@@ -473,8 +475,9 @@ def test_neural_shifts_init_random_weights(mocker):
 
 
 def test_build_residue_features_padding(mocker):
-    from synth_nmr.neural_shifts import build_residue_features
     import biotite.structure as struc
+
+    from synth_nmr.neural_shifts import build_residue_features
 
     structure = struc.AtomArray(3)
     structure.res_id = np.array([1, 2, 3])

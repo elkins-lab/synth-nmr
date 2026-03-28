@@ -17,19 +17,19 @@ standalone NMR toolkit that works with any protein structure source.
 
 __version__ = "0.8.0"
 
-from .nmr import calculate_synthetic_noes
-from .relaxation import calculate_relaxation_rates, predict_order_parameters
-from .chemical_shifts import predict_chemical_shifts, calculate_csi
+from .chemical_shifts import calculate_csi, predict_chemical_shifts
 from .j_coupling import calculate_hn_ha_coupling
+from .nmr import calculate_synthetic_noes
 from .rdc import calculate_rdcs
+from .relaxation import calculate_relaxation_rates, predict_order_parameters
 from .trajectory import (
     TrajectoryEnsemble,
-    load_trajectory,
-    ensemble_average_shifts,
+    compute_s2_from_trajectory,
+    ensemble_average_j_couplings,
     ensemble_average_noes,
     ensemble_average_rdcs,
-    ensemble_average_j_couplings,
-    compute_s2_from_trajectory,
+    ensemble_average_shifts,
+    load_trajectory,
 )
 
 __all__ = [

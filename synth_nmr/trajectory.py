@@ -81,10 +81,10 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, Tuple
 
-import numpy as np
 import biotite.structure as struc
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +143,7 @@ class TrajectoryEnsemble:
         order) for meaningful ensemble averaging.
     """
 
-    frames: List[struc.AtomArray] = field(default_factory=list)
+    frames: list[struc.AtomArray] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         # Validate: must have at least one frame
@@ -165,13 +165,32 @@ class TrajectoryEnsemble:
         """Return the number of frames in the ensemble."""
         return len(self.frames)
 
+    def __getitem__(self, index: int | slice) -> struc.AtomArray | TrajectoryEnsemble:
+        """
+        Get a frame or a sub-ensemble.
+
+        Parameters
+        ----------
+        index : int or slice
+            The frame index or range to retrieve.
+
+        Returns
+        -------
+        biotite.structure.AtomArray or TrajectoryEnsemble
+            A single frame if `index` is an int, or a new TrajectoryEnsemble
+            containing the specified range if `index` is a slice.
+        """
+        if isinstance(index, slice):
+            return TrajectoryEnsemble(frames=self.frames[index])
+        return self.frames[index]
+
     def __iter__(self) -> Iterator[struc.AtomArray]:
         """Iterate over frames in order."""
         return iter(self.frames)
 
     def __repr__(self) -> str:
         n_atoms = self.frames[0].array_length() if self.frames else 0
-        return f"TrajectoryEnsemble(" f"n_frames={len(self)}, " f"n_atoms_per_frame={n_atoms})"
+        return f"TrajectoryEnsemble(n_frames={len(self)}, n_atoms_per_frame={n_atoms})"
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -180,8 +199,8 @@ class TrajectoryEnsemble:
 
 
 def load_trajectory(
-    source: Union[List[struc.AtomArray], Any],
-    topology: Optional[str] = None,
+    source: list[struc.AtomArray] | Any,
+    topology: str | None = None,
     stride: int = 1,
 ) -> TrajectoryEnsemble:
     """
@@ -240,12 +259,11 @@ def load_trajectory(
     if isinstance(source, list):
         if len(source) == 0:
             raise ValueError(
-                "load_trajectory received an empty list.  " "Provide at least one AtomArray frame."
+                "load_trajectory received an empty list.  Provide at least one AtomArray frame."
             )
-        frames: List[struc.AtomArray] = list(source)[::stride]
+        frames: list[struc.AtomArray] = list(source)[::stride]
         logger.info(
-            f"load_trajectory: loaded {len(frames)} frames "
-            f"(stride={stride}) from AtomArray list."
+            f"load_trajectory: loaded {len(frames)} frames (stride={stride}) from AtomArray list."
         )
         return TrajectoryEnsemble(frames=frames)
 
@@ -270,7 +288,7 @@ def load_trajectory(
         mdtraj_traj = mdtraj.load(source, top=topology, stride=stride)
         frames = _mdtraj_to_atomarrays(mdtraj_traj)
         logger.info(
-            f"load_trajectory: loaded {len(frames)} frames " f"(stride={stride}) from '{source}'."
+            f"load_trajectory: loaded {len(frames)} frames (stride={stride}) from '{source}'."
         )
         return TrajectoryEnsemble(frames=frames)
 
@@ -278,10 +296,9 @@ def load_trajectory(
     source_type_name = type(source).__module__ + "." + type(source).__qualname__
     if source_type_name.startswith("mdtraj"):
         raw_frames = _mdtraj_to_atomarrays(source)
-        mdtraj_frames: List[struc.AtomArray] = list(raw_frames)[::stride]
+        mdtraj_frames: list[struc.AtomArray] = list(raw_frames)[::stride]
         logger.info(
-            f"load_trajectory: loaded {len(mdtraj_frames)} frames "
-            f"from MDTraj Trajectory object."
+            f"load_trajectory: loaded {len(mdtraj_frames)} frames from MDTraj Trajectory object."
         )
         return TrajectoryEnsemble(frames=mdtraj_frames)
 
@@ -292,7 +309,7 @@ def load_trajectory(
     )
 
 
-def _mdtraj_to_atomarrays(traj: Any) -> List[struc.AtomArray]:
+def _mdtraj_to_atomarrays(traj: Any) -> list[struc.AtomArray]:
     """
     Convert an MDTraj ``Trajectory`` to a list of biotite ``AtomArray`` objects.
 
@@ -314,7 +331,7 @@ def _mdtraj_to_atomarrays(traj: Any) -> List[struc.AtomArray]:
     list of struc.AtomArray
         One AtomArray per frame.
     """
-    frames: List[struc.AtomArray] = []
+    frames: list[struc.AtomArray] = []
     topology = traj.topology
     n_atoms = topology.n_atoms
 
@@ -345,7 +362,7 @@ def _mdtraj_to_atomarrays(traj: Any) -> List[struc.AtomArray]:
 
 
 def ensemble_average_shifts(
-    per_frame_shifts: List[FrameShifts],
+    per_frame_shifts: list[FrameShifts],
 ) -> FrameShifts:
     """
     Compute time-averaged chemical shifts from a list of per-frame shift
@@ -417,7 +434,7 @@ def ensemble_average_shifts(
     # filter to only those keys seen in all n_frames frames.
 
     # {(res_id, atom_name): list of float}
-    accumulator: Dict[Tuple[int, str], List[float]] = {}
+    accumulator: dict[tuple[int, str], list[float]] = {}
 
     for frame_dict in per_frame_shifts:
         for res_id, nucleus_dict in frame_dict.items():
@@ -443,7 +460,7 @@ def ensemble_average_shifts(
 
     n_residues = len(result)
     logger.info(
-        f"ensemble_average_shifts: averaged {n_frames} frames, " f"retained {n_residues} residues."
+        f"ensemble_average_shifts: averaged {n_frames} frames, retained {n_residues} residues."
     )
     return result
 
@@ -454,7 +471,7 @@ def ensemble_average_shifts(
 
 
 def ensemble_average_noes(
-    per_frame_noes: List[FrameNoes],
+    per_frame_noes: list[FrameNoes],
 ) -> FrameNoes:
     """
     Compute ensemble-averaged effective NOE distances using the r⁻⁶ average.
@@ -525,7 +542,7 @@ def ensemble_average_noes(
 
     # Accumulate r⁻⁶ values for each atom pair
     # {pair: list of r⁻⁶ values}
-    accumulator: Dict[Tuple[int, int], List[float]] = {}
+    accumulator: dict[tuple[int, int], list[float]] = {}
 
     for frame_dict in per_frame_noes:
         for pair, dist in frame_dict.items():
@@ -548,7 +565,7 @@ def ensemble_average_noes(
             )
 
     logger.info(
-        f"ensemble_average_noes: averaged {n_frames} frames, " f"retained {len(result)} NOE pairs."
+        f"ensemble_average_noes: averaged {n_frames} frames, retained {len(result)} NOE pairs."
     )
     return result
 
@@ -559,7 +576,7 @@ def ensemble_average_noes(
 
 
 def ensemble_average_rdcs(
-    per_frame_rdcs: List[FrameRdcs],
+    per_frame_rdcs: list[FrameRdcs],
 ) -> FrameRdcs:
     """
     Compute time-averaged Residual Dipolar Couplings (RDCs) from a list of
@@ -623,7 +640,7 @@ def ensemble_average_rdcs(
     n_frames = len(per_frame_rdcs)
 
     # Accumulate RDC values per residue
-    accumulator: Dict[int, List[float]] = {}
+    accumulator: dict[int, list[float]] = {}
     for frame_dict in per_frame_rdcs:
         for res_id, rdc_val in frame_dict.items():
             if res_id not in accumulator:
@@ -642,7 +659,7 @@ def ensemble_average_rdcs(
             )
 
     logger.info(
-        f"ensemble_average_rdcs: averaged {n_frames} frames, " f"retained {len(result)} residues."
+        f"ensemble_average_rdcs: averaged {n_frames} frames, retained {len(result)} residues."
     )
     return result
 
@@ -654,7 +671,7 @@ def ensemble_average_rdcs(
 
 def compute_s2_from_trajectory(
     ensemble: TrajectoryEnsemble,
-) -> Dict[int, float]:
+) -> dict[int, float]:
     """
     Compute the Lipari-Szabo generalized order parameter S² for backbone
     N-H bond vectors directly from a trajectory ensemble.
@@ -734,7 +751,7 @@ def compute_s2_from_trajectory(
     # We accumulate numpy arrays because we need the vector mean, not a scalar.
 
     # {res_id: list of np.ndarray shape (3,)}
-    nh_vectors: Dict[int, List[np.ndarray]] = {}
+    nh_vectors: dict[int, list[np.ndarray]] = {}
 
     for frame in ensemble:
         # Extract backbone N and H atoms; build a fast residue→coord lookup
@@ -749,7 +766,7 @@ def compute_s2_from_trajectory(
             continue
 
         # Build a lookup: res_id -> H coord (for amide proton matching)
-        h_coord_map: Dict[int, np.ndarray] = {int(h.res_id): np.asarray(h.coord) for h in h_atoms}
+        h_coord_map: dict[int, np.ndarray] = {int(h.res_id): np.asarray(h.coord) for h in h_atoms}
 
         for n_atom in n_atoms:
             res_id = int(n_atom.res_id)
@@ -790,7 +807,7 @@ def compute_s2_from_trajectory(
     #   - rigid vector: all μ_i point the same way → |<μ>| = 1
     #   - random vectors: Σμ_i ≈ 0 → |<μ>| ≈ 0
 
-    result: Dict[int, float] = {}
+    result: dict[int, float] = {}
 
     for res_id, vec_list in nh_vectors.items():
         mu_mean = np.mean(np.stack(vec_list, axis=0), axis=0)  # shape (3,)
@@ -819,7 +836,7 @@ def compute_s2_from_trajectory(
 
 
 def ensemble_average_j_couplings(
-    per_frame_j: List[FrameJCouplings],
+    per_frame_j: list[FrameJCouplings],
 ) -> FrameJCouplings:
     """
     Compute time-averaged J-couplings from a list of per-frame dictionaries.
@@ -858,7 +875,7 @@ def ensemble_average_j_couplings(
     n_frames = len(per_frame_j)
 
     # {(chain_id, res_id): list of float}
-    accumulator: Dict[Tuple[str, int], List[float]] = {}
+    accumulator: dict[tuple[str, int], list[float]] = {}
 
     for frame_dict in per_frame_j:
         for chain_id, res_dict in frame_dict.items():

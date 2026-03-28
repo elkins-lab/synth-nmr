@@ -2,11 +2,13 @@
 Tests for the robustness and validation of the chemical_shifts module.
 """
 
-import pytest
+import os
+
 import biotite.structure as struc
 import biotite.structure.io as strucio
-import os
-from synth_nmr.chemical_shifts import predict_chemical_shifts, calculate_csi
+import pytest
+
+from synth_nmr.chemical_shifts import calculate_csi, predict_chemical_shifts
 
 # Get the directory of the current test file
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")

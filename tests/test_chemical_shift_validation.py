@@ -2,12 +2,14 @@
 Validation tests for comparing predicted chemical shifts against published experimental results.
 """
 
-import pytest
-import numpy as np
+from io import StringIO
+
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
-from io import StringIO
+import numpy as np
+import pytest
 import requests
+
 from synth_nmr.chemical_shifts import predict_chemical_shifts
 
 
@@ -181,7 +183,6 @@ def test_chemical_shift_validation_against_1d3z(ubiquitin_structure, monkeypatch
 
         for res_id, exp_shift_data in experimental_shifts.items():
             if res_id in predicted_shifts_chain_A and atom_type in exp_shift_data:
-
                 # Some residues (like Proline) don't have N-H shifts, so skip if experimental is 0.0
                 if exp_shift_data[atom_type] == 0.0:
                     continue
@@ -210,6 +211,6 @@ def test_chemical_shift_validation_against_1d3z(ubiquitin_structure, monkeypatch
         else:
             tolerance = 1.0  # Default
 
-        assert (
-            rmsd < tolerance
-        ), f"RMSD for {atom_type} shifts is {rmsd:.2f} ppm, which is too high (tolerance: {tolerance} ppm)."
+        assert rmsd < tolerance, (
+            f"RMSD for {atom_type} shifts is {rmsd:.2f} ppm, which is too high (tolerance: {tolerance} ppm)."
+        )

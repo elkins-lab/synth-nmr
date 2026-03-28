@@ -2,8 +2,8 @@ import math
 
 # These imports will fail initially because the helper functions do not exist yet.
 from synth_nmr.chemical_shifts import (
-    _get_random_coil_shifts,
     _apply_secondary_structure_offsets,
+    _get_random_coil_shifts,
 )
 
 

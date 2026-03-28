@@ -1,11 +1,11 @@
-import sys
 import runpy
 import subprocess
+import sys
 from unittest import mock
-import pytest
-import numpy as np
 
 import biotite.structure as struc
+import numpy as np
+import pytest
 
 
 def _make_dummy_dataset():
@@ -67,7 +67,9 @@ def test_train_gnn_empty_dataset(mocker, caplog):
 
 def test_train_gnn_import_error():
     # This runs the script in a fresh process without torch available
-    script = "import sys\n" "sys.modules['torch'] = None\n" "import synth_nmr.scripts.train_gnn\n"
-    res = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True)
+    script = "import sys\nsys.modules['torch'] = None\nimport synth_nmr.scripts.train_gnn\n"
+    res = subprocess.run(
+        [sys.executable, "-c", script], check=False, capture_output=True, text=True
+    )
     assert res.returncode == 1
     assert "PyTorch and PyTorch Geometric are required" in res.stdout

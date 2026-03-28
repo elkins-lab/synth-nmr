@@ -19,26 +19,29 @@
 # along with synth-nmr. If not, see <https://www.gnu.org/licenses/>.
 
 """A command-line interface for synth-nmr."""
+
 import sys
 from typing import Dict, List, Optional, Tuple
+
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
-from synth_nmr.rdc import calculate_rdcs
+
 from synth_nmr.chemical_shifts import predict_chemical_shifts
-from synth_nmr.trajectory import (
-    TrajectoryEnsemble,
-    load_trajectory,
-    ensemble_average_shifts,
-    ensemble_average_noes,
-    ensemble_average_rdcs,
-    ensemble_average_j_couplings,
-    compute_s2_from_trajectory,
+from synth_nmr.j_coupling import (
+    calculate_c_cg_coupling,
+    calculate_ha_hb_coupling,
+    calculate_hn_ha_coupling,
 )
 from synth_nmr.nmr import calculate_synthetic_noes
-from synth_nmr.j_coupling import (
-    calculate_hn_ha_coupling,
-    calculate_ha_hb_coupling,
-    calculate_c_cg_coupling,
+from synth_nmr.rdc import calculate_rdcs
+from synth_nmr.trajectory import (
+    TrajectoryEnsemble,
+    compute_s2_from_trajectory,
+    ensemble_average_j_couplings,
+    ensemble_average_noes,
+    ensemble_average_rdcs,
+    ensemble_average_shifts,
+    load_trajectory,
 )
 
 structure: Optional[struc.AtomArray] = None
@@ -153,11 +156,13 @@ def process_commands(args: List[str]) -> None:
                 per_frame_n: List[Dict[Tuple[int, int], float]] = []
                 for frame in ensemble:
                     try:
-                        noe_dict = calculate_synthetic_noes(frame, cutoff=cutoff)
+                        noe_list = calculate_synthetic_noes(frame, cutoff=cutoff)
                         flat: Dict[Tuple[int, int], float] = {}
-                        for ri, peers in noe_dict.items():  # type: ignore[attr-defined]
-                            for rj, dist in peers.items():
-                                flat[(ri, rj)] = dist
+                        for restraint in noe_list:
+                            ri = int(restraint["index_1"])
+                            rj = int(restraint["index_2"])
+                            dist = float(restraint["distance"])
+                            flat[(ri, rj)] = dist
                         per_frame_n.append(flat)
                     except Exception as e:
                         print(f"Warning: NOE calculation failed for a frame: {e}")
@@ -274,194 +279,221 @@ def process_commands(args: List[str]) -> None:
             i += 1
 
 
-def interactive_mode() -> None:
-    """Run the CLI in interactive mode."""
+def handle_interactive_command(line: str) -> bool:
+    """
+    Handle a single line of input in interactive mode.
+
+    Args:
+        line: The command line string.
+
+    Returns:
+        True if the session should continue, False if 'exit' was received.
+    """
     global structure, ensemble
-    print("Welcome to the synth-nmr CLI!")
-    print("Enter 'help' for a list of commands.")
-    while True:
-        try:
-            sys.stdout.write("SynthNMR> ")
-            sys.stdout.flush()
-            line = sys.stdin.readline().strip()
-            if not line:
-                continue
+    parts = line.split()
+    if not parts:
+        return True
+    command = parts[0].lower()
 
-            parts = line.split()
-            command = parts[0].lower()
-
-            if command == "exit":
-                break
-            elif command == "help":
-                print("Commands:")
-                print("  read pdb <filename>")
-                print("  load trajectory <pdb1> [pdb2 ...]")
-                print("  ensemble shifts")
-                print("  ensemble noes [cutoff_angstrom]")
-                print("  ensemble rdcs [Da] [R]")
-                print("  ensemble s2")
-                print("  calculate rdc [Da] [R]")
-                print("  predict shifts")
-                print("  calculate j-coupling")
-                print("  exit")
-            elif command == "read" and len(parts) > 1 and parts[1].lower() == "pdb":
-                if len(parts) < 3:
-                    print("Usage: read pdb <filename>")
-                    continue
-                filename = " ".join(parts[2:])
+    try:
+        if command == "exit":
+            return False
+        elif command == "help":
+            print("Commands:")
+            print("  read pdb <filename>          Read a PDB file.")
+            print("  load trajectory <pdb1> ...   Load a trajectory ensemble.")
+            print("  ensemble shifts              Ensemble-average chemical shifts.")
+            print("  ensemble noes [cutoff]       Ensemble-average NOE distances.")
+            print("  ensemble rdcs [Da] [R]       Ensemble-average RDCs.")
+            print("  ensemble j-coupling          Ensemble-average J-couplings.")
+            print("  ensemble s2                  Compute S² order parameters.")
+            print("  calculate rdc [Da] [R]       Calculate RDCs for single structure.")
+            print("  predict shifts               Predict chemical shifts for single structure.")
+            print("  calculate j-coupling         Calculate J-couplings for single structure.")
+            print("  exit                         Exit the CLI.")
+        elif command == "read" and len(parts) > 2 and parts[1].lower() == "pdb":
+            path = parts[2]
+            try:
+                pdb_file = pdb.PDBFile.read(path)
+                structure = pdb_file.get_structure()
+                if isinstance(structure, struc.AtomArrayStack):
+                    structure = structure[0]
+                print(f"Read PDB file: {path}")
+            except Exception as e:
+                print(f"Error: Could not read '{path}': {e}")
+        elif command == "load" and len(parts) > 2 and parts[1].lower() == "trajectory":
+            paths = parts[2:]
+            frames = []
+            for path in paths:
                 try:
-                    pdb_file = pdb.PDBFile.read(filename)
-                    structure = pdb_file.get_structure()
-                    if isinstance(structure, struc.AtomArrayStack):
-                        structure = structure[0]
-                    print(f"Read PDB file: {filename}")
-                except FileNotFoundError:
-                    print(f"Error: File not found: {filename}")
+                    pdb_file = pdb.PDBFile.read(path)
+                    frame = pdb_file.get_structure()
+                    if isinstance(frame, struc.AtomArrayStack):
+                        frame = frame[0]
+                    frames.append(frame)
                 except Exception as e:
-                    print(f"Error: Failed to read PDB file: {e}")
+                    print(f"Warning: Could not read '{path}': {e}")
+            if frames:
+                ensemble = load_trajectory(frames)
+                print(f"Loaded trajectory ensemble with {len(ensemble)} frames.")
+            else:
+                print("Error: No frames could be loaded.")
+        elif command == "ensemble" and len(parts) > 1:
+            sub = parts[1].lower()
+            if ensemble is None:
+                print("Error: No trajectory loaded. Use 'load trajectory <pdb1> ...' first.")
+                return True
 
-            elif command == "load" and len(parts) > 1 and parts[1].lower() == "trajectory":
-                frame_paths = parts[2:]
-                if not frame_paths:
-                    print("Usage: load trajectory <pdb1> [pdb2 ...]")
-                    continue
-                frames: List[struc.AtomArray] = []
-                for path in frame_paths:
+            if sub == "shifts":
+                per_frame = []
+                for frame in ensemble:
                     try:
-                        pdb_file = pdb.PDBFile.read(path)
-                        frame = pdb_file.get_structure()
-                        if isinstance(frame, struc.AtomArrayStack):
-                            frame = frame[0]
-                        frames.append(frame)
+                        raw = predict_chemical_shifts(frame)
+                        merged = {}
+                        for method_dict in raw.values():
+                            for res_id, atoms in method_dict.items():
+                                if res_id not in merged:
+                                    merged[res_id] = {}
+                                merged[res_id].update(atoms)
+                        per_frame.append(merged)
                     except Exception as e:
-                        print(f"Warning: Could not read '{path}': {e}")
-                if frames:
-                    ensemble = load_trajectory(frames)
-                    print(f"Loaded trajectory ensemble with {len(ensemble)} frames.")
-                else:
-                    print("Error: No frames could be loaded.")
+                        print(f"Warning: shift prediction failed for a frame: {e}")
+                if per_frame:
+                    avg = ensemble_average_shifts(per_frame)
+                    for res_id, nucleus_dict in sorted(avg.items()):
+                        for atom_name, shift in sorted(nucleus_dict.items()):
+                            print(f"ResID {res_id:4d}  {atom_name:<4s}  {shift:.3f} ppm")
 
-            elif command == "ensemble" and len(parts) > 1:
-                sub = parts[1].lower()
-                if ensemble is None:
-                    print("Error: No trajectory loaded. Use 'load trajectory <pdb1> ...' first.")
-                    continue
+            elif sub == "noes":
+                cutoff = 5.0
+                if len(parts) > 2:
+                    try:
+                        cutoff = float(parts[2])
+                    except ValueError:
+                        pass
+                per_frame_n = []
+                for frame in ensemble:
+                    try:
+                        noe_list = calculate_synthetic_noes(frame, cutoff=cutoff)
+                        flat = {}
+                        for restraint in noe_list:
+                            ri = int(restraint["index_1"])
+                            rj = int(restraint["index_2"])
+                            dist = float(restraint["distance"])
+                            flat[(ri, rj)] = dist
+                        per_frame_n.append(flat)
+                    except Exception as e:
+                        print(f"Warning: NOE calculation failed for a frame: {e}")
+                if per_frame_n:
+                    avg_noes = ensemble_average_noes(per_frame_n)
+                    for (ri, rj), r_eff in sorted(avg_noes.items()):
+                        print(f"Res {ri:4d} — Res {rj:4d}  r_eff = {r_eff:.3f} Å")
 
-                if sub == "shifts":
-                    per_frame2: List[Dict[int, Dict[str, float]]] = []
-                    for frame in ensemble:
-                        try:
-                            raw = predict_chemical_shifts(frame)
-                            merged2: Dict[int, Dict[str, float]] = {}
-                            for method_dict in raw.values():
-                                for res_id, atoms in method_dict.items():
-                                    if res_id not in merged2:
-                                        merged2[res_id] = {}
-                                    merged2[res_id].update(atoms)
-                            per_frame2.append(merged2)
-                        except Exception as e:
-                            print(f"Warning: shift prediction failed for a frame: {e}")
-                    if per_frame2:
-                        avg = ensemble_average_shifts(per_frame2)
-                        for res_id, nucleus_dict in sorted(avg.items()):
-                            for atom_name, shift in sorted(nucleus_dict.items()):
-                                print(f"ResID {res_id:4d}  {atom_name:<4s}  {shift:.3f} ppm")
-
-                elif sub == "noes":
-                    cutoff = float(parts[2]) if len(parts) > 2 else 5.0
-                    per_frame_n2: List[Dict[Tuple[int, int], float]] = []
-                    for frame in ensemble:
-                        try:
-                            noe_dict = calculate_synthetic_noes(frame, cutoff=cutoff)
-                            flat2: Dict[Tuple[int, int], float] = {}
-                            for ri, peers in noe_dict.items():  # type: ignore[attr-defined]
-                                for rj, dist in peers.items():
-                                    flat2[(ri, rj)] = dist
-                            per_frame_n2.append(flat2)
-                        except Exception as e:
-                            print(f"Warning: NOE calculation failed for a frame: {e}")
-                    if per_frame_n2:
-                        avg_noes = ensemble_average_noes(per_frame_n2)
-                        for (ri, rj), r_eff in sorted(avg_noes.items()):
-                            print(f"Res {ri:4d} — Res {rj:4d}  r_eff = {r_eff:.3f} Å")
-
-                elif sub == "rdcs":
-                    Da = float(parts[2]) if len(parts) > 2 else 10.0
-                    R = float(parts[3]) if len(parts) > 3 else 0.5
-                    per_frame_r = [calculate_rdcs(f, Da=Da, R=R) for f in ensemble]
-                    avg_rdcs = ensemble_average_rdcs(per_frame_r)
-                    for res_id, rdc in sorted(avg_rdcs.items()):
-                        print(f"ResID {res_id:4d}  D_NH = {rdc:.3f} Hz")
-
-                elif sub == "j-coupling":
-                    per_frame_j = [calculate_hn_ha_coupling(f) for f in ensemble]
-                    avg_j = ensemble_average_j_couplings(per_frame_j)
-                    for chain_id, res_couplings in sorted(avg_j.items()):
-                        for res_id, j_val in sorted(res_couplings.items()):
-                            print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {j_val:.3f} Hz")
-
-                elif sub == "s2":
-                    s2_map = compute_s2_from_trajectory(ensemble)
-                    for res_id, s2_val in sorted(s2_map.items()):
-                        print(f"ResID {res_id:4d}  S² = {s2_val:.4f}")
-
-                else:
-                    print(f"Error: Unknown ensemble subcommand: {sub}")
-
-            elif command == "calculate" and len(parts) > 1 and parts[1].lower() == "rdc":
-                if structure is None:
-                    print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
-                    continue
+            elif sub == "rdcs":
                 Da = 10.0
                 R = 0.5
                 if len(parts) > 2:
                     try:
                         Da = float(parts[2])
                     except ValueError:
-                        print("Error: Invalid value for Da. Must be a float.")
-                        continue
+                        pass
                 if len(parts) > 3:
                     try:
                         R = float(parts[3])
                     except ValueError:
-                        print("Error: Invalid value for R. Must be a float.")
-                        continue
-                rdcs = calculate_rdcs(structure, Da=Da, R=R)
-                for res_id, rdc in rdcs.items():
-                    print(f"ResID: {res_id}, RDC: {rdc}")
-            elif command == "predict" and len(parts) > 1 and parts[1].lower() == "shifts":
-                if structure is None:
-                    print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
-                    continue
-                shifts = predict_chemical_shifts(structure)
-                for chain_id, res_shifts in shifts.items():
-                    for res_id, atom_shifts in res_shifts.items():
-                        print(f"Chain: {chain_id}, ResID: {res_id}")
-                        for atom_name, shift_val in atom_shifts.items():
-                            print(f"  {atom_name}: {shift_val}")
-            elif command == "calculate" and len(parts) > 1 and parts[1].lower() == "j-coupling":
-                if structure is None:
-                    print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
-                    continue
-                # Backbone
-                j_couplings = calculate_hn_ha_coupling(structure)
-                # Side-chains
-                j_hahb = calculate_ha_hb_coupling(structure)
-                j_ccg = calculate_c_cg_coupling(structure)
+                        pass
+                per_frame_r = [calculate_rdcs(f, Da=Da, R=R) for f in ensemble]
+                avg_rdcs = ensemble_average_rdcs(per_frame_r)
+                for res_id, rdc in sorted(avg_rdcs.items()):
+                    print(f"ResID {res_id:4d}  D_NH = {rdc:.3f} Hz")
 
-                for chain_id, res_couplings in sorted(j_couplings.items()):
-                    for res_id, coupling in sorted(res_couplings.items()):
-                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {coupling:.3f} Hz")
-                        if chain_id in j_hahb and res_id in j_hahb[chain_id]:
-                            print(
-                                f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz"
-                            )
-                        if chain_id in j_ccg and res_id in j_ccg[chain_id]:
-                            print(
-                                f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz"
-                            )
+            elif sub == "j-coupling":
+                per_frame_j = [calculate_hn_ha_coupling(f) for f in ensemble]
+                avg_j = ensemble_average_j_couplings(per_frame_j)
+                for chain_id, res_couplings in sorted(avg_j.items()):
+                    for res_id, j_val in sorted(res_couplings.items()):
+                        print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {j_val:.3f} Hz")
+
+            elif sub == "s2":
+                s2_map = compute_s2_from_trajectory(ensemble)
+                for res_id, s2_val in sorted(s2_map.items()):
+                    print(f"ResID {res_id:4d}  S² = {s2_val:.4f}")
             else:
-                print(f"Error: Unknown command: {command}")
+                print(f"Error: Unknown ensemble subcommand: {sub}")
+
+        elif command == "calculate" and len(parts) > 1 and parts[1].lower() == "rdc":
+            if structure is None:
+                print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
+                return True
+            Da = 10.0
+            R = 0.5
+            if len(parts) > 2:
+                try:
+                    Da = float(parts[2])
+                except ValueError:
+                    print("Error: Invalid value for Da. Must be a float.")
+                    return True
+            if len(parts) > 3:
+                try:
+                    R = float(parts[3])
+                except ValueError:
+                    print("Error: Invalid value for R. Must be a float.")
+                    return True
+            rdcs = calculate_rdcs(structure, Da=Da, R=R)
+            for res_id, rdc in rdcs.items():
+                print(f"ResID: {res_id}, RDC: {rdc}")
+        elif command == "predict" and len(parts) > 1 and parts[1].lower() == "shifts":
+            if structure is None:
+                print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
+                return True
+            shifts = predict_chemical_shifts(structure)
+            for chain_id, res_shifts in shifts.items():
+                for res_id, atom_shifts in res_shifts.items():
+                    print(f"Chain: {chain_id}, ResID: {res_id}")
+                    for atom_name, shift_val in atom_shifts.items():
+                        print(f"  {atom_name}: {shift_val}")
+        elif command == "calculate" and len(parts) > 1 and parts[1].lower() == "j-coupling":
+            if structure is None:
+                print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
+                return True
+            j_couplings = calculate_hn_ha_coupling(structure)
+            j_hahb = calculate_ha_hb_coupling(structure)
+            j_ccg = calculate_c_cg_coupling(structure)
+            for chain_id, res_couplings in sorted(j_couplings.items()):
+                for res_id, coupling in sorted(res_couplings.items()):
+                    print(f"Chain {chain_id} ResID {res_id:4d}  3J_HNHa = {coupling:.3f} Hz")
+                    if chain_id in j_hahb and res_id in j_hahb[chain_id]:
+                        print(
+                            f"Chain {chain_id} ResID {res_id:4d}  3J_HaHb = {j_hahb[chain_id][res_id]:.3f} Hz"
+                        )
+                    if chain_id in j_ccg and res_id in j_ccg[chain_id]:
+                        print(
+                            f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz"
+                        )
+        else:
+            print(f"Error: Unknown command: {command}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
+    return True
+
+
+def interactive_mode() -> None:
+    """Run the CLI in interactive mode."""
+    print("Welcome to the synth-nmr CLI!")
+    print("Enter 'help' for a list of commands.")
+    while True:
+        try:
+            sys.stdout.write("SynthNMR> ")
+            sys.stdout.flush()
+            line = sys.stdin.readline()
+            if not line:
+                break
+            line = line.strip()
+            if not line:
+                continue
+            if not handle_interactive_command(line):
+                break
         except (EOFError, KeyboardInterrupt):
             break
         except Exception as e:

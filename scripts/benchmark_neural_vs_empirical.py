@@ -45,10 +45,11 @@ Key observations:
 ─────────────────────────────────────────────────────────────────────────────
 """
 
-import time
-import sys
-import os
 import logging
+import os
+import sys
+import time
+
 import numpy as np
 
 # Quiet the info-level logging from the predictors during benchmarking
@@ -62,6 +63,7 @@ NUCLEUS_ORDER = ["HA", "CA", "CB", "C", "N", "H"]
 
 # ─── Load 1D3Z ubiquitin structure ───────────────────────────────────────────
 
+
 def load_1d3z():
     cif_path = os.path.join(ROOT, "1D3Z.cif")
     if not os.path.exists(cif_path):
@@ -69,9 +71,11 @@ def load_1d3z():
         return _make_helix(20)
     try:
         import biotite.structure as struc
+
         # biotite ≥ 0.38 uses biotite.structure.io.pdbx directly (CIF/mmCIF)
         try:
             import biotite.structure.io.pdbx as pdbx
+
             # Try new API (0.38+)
             try:
                 f = pdbx.CIFFile.read(cif_path)
@@ -84,6 +88,7 @@ def load_1d3z():
             # Ultimate fallback: try loading the .mr file as PDB
             mr_path = os.path.join(ROOT, "1D3Z.cif").replace(".cif", "_mr.str")
             import biotite.structure.io.pdb as pdb_io
+
             struct = pdb_io.PDBFile.read(mr_path).get_structure(model=1)
 
         struct = struct[struc.filter_amino_acids(struct)]
@@ -94,28 +99,38 @@ def load_1d3z():
         return _make_helix(20)
 
 
-
 def _make_helix(n):
     """Minimal backbone-only α-helix (same helper as in tests)."""
     import biotite.structure as struc
-    AA_LIST = ["ALA", "LEU", "VAL", "ILE", "GLU",
-               "LYS", "PHE", "TRP", "ASP", "GLY"]
+
+    AA_LIST = ["ALA", "LEU", "VAL", "ILE", "GLU", "LYS", "PHE", "TRP", "ASP", "GLY"]
     atoms = []
     for i in range(n):
         rn = AA_LIST[i % len(AA_LIST)]
         angle = np.radians(i * 100.0)
         cx, cy, cz = 2.3 * np.cos(angle), 2.3 * np.sin(angle), i * 1.5
-        for aname, off in [("N", [-1.2, 0, -0.4]), ("CA", [0, 0, 0]),
-                           ("C", [1.2, 0, 0.4]), ("O", [1.5, 0, 1.5])]:
-            atoms.append(struc.Atom(
-                [cx + off[0], cy + off[1], cz + off[2]],
-                chain_id="A", res_id=i + 1, res_name=rn,
-                atom_name=aname, element=aname[0], b_factor=10.0,
-            ))
+        for aname, off in [
+            ("N", [-1.2, 0, -0.4]),
+            ("CA", [0, 0, 0]),
+            ("C", [1.2, 0, 0.4]),
+            ("O", [1.5, 0, 1.5]),
+        ]:
+            atoms.append(
+                struc.Atom(
+                    [cx + off[0], cy + off[1], cz + off[2]],
+                    chain_id="A",
+                    res_id=i + 1,
+                    res_name=rn,
+                    atom_name=aname,
+                    element=aname[0],
+                    b_factor=10.0,
+                )
+            )
     return struc.array(atoms)
 
 
 # ─── Parse BMRB measured shifts from 1D3Z_mr.str ────────────────────────────
+
 
 def load_bmrb_shifts():
     """
@@ -132,7 +147,7 @@ def load_bmrb_shifts():
         headers = []
         res_col = atom_col = shift_col = None
 
-        with open(str_path, "r") as f:
+        with open(str_path) as f:
             for line in f:
                 stripped = line.strip()
                 if stripped == "loop_":
@@ -153,10 +168,9 @@ def load_bmrb_shifts():
                 if stripped == "stop_":
                     in_loop = False
                     continue
-                if (in_loop and res_col is not None
-                        and stripped and not stripped.startswith("_")):
+                if in_loop and res_col is not None and stripped and not stripped.startswith("_"):
                     parts = stripped.split()
-                    if (len(parts) > max(res_col, atom_col, shift_col)):
+                    if len(parts) > max(res_col, atom_col, shift_col):
                         try:
                             rid = int(parts[res_col])
                             atom = parts[atom_col]
@@ -172,8 +186,8 @@ def load_bmrb_shifts():
         return {}
 
 
-
 # ─── Core comparison functions ────────────────────────────────────────────────
+
 
 def time_predictor(name, predict_fn, structure, n_runs=5):
     """Warm-up + timed runs. Returns mean seconds per call."""
@@ -184,10 +198,11 @@ def time_predictor(name, predict_fn, structure, n_runs=5):
         predict_fn(structure)
         times.append(time.perf_counter() - t0)
     import biotite.structure as struc
+
     n_res = struc.get_residue_count(structure)
     mean_s = np.mean(times)
     us_per_res = mean_s * 1e6 / n_res
-    print(f"  {name:<30} {mean_s*1000:6.2f} ms/call   {us_per_res:6.2f} µs/residue")
+    print(f"  {name:<30} {mean_s * 1000:6.2f} ms/call   {us_per_res:6.2f} µs/residue")
     return mean_s
 
 
@@ -215,6 +230,7 @@ def rmse_vs_bmrb(pred_dict, bmrb, nucleus):
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
+
 def main():
     print("=" * 62)
     print("  Chemical Shift Predictor Benchmark: Empirical vs. Neural")
@@ -225,7 +241,8 @@ def main():
     bmrb = load_bmrb_shifts()
 
     try:
-        import torch   # noqa: F401
+        import torch  # noqa: F401
+
         HAS_TORCH = True
     except ImportError:
         HAS_TORCH = False
@@ -234,7 +251,7 @@ def main():
     from synth_nmr.chemical_shifts import predict_chemical_shifts
     from synth_nmr.neural_shifts import NeuralShiftPredictor
 
-    neural = NeuralShiftPredictor()   # random-weight baseline
+    neural = NeuralShiftPredictor()  # random-weight baseline
 
     # ── 1. Speed ─────────────────────────────────────────────────────────────
     print("\n── 1. Prediction Speed ─────────────────────────────────────")
@@ -257,8 +274,10 @@ def main():
         if len(e_vals) == 0:
             continue
         delta = np.mean(n_vals) - np.mean(e_vals) if HAS_TORCH else 0.0
-        print(f"  {nuc:<6} {np.mean(e_vals):>14.3f} {np.std(e_vals):>13.3f} | "
-              f"{np.mean(n_vals):>11.3f} {np.std(n_vals):>10.3f} | {delta:>+14.4f}")
+        print(
+            f"  {nuc:<6} {np.mean(e_vals):>14.3f} {np.std(e_vals):>13.3f} | "
+            f"{np.mean(n_vals):>11.3f} {np.std(n_vals):>10.3f} | {delta:>+14.4f}"
+        )
 
     # ── 3. Neural correction statistics ──────────────────────────────────
     if HAS_TORCH:
@@ -271,7 +290,9 @@ def main():
             if len(e_vals) == 0:
                 continue
             delta = n_vals - e_vals
-            print(f"  {nuc:<6} {np.mean(delta):>+10.4f} {np.std(delta):>10.4f} {np.max(np.abs(delta)):>12.4f}")
+            print(
+                f"  {nuc:<6} {np.mean(delta):>+10.4f} {np.std(delta):>10.4f} {np.max(np.abs(delta)):>12.4f}"
+            )
 
         print("\n  NOTE: With random weights, corrections average near zero")
         print("  (typical initialisation). After training, these corrections")

@@ -1,10 +1,11 @@
-import pytest
-import numpy as np
 import biotite.structure as struc
+import numpy as np
+import pytest
+
 from synth_nmr.chemical_shifts import (
-    predict_chemical_shifts,
-    calculate_csi,
     RANDOM_COIL_SHIFTS,
+    calculate_csi,
+    predict_chemical_shifts,
     predict_empirical_shifts,
 )
 
@@ -405,6 +406,7 @@ def test_numba_fallback(mocker):
     """Test that the njit decorator falls back to a regular function when numba is not installed."""
     mocker.patch.dict("sys.modules", {"numba": None})
     import importlib
+
     import synth_nmr.chemical_shifts
 
     importlib.reload(synth_nmr.chemical_shifts)
@@ -431,6 +433,7 @@ def test_numba_fallback_with_args(mocker):
     """Test the njit decorator fallback when called with arguments."""
     mocker.patch.dict("sys.modules", {"numba": None})
     import importlib
+
     import synth_nmr.chemical_shifts
 
     importlib.reload(synth_nmr.chemical_shifts)
@@ -529,6 +532,7 @@ def test_shiftx2_predict_not_available(mocker):
 def test_shiftx2_predict_subprocess_error(mocker, tmp_path):
     """Test ShiftX2 predict raises error when subprocess fails."""
     import subprocess
+
     from synth_nmr.chemical_shifts import ShiftX2Predictor
 
     predictor = ShiftX2Predictor()
@@ -710,7 +714,7 @@ def test_calculate_csi_empty_structure(mocker):
 
 
 def test_calculate_csi_missing_random_coil(mocker):
-    from synth_nmr.chemical_shifts import calculate_csi, RANDOM_COIL_SHIFTS
+    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS, calculate_csi
 
     structure = struc.AtomArray(1)
     structure.res_name = np.array(["ALA"])
@@ -725,7 +729,7 @@ def test_calculate_csi_missing_random_coil(mocker):
 
 
 def test_get_aromatic_rings_unsupported(mocker):
-    from synth_nmr.chemical_shifts import _get_aromatic_rings, RING_INTENSITIES
+    from synth_nmr.chemical_shifts import RING_INTENSITIES, _get_aromatic_rings
 
     structure = struc.AtomArray(1)
     structure.res_name = np.array(["XYZ"])

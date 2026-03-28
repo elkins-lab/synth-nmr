@@ -2,9 +2,10 @@
 Validation and comparison utilities for chemical shift predictions.
 """
 
-import numpy as np
 import logging
 from typing import Dict, List
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +13,19 @@ logger = logging.getLogger(__name__)
 def compare_chemical_shifts(
     predicted: Dict[str, Dict[int, Dict[str, float]]],
     reference: Dict[str, Dict[int, Dict[str, float]]],
-    atom_types: List[str] = ["CA", "HA", "N", "H"],
+    atom_types: List[str] = None,
 ) -> Dict[str, Dict[str, float]]:
     """
     Compare two sets of chemical shifts and calculate validation metrics.
+
+    This function aligns predicted and reference chemical shifts by chain and
+    residue ID, then calculates the Root Mean Square Error (RMSE) and
+    Pearson correlation coefficient (R) for each specified atom type.
+
+    Educational Note:
+    - RMSE provides a measure of the absolute accuracy of the predictions in ppm.
+    - Pearson R measures the linear correlation, sensitive to how well the
+      relative shifts (the "spread") are captured, even if there is a global offset.
 
     Args:
         predicted: Predicted shifts {chain_id: {res_id: {atom: val}}}
@@ -25,6 +35,8 @@ def compare_chemical_shifts(
     Returns:
         A dictionary of metrics per atom type: {atom: {"rmse": float, "pearson": float}}
     """
+    if atom_types is None:
+        atom_types = ["CA", "HA", "N", "H"]
     stats = {}
 
     for atom in atom_types:

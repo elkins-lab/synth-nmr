@@ -5,14 +5,15 @@ These tests verify that the main NMR calculation functions work correctly
 without requiring the full synth-pdb package for structure generation.
 """
 
-import pytest
 import biotite.structure as struc
+import pytest
+
 from synth_nmr import (
-    calculate_synthetic_noes,
-    predict_order_parameters,
-    predict_chemical_shifts,
     calculate_csi,
     calculate_hn_ha_coupling,
+    calculate_synthetic_noes,
+    predict_chemical_shifts,
+    predict_order_parameters,
 )
 
 
@@ -32,7 +33,7 @@ def create_minimal_structure(n_residues=3):
         structure.element[start : start + 5] = ["N", "C", "C", "O", "C"]
 
         # Simple linear coordinates
-        for j, atom in enumerate(atom_names):
+        for j, _atom in enumerate(atom_names):
             structure.coord[start + j] = [i * 3.8, j * 1.5, 0.0]
 
     return structure

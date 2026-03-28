@@ -1,11 +1,14 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from synth_nmr.data_pipeline import (
-    ensure_data_dir_exists,
     download_bmrb_file,
     download_pdb_file,
-    parse_bmrb_shifts,
+    ensure_data_dir_exists,
     load_matched_dataset,
+    parse_bmrb_j_couplings,
+    parse_bmrb_shifts,
 )
 
 
@@ -197,3 +200,66 @@ stop_
     assert "CB" in shifts[1]
     assert "C" in shifts[1]
     assert "H" not in shifts[1]
+
+
+def test_parse_bmrb_j_couplings(tmp_path):
+    bmrb_content = """
+data_17769
+save_coupling_list
+   loop_
+      _Coupling_constant.ID
+      _Coupling_constant.Seq_ID_1
+      _Coupling_constant.Comp_index_ID_1
+      _Coupling_constant.Atom_ID_1
+      _Coupling_constant.Seq_ID_2
+      _Coupling_constant.Comp_index_ID_2
+      _Coupling_constant.Atom_ID_2
+      _Coupling_constant.Code
+      _Coupling_constant.Val
+      1    1    MET    H     1    MET    HA     3JHNHA    7.5
+      2    2    GLN    CA    2    GLN    CB     3JHAHB    4.2
+   stop_
+save_
+"""
+    bmrb_file = tmp_path / "test_j.str"
+    bmrb_file.write_text(bmrb_content)
+
+    couplings = parse_bmrb_j_couplings(str(bmrb_file))
+
+    assert 1 in couplings
+    assert "3JHNHA" in couplings[1]
+    assert couplings[1]["3JHNHA"] == 7.5
+
+    assert 2 in couplings
+    assert "3JHAHB" in couplings[2]
+    assert couplings[2]["3JHAHB"] == 4.2
+
+
+def test_parse_bmrb_j_couplings_io_error():
+    from synth_nmr.data_pipeline import parse_bmrb_j_couplings
+
+    couplings = parse_bmrb_j_couplings("non_existent_j.str")
+    assert couplings == {}
+
+
+def test_parse_bmrb_shifts_atom_types(tmp_path):
+    from synth_nmr.data_pipeline import parse_bmrb_shifts
+
+    bmrb_content = """
+loop_
+_Atom_chem_shift.ID
+_Atom_chem_shift.Seq_ID
+_Atom_chem_shift.Atom_ID
+_Atom_chem_shift.Atom_type
+_Atom_chem_shift.Val
+1 5 N N 115.0
+2 5 H H 8.5
+stop_
+"""
+    bmrb_file = tmp_path / "test_atoms.str"
+    bmrb_file.write_text(bmrb_content)
+
+    shifts = parse_bmrb_shifts(str(bmrb_file))
+    assert 5 in shifts
+    assert shifts[5]["N"] == 115.0
+    assert shifts[5]["H"] == 8.5

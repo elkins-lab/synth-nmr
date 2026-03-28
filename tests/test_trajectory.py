@@ -20,20 +20,19 @@ Physics recap (relevant to test design):
   S² order param  : |<μ>|²  — squared magnitude of the mean unit-vector (Lipari & Szabo 1982)
 """
 
+import biotite.structure as struc
 import numpy as np
 import pytest
-import biotite.structure as struc
 
 # ── The imports that will be RED until trajectory.py is created ────────────
 from synth_nmr.trajectory import (
     TrajectoryEnsemble,
-    load_trajectory,
-    ensemble_average_shifts,
+    compute_s2_from_trajectory,
     ensemble_average_noes,
     ensemble_average_rdcs,
-    compute_s2_from_trajectory,
+    ensemble_average_shifts,
+    load_trajectory,
 )
-
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Helper fixtures
@@ -795,8 +794,8 @@ class TestCLITrajectoryCommands:
           1. Load 2 frames successfully
           2. Compute S² and print at least one residue line via stdout
         """
-        from synth_nmr.synth_nmr_cli import process_commands
         import synth_nmr.synth_nmr_cli as cli_module
+        from synth_nmr.synth_nmr_cli import process_commands
 
         # Reset global state before the test
         cli_module.ensemble = None
@@ -826,8 +825,8 @@ class TestCLITrajectoryCommands:
         """
         'load trajectory ... ensemble rdcs' should print per-residue D_NH values.
         """
-        from synth_nmr.synth_nmr_cli import process_commands
         import synth_nmr.synth_nmr_cli as cli_module
+        from synth_nmr.synth_nmr_cli import process_commands
 
         cli_module.ensemble = None
         f1 = tmp_path / "f1.pdb"
@@ -856,8 +855,8 @@ class TestCLITrajectoryCommands:
         Running 'ensemble s2' before 'load trajectory' should print a clear
         error message, not raise an exception.
         """
-        from synth_nmr.synth_nmr_cli import process_commands
         import synth_nmr.synth_nmr_cli as cli_module
+        from synth_nmr.synth_nmr_cli import process_commands
 
         cli_module.ensemble = None
         process_commands(["ensemble", "s2"])
@@ -870,8 +869,8 @@ class TestCLITrajectoryCommands:
         """
         'load trajectory' with no PDB arguments should print an error, not crash.
         """
-        from synth_nmr.synth_nmr_cli import process_commands
         import synth_nmr.synth_nmr_cli as cli_module
+        from synth_nmr.synth_nmr_cli import process_commands
 
         cli_module.ensemble = None
         process_commands(["load", "trajectory"])
@@ -883,8 +882,8 @@ class TestCLITrajectoryCommands:
         """
         'ensemble bogus' should print 'Error: Unknown ensemble subcommand'.
         """
-        from synth_nmr.synth_nmr_cli import process_commands
         import synth_nmr.synth_nmr_cli as cli_module
+        from synth_nmr.synth_nmr_cli import process_commands
 
         cli_module.ensemble = None
         f1 = tmp_path / "f1.pdb"
@@ -908,8 +907,8 @@ class TestCLITrajectoryCommands:
         'ensemble noes 6.0' should not crash and should print output lines
         (or a silent empty result if atoms are too far apart — both are valid).
         """
-        from synth_nmr.synth_nmr_cli import process_commands
         import synth_nmr.synth_nmr_cli as cli_module
+        from synth_nmr.synth_nmr_cli import process_commands
 
         cli_module.ensemble = None
         f1 = tmp_path / "f1.pdb"

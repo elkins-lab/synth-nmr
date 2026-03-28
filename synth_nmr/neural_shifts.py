@@ -126,7 +126,7 @@ USAGE
 
 import logging
 import os
-from typing import Dict, Optional, Tuple, Any
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 
@@ -189,8 +189,10 @@ def build_residue_features(structure: Any) -> np.ndarray:
     Returns:
         float32 numpy array of shape [N_residues, 74].
     """
-    import biotite.structure as struc
     import math
+
+    import biotite.structure as struc
+
     from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
     from synth_nmr.structure_utils import get_secondary_structure
 
@@ -205,7 +207,7 @@ def build_residue_features(structure: Any) -> np.ndarray:
     n_res = len(res_starts)
 
     res_names = []
-    for i, start in enumerate(res_starts):
+    for _i, start in enumerate(res_starts):
         rn = structure.res_name[start]
         rn = _AA_ALIASES.get(rn, rn)
         res_names.append(rn)
@@ -329,7 +331,7 @@ def build_graph_data(structure: Any) -> Any:
         from torch_geometric.data import Data
     except ImportError as exc:
         raise ImportError(
-            "torch and torch_geometric are required. " "Install with: pip install synth-nmr[ml]"
+            "torch and torch_geometric are required. Install with: pip install synth-nmr[ml]"
         ) from exc
 
     import biotite.structure as struc
@@ -405,7 +407,7 @@ def _make_mlp(
         import torch.nn as nn
     except ImportError as exc:
         raise ImportError(
-            "torch is required for NeuralShiftPredictor. " "Install with: pip install synth-nmr[ml]"
+            "torch is required for NeuralShiftPredictor. Install with: pip install synth-nmr[ml]"
         ) from exc
 
     layers = []
@@ -579,7 +581,8 @@ class NeuralShiftPredictor:
             ) from exc
 
         import biotite.structure as struc
-        from synth_nmr.chemical_shifts import predict_empirical_shifts, RANDOM_COIL_SHIFTS
+
+        from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS, predict_empirical_shifts
 
         if len(structure) == 0:
             return {}

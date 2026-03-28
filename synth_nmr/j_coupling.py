@@ -33,10 +33,11 @@
 # of J-couplings (e.g., ^3J_HNHa, ^3J_NCb, ^3J_CC) simultaneously to "triangulate"
 # the correct dihedral angle.
 
-import numpy as np
-import biotite.structure as struc
 import logging
 from typing import Dict
+
+import biotite.structure as struc
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -72,9 +73,9 @@ KARPLUS_C_CG_PARAMS = {"A": 4.5, "B": -1.2, "C": 0.1}
 #    can perturb the electron distribution and thus the coupling.
 
 
-def calculate_hn_ha_coupling_from_phi(phi_degrees: float) -> float:
+def calculate_hn_ha_coupling_from_phi(phi_degrees: np.ndarray) -> np.ndarray:
     """
-    Calculate the 3J(HN-HA) coupling constant from a Phi angle in degrees.
+    Calculate the 3J(HN-HA) coupling constant from Phi angles in degrees.
 
     # EDUCATIONAL NOTE - The Karplus Equation
     # ========================================
@@ -93,24 +94,21 @@ def calculate_hn_ha_coupling_from_phi(phi_degrees: float) -> float:
     # Beta Sheet (Phi ~ -120): theta ~ -180 -> J is large (~9 Hz)
 
     Args:
-        phi_degrees: Backbone Phi angle in degrees.
+        phi_degrees: Backbone Phi angle in degrees (NumPy array).
 
     Returns:
-        Predicted J-coupling in Hz. Returns NaN if input is NaN.
+        Predicted J-coupling in Hz (NumPy array).
     """
-    if np.isnan(phi_degrees):
-        return np.nan
-
     # Theta = Phi - 60 degrees
     theta_rad = np.radians(phi_degrees - 60.0)
 
     cos_theta = np.cos(theta_rad)
-    j_val = (
+    j_vals = (
         (KARPLUS_PARAMS["A"] * (cos_theta**2))
         + (KARPLUS_PARAMS["B"] * cos_theta)
         + KARPLUS_PARAMS["C"]
     )
-    return float(j_val)
+    return j_vals
 
 
 def predict_couplings_from_phi_map(phi_map: Dict[int, float]) -> Dict[int, float]:
@@ -118,30 +116,20 @@ def predict_couplings_from_phi_map(phi_map: Dict[int, float]) -> Dict[int, float
     Predict HN-HA couplings for a set of residues from a Phi map.
 
     Args:
-        phi_map: Dictionary mapping Residue ID -> Phi angle (degrees)
+        phi_map: Dictionary mapping Residue ID -> Phi angle (degrees).
 
     Returns:
-        Dictionary mapping Residue ID -> J-coupling (Hz)
+        Dictionary mapping Residue ID -> J-coupling (Hz).
     """
-    return {res_id: calculate_hn_ha_coupling_from_phi(phi) for res_id, phi in phi_map.items()}
+    res_ids = np.array(list(phi_map.keys()))
+    phi_vals = np.array(list(phi_map.values()))
+    j_vals = calculate_hn_ha_coupling_from_phi(phi_vals)
+    return {int(rid): float(round(j, 2)) for rid, j in zip(res_ids, j_vals) if not np.isnan(j)}
 
 
 def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     """
     Calculate 3J_HNHa coupling constants for the protein backbone.
-
-    Args:
-        structure: AtomArray containing the protein
-
-    Returns:
-        Dict keyed by Chain ID -> Residue ID -> J-coupling value (Hz)
-    """
-    logger.info("Calculating 3J_HNHa scalar couplings...")
-    # Filter for amino acids to avoid mismatches with HETATMs (waters/ions)
-    protein_mask = struc.filter_amino_acids(structure)
-    structure = structure[protein_mask]
-    if structure.array_length() == 0:
-        return {}
 
     # ── J-Coupling Physics and Structural Biology ────────────────────────
     # The 3J_HNHa coupling constant is a measure of the scalar (through-bond)
@@ -154,52 +142,61 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
     #   J(φ) = A cos²(θ) + B cos(θ) + C
     # where θ is the H-N-C-H dihedral angle (related to Phi).
     #
+    # Scalar couplings are mediated by electrons in the chemical bonds.
+    # The interaction is sensitive to the overlap of the electron wavefunctions,
+    # which in turn is a function of the dihedral angle. In structural biology,
+    # J-couplings are one of the most direct ways to measure torsion angles.
+    #
+    # Proteins are dynamic, and the measured J-coupling is actually a
+    # time-average over the conformational ensemble. Here we predict the
+    # value based on a single static structure or a single frame.
+    #
     # Large 3J_HNHa values (~8-10 Hz) typically indicate beta-sheet regions,
-    # while small values (~3-5 Hz) indicate alpha-helical regions.
+    # where the Phi angle is around -120 to -150 degrees.
+    # Small 3J_HNHa values (~3-5 Hz) indicate alpha-helical regions,
+    # where the Phi angle is around -60 degrees.
     # ─────────────────────────────────────────────────────────────────────
 
-    phi, psi, omega = struc.dihedral_backbone(structure)
+    Args:
+        structure: biotite.structure.AtomArray containing the protein.
 
-    # biotite returns angles for each residue.
-    # The first residue has no Phi (undefined).
-    # The corresponding residues are structure residues that have backbone atoms.
-    # We need to map these back to Res IDs.
+    Returns:
+        Dict keyed by Chain ID -> Residue ID -> J-coupling value (Hz).
+    """
+    from synth_nmr.structure_utils import get_residue_info
 
-    res_starts = struc.get_residue_starts(structure)
-    # Filter to only amino acids? Usually safe.
+    logger.info("Calculating 3J_HNHa scalar couplings...")
+    # Filter for amino acids to avoid mismatches with HETATMs (waters/ions)
+    protein_mask = struc.filter_amino_acids(structure)
+    structure = structure[protein_mask]
+    if structure.array_length() == 0:
+        return {}
 
-    results: Dict[str, Dict[int, float]] = {}
+    # Calculate backbone dihedrals
+    phi, _, _ = struc.dihedral_backbone(structure)
 
-    # Iterate over residues
-    # Angles array matches number of residues
-    if len(phi) != len(res_starts):
+    # Get residue info using unified utility
+    chain_ids, res_ids, _, _ = get_residue_info(structure)
+
+    if len(phi) != len(res_ids):
         logger.warning(
-            f"Mismatch in backbone angles count ({len(phi)}) vs residue count ({len(res_starts)})."
+            f"Mismatch in backbone angles count ({len(phi)}) vs residue count ({len(res_ids)})."
         )
         return {}
 
-    for i, start_idx in enumerate(res_starts):
-        # Get residue info
-        res_atoms = structure[start_idx : res_starts[i + 1] if i + 1 < len(res_starts) else None]
-        chain_id = str(res_atoms.chain_id[0])
-        res_id = int(res_atoms.res_id[0])
+    # Vectorized Karplus calculation
+    phi_deg = np.degrees(phi)
+    j_vals = calculate_hn_ha_coupling_from_phi(phi_deg)
+
+    # Build results dictionary
+    results: Dict[str, Dict[int, float]] = {}
+    for chain_id, res_id, j_val in zip(chain_ids, res_ids, j_vals):
+        if np.isnan(j_val):
+            continue
 
         if chain_id not in results:
             results[chain_id] = {}
-
-        # Get Phi angle (in radians)
-        phi_rad = phi[i]
-
-        # Check for NaN (undefined, e.g. N-terminus)
-        if np.isnan(phi_rad):
-            # No coupling defined
-            continue
-
-        # Convert to degrees for our helper function
-        phi_deg = float(np.degrees(phi_rad))
-        j_val = calculate_hn_ha_coupling_from_phi(phi_deg)
-
-        results[chain_id][res_id] = float(round(j_val, 2))
+        results[chain_id][int(res_id)] = float(round(j_val, 2))
 
     return results
 
@@ -225,6 +222,12 @@ def calculate_hn_ha_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
 def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     """
     Extracts the chi1 (x1) dihedral angle for all valid residues.
+
+    Args:
+        structure: biotite.structure.AtomArray containing the protein.
+
+    Returns:
+        Dict keyed by Chain ID -> Residue ID -> chi1 angle (radians).
     """
     results: Dict[str, Dict[int, float]] = {}
 
@@ -301,6 +304,12 @@ def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
 def calculate_ha_hb_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     """
     Calculate 3J_HaHb coupling constants dependent on the chi1 angle.
+
+    Args:
+        structure: biotite.structure.AtomArray containing the protein.
+
+    Returns:
+        Dict keyed by Chain ID -> Residue ID -> J-coupling value (Hz).
     """
     logger.info("Calculating 3J_HaHb side-chain couplings...")
     chi1_angles = _get_chi1_angles(structure)
@@ -309,7 +318,6 @@ def calculate_ha_hb_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
     for chain_id, residues in chi1_angles.items():
         results[chain_id] = {}
         for res_id, chi1_rad in residues.items():
-
             # Phase shifts depend exactly on pro-R/pro-S proton alignments,
             # but we use a simplified idealized theta relation for this implementation.
             theta = float(chi1_rad - np.deg2rad(120.0))
@@ -345,7 +353,13 @@ def calculate_ha_hb_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, 
 
 def calculate_c_cg_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     """
-    Calculate 3J_C'Cg coupling constants dependent on the chi1 angle.
+    Calculate 3J(C', Cg) coupling constants dependent on the chi1 angle.
+
+    Args:
+        structure: biotite.structure.AtomArray containing the protein.
+
+    Returns:
+        Dict keyed by Chain ID -> Residue ID -> J-coupling value (Hz).
     """
     logger.info("Calculating 3J_C'Cg side-chain couplings...")
     chi1_angles = _get_chi1_angles(structure)
@@ -354,7 +368,6 @@ def calculate_c_cg_coupling(structure: struc.AtomArray) -> Dict[str, Dict[int, f
     for chain_id, residues in chi1_angles.items():
         results[chain_id] = {}
         for res_id, chi1_rad in residues.items():
-
             # The dihedral angle pathway for C' - CA - CB - CG intersects chi1
             theta = float(chi1_rad)
 

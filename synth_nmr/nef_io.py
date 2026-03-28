@@ -3,9 +3,9 @@ NEF (NMR Exchange Format) I/O module for synth-nmr.
 Handles writing synthetic NMR data to valid NEF files.
 """
 
-import logging
 import datetime
-from typing import List, Dict
+import logging
+from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 
@@ -358,7 +358,7 @@ def read_nef_restraints(filename: str) -> List[Dict]:
     col_map: Dict[str, int] = {}
 
     try:
-        with open(filename, "r") as f:
+        with open(filename) as f:
             lines = f.readlines()
 
         for line in lines:

@@ -2,11 +2,13 @@
 Tests for the robustness and validation of the rdc module.
 """
 
-import pytest
+import os
+
 import biotite.structure as struc
 import biotite.structure.io as strucio
 import numpy as np
-import os
+import pytest
+
 from synth_nmr.rdc import calculate_rdcs
 
 # Get the directory of the current test file

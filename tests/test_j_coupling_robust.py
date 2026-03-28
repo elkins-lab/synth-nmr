@@ -1,11 +1,13 @@
-import pytest
+import os
+
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
-import os
+import pytest
+
 from synth_nmr.j_coupling import (
-    calculate_hn_ha_coupling,
-    calculate_ha_hb_coupling,
     calculate_c_cg_coupling,
+    calculate_ha_hb_coupling,
+    calculate_hn_ha_coupling,
 )
 
 
@@ -29,7 +31,7 @@ def test_j_coupling_on_real_pdb():
     assert len(j_hnha["A"]) >= 70
 
     # Check physical ranges
-    for res_id, j_val in j_hnha["A"].items():
+    for _res_id, j_val in j_hnha["A"].items():
         assert 2.0 <= j_val <= 12.0
 
     # 2. Side-chain Ha-Hb

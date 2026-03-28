@@ -1,6 +1,8 @@
 import unittest
-import numpy as np
+
 import biotite.structure as struc
+import numpy as np
+
 from synth_nmr.structure_utils import get_secondary_structure
 
 

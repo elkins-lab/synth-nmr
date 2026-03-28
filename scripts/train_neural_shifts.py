@@ -49,6 +49,7 @@ NUCLEUS_ORDER = ["HA", "CA", "CB", "C", "N", "H"]
 # Data generation
 # ---------------------------------------------------------------------------
 
+
 def generate_synthetic_structures(n_samples: int, random_state: int = 42):
     """
     Generate protein structures using synth-pdb for training data.
@@ -56,9 +57,10 @@ def generate_synthetic_structures(n_samples: int, random_state: int = 42):
     Returns a list of biotite AtomArray objects.
     """
     try:
-        from synth_pdb.generator import generate_pdb_content
-        import biotite.structure.io.pdb as pdb_io
         import io
+
+        import biotite.structure.io.pdb as pdb_io
+        from synth_pdb.generator import generate_pdb_content
     except ImportError:
         logger.warning(
             "synth-pdb not installed — cannot generate synthetic structures. "
@@ -72,10 +74,9 @@ def generate_synthetic_structures(n_samples: int, random_state: int = 42):
 
     for i in range(n_samples):
         conf = conformations[i % len(conformations)]
-        length = int(rng.integers(8, 25))    # short peptides for speed
+        length = int(rng.integers(8, 25))  # short peptides for speed
         try:
-            pdb_str = generate_pdb_content(length=length, conformation=conf,
-                                           minimize_energy=False)
+            pdb_str = generate_pdb_content(length=length, conformation=conf, minimize_energy=False)
             struct = pdb_io.PDBFile.read(io.StringIO(pdb_str)).get_structure(model=1)
             structures.append(struct)
         except Exception as e:
@@ -88,6 +89,7 @@ def generate_synthetic_structures(n_samples: int, random_state: int = 42):
 def load_pdb_directory(pdb_dir: str):
     """Load all .pdb files from a directory as biotite AtomArrays."""
     import biotite.structure.io.pdb as pdb_io
+
     structures = []
     for fname in sorted(os.listdir(pdb_dir)):
         if not fname.endswith(".pdb"):
@@ -106,6 +108,7 @@ def load_pdb_directory(pdb_dir: str):
 # Dataset building
 # ---------------------------------------------------------------------------
 
+
 def build_dataset(dataset_pairs: list):
     """
     Build (X, y) arrays from a list of (AtomArray, ExperimentalShifts) pairs.
@@ -116,9 +119,10 @@ def build_dataset(dataset_pairs: list):
     Returns (X, y) as float32 numpy arrays, and the count of successfully
     processed residues.
     """
-    from synth_nmr.neural_shifts import build_residue_features, NUCLEUS_ORDER
-    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
     import biotite.structure as struc
+
+    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
+    from synth_nmr.neural_shifts import NUCLEUS_ORDER, build_residue_features
 
     X_list, y_list = [], []
     valid_residue_count = 0
@@ -168,7 +172,12 @@ def build_dataset(dataset_pairs: list):
 
     X_all = np.vstack(X_list)
     y_all = np.vstack(y_list)
-    logger.info("Dataset: %d valid residues with assignments, X=%s, y=%s", valid_residue_count, X_all.shape, y_all.shape)
+    logger.info(
+        "Dataset: %d valid residues with assignments, X=%s, y=%s",
+        valid_residue_count,
+        X_all.shape,
+        y_all.shape,
+    )
     return X_all, y_all
 
 
@@ -176,8 +185,17 @@ def build_dataset(dataset_pairs: list):
 # Training loop
 # ---------------------------------------------------------------------------
 
-def train(X_train, y_train, X_test, y_test, epochs: int = 100,
-          hidden_dims=(128, 64, 32), batch_size: int = 64, lr: float = 1e-3):
+
+def train(
+    X_train,
+    y_train,
+    X_test,
+    y_test,
+    epochs: int = 100,
+    hidden_dims=(128, 64, 32),
+    batch_size: int = 64,
+    lr: float = 1e-3,
+):
     """
     Train the MLP and return the trained model.
 
@@ -188,6 +206,7 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
     """
     import torch
     import torch.nn as nn
+
     from synth_nmr.neural_shifts import _make_mlp
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -195,8 +214,8 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
 
     X_tr = torch.tensor(X_train, dtype=torch.float32, device=device)
     y_tr = torch.tensor(y_train, dtype=torch.float32, device=device)
-    X_te = torch.tensor(X_test,  dtype=torch.float32, device=device)
-    y_te = torch.tensor(y_test,  dtype=torch.float32, device=device)
+    X_te = torch.tensor(X_test, dtype=torch.float32, device=device)
+    y_te = torch.tensor(y_test, dtype=torch.float32, device=device)
 
     model = _make_mlp(hidden_dims=hidden_dims).to(device)
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -204,7 +223,9 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
 
     criterion = nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs, eta_min=lr / 100)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=epochs, eta_min=lr / 100
+    )
 
     n_train = len(X_tr)
     log_every = max(1, epochs // 10)
@@ -218,7 +239,7 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
         n_batches = 0
 
         for start in range(0, n_train, batch_size):
-            idx = perm[start: start + batch_size]
+            idx = perm[start : start + batch_size]
             pred = model(X_tr[idx])
             loss = criterion(pred, y_tr[idx])
             optimizer.zero_grad()
@@ -235,7 +256,8 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
                 test_mse = criterion(model(X_te), y_te).item()
             logger.info(
                 "Epoch %4d/%d | train MSE=%.4f | test MSE=%.4f | lr=%.2e",
-                epoch, epochs,
+                epoch,
+                epochs,
                 epoch_loss / max(1, n_batches),
                 test_mse,
                 scheduler.get_last_lr()[0],
@@ -251,9 +273,11 @@ def train(X_train, y_train, X_test, y_test, epochs: int = 100,
 # Per-nucleus RMSE evaluation
 # ---------------------------------------------------------------------------
 
+
 def evaluate(model, X_test, y_test):
     """Print per-nucleus RMSE on the test set."""
     import torch
+
     from synth_nmr.neural_shifts import NUCLEUS_ORDER
 
     with torch.no_grad():
@@ -275,33 +299,41 @@ def evaluate(model, X_test, y_test):
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 def main():
     parser = argparse.ArgumentParser(description="Train NeuralShiftPredictor on Experimental Data")
     # Data sources (mutually exclusive)
     data_grp = parser.add_mutually_exclusive_group()
     data_grp.add_argument(
-        "--experimental-data", action="store_true", default=True,
+        "--experimental-data",
+        action="store_true",
+        default=True,
         help="Download and use experimental BMRB/PDB reference pairs (default).",
     )
     # Training hyperparameters
-    parser.add_argument("--epochs",     type=int,   default=200,   help="Training epochs")
-    parser.add_argument("--batch-size", type=int,   default=64,    help="Mini-batch size")
-    parser.add_argument("--lr",         type=float, default=1e-3,  help="Initial learning rate")
-    parser.add_argument("--test-size",  type=float, default=0.2,   help="Held-out fraction")
+    parser.add_argument("--epochs", type=int, default=200, help="Training epochs")
+    parser.add_argument("--batch-size", type=int, default=64, help="Mini-batch size")
+    parser.add_argument("--lr", type=float, default=1e-3, help="Initial learning rate")
+    parser.add_argument("--test-size", type=float, default=0.2, help="Held-out fraction")
     parser.add_argument("--random-state", type=int, default=42)
     parser.add_argument(
-        "--output", type=str,
-        default=os.path.join(os.path.dirname(__file__), "..", "synth_nmr", "models", "neural_shifts_v1.pt"),
+        "--output",
+        type=str,
+        default=os.path.join(
+            os.path.dirname(__file__), "..", "synth_nmr", "models", "neural_shifts_v1.pt"
+        ),
         help="Output checkpoint path",
     )
     args = parser.parse_args()
 
     import importlib.util
+
     if importlib.util.find_spec("torch") is None:
         print("ERROR: torch is required. Install with: pip install synth-nmr[ml]")
         sys.exit(1)
 
     from sklearn.model_selection import train_test_split
+
     from synth_nmr.data_pipeline import load_matched_dataset
 
     # 1 — Load structures and experimental BMRB shifts
@@ -323,7 +355,10 @@ def main():
 
     # 4 — Train
     model = train(
-        X_train, y_train, X_test, y_test,
+        X_train,
+        y_train,
+        X_test,
+        y_test,
         epochs=args.epochs,
         batch_size=args.batch_size,
         lr=args.lr,
@@ -334,6 +369,7 @@ def main():
 
     # 6 — Save via NeuralShiftPredictor.save() so checkpoint is self-describing
     from synth_nmr.neural_shifts import NeuralShiftPredictor
+
     predictor = NeuralShiftPredictor.__new__(NeuralShiftPredictor)
     predictor.hidden_dims = (128, 64, 32)
     predictor.model = model

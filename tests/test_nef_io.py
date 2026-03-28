@@ -1,4 +1,4 @@
-from synth_nmr.nef_io import write_nef_file, write_nef_relaxation, write_nef_chemical_shifts
+from synth_nmr.nef_io import write_nef_chemical_shifts, write_nef_file, write_nef_relaxation
 
 
 def test_write_nef_file_basic(tmp_path):
