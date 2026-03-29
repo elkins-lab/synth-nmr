@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-03-29
+
+### Added
+
+- **Security Policy**: Added `SECURITY.md` for security policy and vulnerability reporting.
+- **Issue Templates**: Updated issue templates for better bug tracking and feature requests.
+
+### Changed
+
+- **Modernized NMR Infrastructure**: Vectorized core modules (J-coupling and relaxation rate calculations) using NumPy, replacing iterative approaches with highly performant arrays.
+- **CLI Refactoring**: Refactored CLI interactive handlers to improve modularity and testability.
+- **Test Suite Expansion**: Expanded test suite to 320 tests, achieving project-wide coverage.
+- **Ensemble Processing Optimization**: Optimized trajectory and ensemble processing for handling large MD datasets efficiently.
+- **Code Quality**:
+  - Integrated Ruff for high-performance linting and formatting, replacing Black/Flake8.
+  - Resolved `mypy` static analysis errors and enforced comprehensive `PEP 484` type hint compliance.
+
+### Fixed
+
+- **NOE Processing**: Fixed synthetic NOE processing bug in ensemble averaging logic.
+- **Backbone Angles**: Resolved test error caused by a mismatch in backbone angles count (76) versus residue count (134).
+
 ## [0.8.0] - 2026-03-10
 
 ### Changed

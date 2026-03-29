@@ -15,7 +15,7 @@ Originally extracted from the synth-pdb package to provide a lightweight,
 standalone NMR toolkit that works with any protein structure source.
 """
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 from .chemical_shifts import calculate_csi, predict_chemical_shifts
 from .j_coupling import calculate_hn_ha_coupling
