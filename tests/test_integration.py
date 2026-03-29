@@ -40,10 +40,15 @@ def create_minimal_structure(n_residues=3):
 
 
 def test_package_import():
-    """Test that the package can be imported."""
+    """Test that the package can be imported and has a valid version."""
+    import re
+
     import synth_nmr
 
-    assert synth_nmr.__version__ == "0.8.0"
+    assert hasattr(synth_nmr, "__version__")
+    assert isinstance(synth_nmr.__version__, str)
+    # Ensure it follows semantic versioning (x.y.z)
+    assert re.match(r"^\d+\.\d+\.\d+", synth_nmr.__version__)
 
 
 def test_calculate_synthetic_noes():
