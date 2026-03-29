@@ -83,6 +83,8 @@ plugins:
           options:
             docstring_style: google
             show_source: true
+            allow_inspect: false   # Prefer static analysis for better filename mapping
+            import_paths: ["."]
             show_root_heading: true
             show_root_full_path: false
             show_symbol_type_heading: true

@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install mkdocs-material==9.7.1 mkdocstrings[python]==1.0.3 mkdocs-jupyter==0.26.1 nbconvert==7.17.0
+          pip install mkdocs-material>=9.5.0 mkdocstrings[python]>=1.10.0 mkdocs-jupyter>=0.24.0 nbconvert>=7.0.0
           # Install the package itself so mkdocstrings can find the modules
           pip install -e .
           
