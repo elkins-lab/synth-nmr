@@ -262,7 +262,7 @@ def parse_bmrb_restraints(filepath: str) -> List[Dict]:
     Returns:
         List[Dict]: List of restraints in a format compatible with RPF calculation.
     """
-    restraints = []
+    restraints: List[Dict] = []
 
     try:
         with open(filepath) as f:
@@ -313,16 +313,18 @@ def parse_bmrb_restraints(filepath: str) -> List[Dict]:
                 try:
                     # Map NMR-STAR 3.1 names to our internal dictionary
                     # Note: Field names can vary slightly between BMRB entries
+                    seq_1 = int(data.get("Seq_ID_1", data.get("Entity_assembly_index_1", 0)))
+                    seq_2 = int(data.get("Seq_ID_2", data.get("Entity_assembly_index_2", 0)))
                     restraint = {
-                        "seq_1": int(data.get("Seq_ID_1", data.get("Entity_assembly_index_1", 0))),
+                        "seq_1": seq_1,
                         "atom_1": data.get("Atom_ID_1", "H"),
-                        "seq_2": int(data.get("Seq_ID_2", data.get("Entity_assembly_index_2", 0))),
+                        "seq_2": seq_2,
                         "atom_2": data.get("Atom_ID_2", "H"),
                         "dist": float(
                             data.get("Target_value", data.get("Distance_upper_bound_val", 5.0))
                         ),
                     }
-                    if restraint["seq_1"] > 0 and restraint["seq_2"] > 0:
+                    if seq_1 > 0 and seq_2 > 0:
                         restraints.append(restraint)
                 except (ValueError, KeyError):
                     continue

@@ -3,7 +3,7 @@ Validation and comparison utilities for chemical shift predictions.
 """
 
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -120,7 +120,7 @@ def calculate_rpf_scores(
 
     # For fast lookup, create a key (res1-atom1-res2-atom2)
     # Note: Pairs are undirected, so we normalize the order
-    def get_pair_key(r):
+    def get_pair_key(r: Dict) -> Tuple:
         p1 = f"{r['seq_1']}-{r['atom_1']}"
         p2 = f"{r['seq_2']}-{r['atom_2']}"
         return tuple(sorted([p1, p2]))
