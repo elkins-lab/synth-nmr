@@ -27,6 +27,7 @@ import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
 
 from synth_nmr.chemical_shifts import predict_chemical_shifts
+from synth_nmr.data_pipeline import download_bmrb_file, parse_bmrb_restraints, parse_bmrb_shifts
 from synth_nmr.j_coupling import (
     calculate_c_cg_coupling,
     calculate_ha_hb_coupling,
@@ -50,7 +51,6 @@ from synth_nmr.validation import (
     calculate_rpf_scores,
     compare_chemical_shifts,
 )
-from synth_nmr.data_pipeline import download_bmrb_file, parse_bmrb_shifts, parse_bmrb_restraints
 
 structure: Optional[struc.AtomArray] = None
 ensemble: Optional[TrajectoryEnsemble] = None
@@ -321,7 +321,7 @@ def process_commands(args: List[str]) -> None:
             elif sub == "structure":
                 deviations = calculate_c_beta_deviations(structure)
                 outliers = {rid: dev for rid, dev in deviations.items() if dev > 0.25}
-                print(f"\nStructural Validation (C-beta deviations):")
+                print("\nStructural Validation (C-beta deviations):")
                 print(f"  Total residues checked: {len(deviations)}")
                 print(f"  Outliers (> 0.25 Å):    {len(outliers)}")
                 for rid, dev in sorted(outliers.items()):
@@ -411,7 +411,7 @@ def handle_interactive_command(line: str) -> bool:
             elif sub == "structure":
                 deviations = calculate_c_beta_deviations(structure)
                 outliers = {rid: dev for rid, dev in deviations.items() if dev > 0.25}
-                print(f"\nStructural Validation (C-beta deviations):")
+                print("\nStructural Validation (C-beta deviations):")
                 print(f"  Total residues checked: {len(deviations)}")
                 print(f"  Outliers (> 0.25 Å):    {len(outliers)}")
                 for rid, dev in sorted(outliers.items()):

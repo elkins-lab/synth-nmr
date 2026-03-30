@@ -4,13 +4,14 @@ Validates predictions against published experimental results for Ubiquitin (1D3Z
 """
 
 from io import StringIO
+
+import biotite.structure as struc
+import biotite.structure.io.pdb as pdb
 import numpy as np
 import pytest
 import requests
-import biotite.structure as struc
-import biotite.structure.io.pdb as pdb
 
-from synth_nmr.chemical_shifts import predict_empirical_shifts, RANDOM_COIL_SHIFTS
+from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS, predict_empirical_shifts
 from synth_nmr.j_coupling import calculate_hn_ha_coupling
 from synth_nmr.rdc import calculate_rdcs
 from synth_nmr.relaxation import calculate_relaxation_rates
@@ -152,16 +153,12 @@ def test_ring_current_effect_on_ubiquitin(ubiquitin_1d3z, monkeypatch):
     # Disable noise for deterministic check
     monkeypatch.setattr("synth_nmr.chemical_shifts._NOISE_SCALE", 0.0)
 
-    shifts = predict_empirical_shifts(ubiquitin_1d3z)["A"]
-
     # Res 67 HA random coil is 4.34
     # Let's see what the predicted value is.
-    val_67 = shifts[67]["HA"]
-    rc_67 = RANDOM_COIL_SHIFTS["LEU"]["HA"]
 
     # Identify if there is a ring current shift
     # We'll compare it to a version where we mock the rings to be empty
-    from synth_nmr.chemical_shifts import _get_aromatic_rings, _calculate_ring_current_shift
+    from synth_nmr.chemical_shifts import _calculate_ring_current_shift, _get_aromatic_rings
 
     rings = _get_aromatic_rings(ubiquitin_1d3z)
     assert rings.size > 0

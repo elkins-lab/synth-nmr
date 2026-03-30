@@ -2,12 +2,11 @@
 Tests for scientific validation metrics based on Montelione et al.
 """
 
-import numpy as np
-import pytest
 import biotite.structure as struc
-from synth_nmr.validation import calculate_rpf_scores, calculate_dp_score, calculate_cs_r_factor
+import numpy as np
+
 from synth_nmr.structure_utils import calculate_c_beta_deviations
-from synth_nmr.nmr import calculate_synthetic_noes
+from synth_nmr.validation import calculate_cs_r_factor, calculate_dp_score, calculate_rpf_scores
 
 
 def test_rpf_scores_and_dp_score():
