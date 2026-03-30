@@ -205,12 +205,7 @@ def calculate_c_beta_deviations(structure: struc.AtomArray) -> Dict[int, float]:
         c_atoms = res_atoms[res_atoms.atom_name == "C"]
         cb_atoms = res_atoms[res_atoms.atom_name == "CB"]
 
-        if (
-            len(n_atoms) == 0
-            or len(ca_atoms) == 0
-            or len(c_atoms) == 0
-            or len(cb_atoms) == 0
-        ):
+        if len(n_atoms) == 0 or len(ca_atoms) == 0 or len(c_atoms) == 0 or len(cb_atoms) == 0:
             continue
 
         n_coord = n_atoms.coord[0]

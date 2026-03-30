@@ -415,9 +415,9 @@ def calculate_relaxation_rates(
         j_diff = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
 
         r1 = 0.25 * d_sq * (j_diff + 3 * jwn + 6 * j_sum) + c_sq * jwn
-        r2 = 0.125 * d_sq * (4 * j0 + j_diff + 3 * jwn + 6 * jwh + 6 * j_sum) + (1.0 / 6.0) * c_sq * (
-            4 * j0 + 3 * jwn
-        )
+        r2 = 0.125 * d_sq * (4 * j0 + j_diff + 3 * jwn + 6 * jwh + 6 * j_sum) + (
+            1.0 / 6.0
+        ) * c_sq * (4 * j0 + 3 * jwn)
 
         if r1 != 0:
             noe = 1.0 + (GAMMA_H / GAMMA_N) * 0.25 * d_sq * (6 * j_sum - j_diff) * (1.0 / r1)

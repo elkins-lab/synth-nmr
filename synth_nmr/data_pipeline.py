@@ -281,8 +281,7 @@ def parse_bmrb_restraints(filepath: str) -> List[Dict]:
             loop_headers = []
 
         elif (
-            line.startswith("_Gen_dist_constraint.")
-            or line.startswith("_Dist_constraint.")
+            line.startswith("_Gen_dist_constraint.") or line.startswith("_Dist_constraint.")
         ) and not in_restraint_loop:
             loop_headers.append(line.split(".")[-1].strip())
 
@@ -319,7 +318,9 @@ def parse_bmrb_restraints(filepath: str) -> List[Dict]:
                         "atom_1": data.get("Atom_ID_1", "H"),
                         "seq_2": int(data.get("Seq_ID_2", data.get("Entity_assembly_index_2", 0))),
                         "atom_2": data.get("Atom_ID_2", "H"),
-                        "dist": float(data.get("Target_value", data.get("Distance_upper_bound_val", 5.0))),
+                        "dist": float(
+                            data.get("Target_value", data.get("Distance_upper_bound_val", 5.0))
+                        ),
                     }
                     if restraint["seq_1"] > 0 and restraint["seq_2"] > 0:
                         restraints.append(restraint)

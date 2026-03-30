@@ -165,18 +165,24 @@ class TestStructureUtils(unittest.TestCase):
     def test_calculate_c_beta_deviations_edge_cases(self):
         """Test calculate_c_beta_deviations with GLY and missing atoms."""
         from synth_nmr.structure_utils import calculate_c_beta_deviations
-        
+
         # GLY residue
         atoms = []
-        atoms.append(struc.Atom(coord=[0, 0, 0], atom_name="CA", res_id=1, res_name="GLY", chain_id="A"))
+        atoms.append(
+            struc.Atom(coord=[0, 0, 0], atom_name="CA", res_id=1, res_name="GLY", chain_id="A")
+        )
         structure = struc.array(atoms)
         deviations = calculate_c_beta_deviations(structure)
         self.assertEqual(deviations, {})
 
         # Missing backbone atoms
         atoms = []
-        atoms.append(struc.Atom(coord=[0, 0, 0], atom_name="CA", res_id=2, res_name="ALA", chain_id="A"))
-        atoms.append(struc.Atom(coord=[1, 1, 1], atom_name="CB", res_id=2, res_name="ALA", chain_id="A"))
+        atoms.append(
+            struc.Atom(coord=[0, 0, 0], atom_name="CA", res_id=2, res_name="ALA", chain_id="A")
+        )
+        atoms.append(
+            struc.Atom(coord=[1, 1, 1], atom_name="CB", res_id=2, res_name="ALA", chain_id="A")
+        )
         # Missing N and C
         structure = struc.array(atoms)
         deviations = calculate_c_beta_deviations(structure)

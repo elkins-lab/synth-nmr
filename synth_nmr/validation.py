@@ -221,7 +221,11 @@ def calculate_cs_r_factor(
         if chain_id not in reference:
             continue
         for res_id, atoms in chain_data.items():
-            if res_id in reference[chain_id] and atom in atoms and atom in reference[chain_id][res_id]:
+            if (
+                res_id in reference[chain_id]
+                and atom in atoms
+                and atom in reference[chain_id][res_id]
+            ):
                 diffs.append(abs(atoms[atom] - reference[chain_id][res_id][atom]))
                 baseline.append(abs(reference[chain_id][res_id][atom]))
 
