@@ -407,18 +407,20 @@ def calculate_relaxation_rates(
         tau_f = tau_f_vals[i]
 
         j0 = spectral_density(0, tau_m, s2, tau_f)
-        jwn = spectral_density(omega_n, tau_m, s2, tau_f)
+        jwn = spectral_density(np.abs(omega_n), tau_m, s2, tau_f)
         jwh = spectral_density(omega_h, tau_m, s2, tau_f)
-        jd = spectral_density(omega_h - omega_n, tau_m, s2, tau_f)
-        js = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
+        # Since omega_n is negative, omega_h - omega_n is the SUM of magnitudes
+        # and omega_h + omega_n is the DIFFERENCE of magnitudes.
+        j_sum = spectral_density(omega_h - omega_n, tau_m, s2, tau_f)
+        j_diff = spectral_density(omega_h + omega_n, tau_m, s2, tau_f)
 
-        r1 = d_sq * (jd + 3 * jwn + 6 * js) + c_sq * jwn
-        r2 = 0.5 * d_sq * (4 * j0 + jd + 3 * jwn + 6 * jwh + 6 * js) + (1.0 / 6.0) * c_sq * (
+        r1 = 0.25 * d_sq * (j_diff + 3 * jwn + 6 * j_sum) + c_sq * jwn
+        r2 = 0.125 * d_sq * (4 * j0 + j_diff + 3 * jwn + 6 * jwh + 6 * j_sum) + (1.0 / 6.0) * c_sq * (
             4 * j0 + 3 * jwn
         )
 
         if r1 != 0:
-            noe = 1.0 + (GAMMA_H / GAMMA_N) * d_sq * (6 * js - jd) * (1.0 / r1)
+            noe = 1.0 + (GAMMA_H / GAMMA_N) * 0.25 * d_sq * (6 * j_sum - j_diff) * (1.0 / r1)
         else:
             noe = np.nan
             logger.warning(f"R1 value for residue {rid} is zero, NOE cannot be calculated.")

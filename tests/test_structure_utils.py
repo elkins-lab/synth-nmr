@@ -151,3 +151,33 @@ class TestStructureUtils(unittest.TestCase):
             ):
                 ss_coil_adjusted = get_secondary_structure(coil_structure)
                 self.assertEqual(ss_coil_adjusted, ["coil", "coil", "coil"])
+
+    def test_get_secondary_structure_no_protein(self):
+        """Test get_secondary_structure when no protein is present."""
+        structure = struc.AtomArray(1)
+        structure.atom_name = np.array(["HOH"])
+        structure.res_id = np.array([1])
+        structure.res_name = np.array(["HOH"])
+        structure.hetero = np.array([True])
+        ss = get_secondary_structure(structure)
+        self.assertEqual(ss, ["coil"])
+
+    def test_calculate_c_beta_deviations_edge_cases(self):
+        """Test calculate_c_beta_deviations with GLY and missing atoms."""
+        from synth_nmr.structure_utils import calculate_c_beta_deviations
+        
+        # GLY residue
+        atoms = []
+        atoms.append(struc.Atom(coord=[0, 0, 0], atom_name="CA", res_id=1, res_name="GLY", chain_id="A"))
+        structure = struc.array(atoms)
+        deviations = calculate_c_beta_deviations(structure)
+        self.assertEqual(deviations, {})
+
+        # Missing backbone atoms
+        atoms = []
+        atoms.append(struc.Atom(coord=[0, 0, 0], atom_name="CA", res_id=2, res_name="ALA", chain_id="A"))
+        atoms.append(struc.Atom(coord=[1, 1, 1], atom_name="CB", res_id=2, res_name="ALA", chain_id="A"))
+        # Missing N and C
+        structure = struc.array(atoms)
+        deviations = calculate_c_beta_deviations(structure)
+        self.assertEqual(deviations, {})

@@ -242,6 +242,94 @@ def parse_bmrb_j_couplings(filepath: str) -> Dict[int, Dict[str, float]]:
     return experimental_couplings
 
 
+def parse_bmrb_restraints(filepath: str) -> List[Dict]:
+    """
+    Parses an NMR-STAR file and extracts distance restraints (NOEs).
+
+    EDUCATIONAL BACKGROUND — NOE Restraints in NMR-STAR
+    ───────────────────────────────────────────────────────────────────
+    In the BMRB (BioMagResBank), NOE data is typically stored in
+    distance_restraint loops. These loops define pairs of atoms and an
+    upper distance bound (e.g., 5.0 Å) derived from the NOE intensity.
+
+    This function extracts:
+    1. Res ID and Atom Name for both atoms in the pair.
+    2. The Target Value (distance) and Upper Limit.
+
+    These are essential for calculating RPF (Recall, Precision, F-measure)
+    scores, which assess how well a structure satisfies experimental NOEs.
+
+    Returns:
+        List[Dict]: List of restraints in a format compatible with RPF calculation.
+    """
+    restraints = []
+
+    try:
+        with open(filepath) as f:
+            lines = f.readlines()
+    except OSError:
+        logger.error(f"Could not read {filepath}")
+        return restraints
+
+    in_restraint_loop = False
+    loop_headers: List[str] = []
+
+    for line in lines:
+        line = line.strip()
+        if line == "loop_":
+            in_restraint_loop = False
+            loop_headers = []
+
+        elif (
+            line.startswith("_Gen_dist_constraint.")
+            or line.startswith("_Dist_constraint.")
+        ) and not in_restraint_loop:
+            loop_headers.append(line.split(".")[-1].strip())
+
+        elif line == "stop_":
+            in_restraint_loop = False
+
+        elif (
+            len(loop_headers) > 0
+            and not in_restraint_loop
+            and not line.startswith("save_")
+            and not line.startswith("data_")
+        ):
+            in_restraint_loop = True
+
+        if (
+            in_restraint_loop
+            and not (
+                line.startswith("save_")
+                or line.startswith("loop_")
+                or line.startswith("stop_")
+                or line.startswith("data_")
+            )
+            and len(line) > 0
+        ):
+            parts = re.split(r"\s+", line)
+            if len(parts) == len(loop_headers):
+                data = dict(zip(loop_headers, parts))
+
+                try:
+                    # Map NMR-STAR 3.1 names to our internal dictionary
+                    # Note: Field names can vary slightly between BMRB entries
+                    restraint = {
+                        "seq_1": int(data.get("Seq_ID_1", data.get("Entity_assembly_index_1", 0))),
+                        "atom_1": data.get("Atom_ID_1", "H"),
+                        "seq_2": int(data.get("Seq_ID_2", data.get("Entity_assembly_index_2", 0))),
+                        "atom_2": data.get("Atom_ID_2", "H"),
+                        "dist": float(data.get("Target_value", data.get("Distance_upper_bound_val", 5.0))),
+                    }
+                    if restraint["seq_1"] > 0 and restraint["seq_2"] > 0:
+                        restraints.append(restraint)
+                except (ValueError, KeyError):
+                    continue
+
+    logger.info(f"Parsed {len(restraints)} distance restraints from {filepath}")
+    return restraints
+
+
 def load_matched_dataset(
     data_dir: str = "data",
 ) -> List[Tuple[struc.AtomArray, Dict[int, Dict[str, float]]]]:

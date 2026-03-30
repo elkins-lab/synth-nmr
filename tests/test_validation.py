@@ -50,3 +50,25 @@ def test_print_validation_report(capsys):
     assert "CA" in captured.out
     assert "1.000" in captured.out
     assert "HA" in captured.out
+
+
+def test_calculate_rpf_scores_edge_cases():
+    """Test RPF scores with empty input lists."""
+    from synth_nmr.validation import calculate_rpf_scores
+
+    # Empty experimental
+    res = calculate_rpf_scores([{"seq_1": 1, "atom_1": "H", "seq_2": 2, "atom_2": "H", "distance": 3.0}], [])
+    assert res == {"recall": 0.0, "precision": 0.0, "f_measure": 0.0}
+
+    # Empty predicted
+    res2 = calculate_rpf_scores([], [{"seq_1": 1, "atom_1": "H", "seq_2": 2, "atom_2": "H", "dist": 5.0}])
+    assert res2["recall"] == 0.0
+    assert res2["precision"] == 0.0
+
+
+def test_calculate_cs_r_factor_edge_cases():
+    """Test CS R-factor with empty input."""
+    from synth_nmr.validation import calculate_cs_r_factor
+
+    res = calculate_cs_r_factor({}, {})
+    assert res == 0.0

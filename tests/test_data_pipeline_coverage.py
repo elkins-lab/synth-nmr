@@ -263,3 +263,47 @@ stop_
     assert 5 in shifts
     assert shifts[5]["N"] == 115.0
     assert shifts[5]["H"] == 8.5
+
+
+def test_parse_bmrb_restraints(tmp_path):
+    from synth_nmr.data_pipeline import parse_bmrb_restraints
+
+    bmrb_content = """
+data_restraints
+save_dist_constraints
+   loop_
+      _Gen_dist_constraint.ID
+      _Gen_dist_constraint.Seq_ID_1
+      _Gen_dist_constraint.Atom_ID_1
+      _Gen_dist_constraint.Seq_ID_2
+      _Gen_dist_constraint.Atom_ID_2
+      _Gen_dist_constraint.Target_value
+      1    1    H     10    HA    5.0
+      2    5    N     15    H     4.5
+   stop_
+save_
+"""
+    bmrb_file = tmp_path / "test_restraints.str"
+    bmrb_file.write_text(bmrb_content)
+
+    restraints = parse_bmrb_restraints(str(bmrb_file))
+
+    assert len(restraints) == 2
+    assert restraints[0]["seq_1"] == 1
+    assert restraints[0]["atom_1"] == "H"
+    assert restraints[0]["seq_2"] == 10
+    assert restraints[0]["atom_2"] == "HA"
+    assert restraints[0]["dist"] == 5.0
+
+    assert restraints[1]["seq_1"] == 5
+    assert restraints[1]["atom_1"] == "N"
+    assert restraints[1]["seq_2"] == 15
+    assert restraints[1]["atom_2"] == "H"
+    assert restraints[1]["dist"] == 4.5
+
+
+def test_parse_bmrb_restraints_io_error():
+    from synth_nmr.data_pipeline import parse_bmrb_restraints
+
+    restraints = parse_bmrb_restraints("non_existent_restraints.str")
+    assert restraints == []

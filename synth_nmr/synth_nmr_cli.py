@@ -34,6 +34,7 @@ from synth_nmr.j_coupling import (
 )
 from synth_nmr.nmr import calculate_synthetic_noes
 from synth_nmr.rdc import calculate_rdcs
+from synth_nmr.structure_utils import calculate_c_beta_deviations
 from synth_nmr.trajectory import (
     TrajectoryEnsemble,
     compute_s2_from_trajectory,
@@ -43,6 +44,13 @@ from synth_nmr.trajectory import (
     ensemble_average_shifts,
     load_trajectory,
 )
+from synth_nmr.validation import (
+    calculate_cs_r_factor,
+    calculate_dp_score,
+    calculate_rpf_scores,
+    compare_chemical_shifts,
+)
+from synth_nmr.data_pipeline import download_bmrb_file, parse_bmrb_shifts, parse_bmrb_restraints
 
 structure: Optional[struc.AtomArray] = None
 ensemble: Optional[TrajectoryEnsemble] = None
@@ -274,6 +282,54 @@ def process_commands(args: List[str]) -> None:
                             f"Chain {chain_id} ResID {res_id:4d}  3J_C'Cg = {j_ccg[chain_id][res_id]:.3f} Hz"
                         )
             i += 2
+
+        elif command == "validate" and i + 1 < len(args):
+            sub = args[i + 1].lower()
+            if structure is None:
+                print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
+                i += 2
+                continue
+
+            if sub == "shifts" and i + 2 < len(args):
+                bmrb_id = args[i + 2]
+                bmrb_path = download_bmrb_file(int(bmrb_id))
+                if bmrb_path:
+                    exp_shifts = parse_bmrb_shifts(bmrb_path)
+                    pred_shifts = predict_chemical_shifts(structure)
+                    ref_dict = {"A": exp_shifts}
+                    stats = compare_chemical_shifts(pred_shifts, ref_dict)
+                    r_cs = calculate_cs_r_factor(pred_shifts, ref_dict, atom="CA")
+                    print(f"\nValidation against BMRB {bmrb_id}:")
+                    for atom, m in stats.items():
+                        print(f"  {atom:4s}: RMSE={m['rmse']:.3f}, Pearson R={m['pearson']:.3f}")
+                    print(f"  Chemical Shift R-factor (CA): {r_cs:.4f}")
+                i += 3
+            elif sub == "noes" and i + 2 < len(args):
+                bmrb_id = args[i + 2]
+                bmrb_path = download_bmrb_file(int(bmrb_id))
+                if bmrb_path:
+                    exp_noes = parse_bmrb_restraints(bmrb_path)
+                    pred_noes = calculate_synthetic_noes(structure, cutoff=5.0)
+                    rpf = calculate_rpf_scores(pred_noes, exp_noes)
+                    dp = calculate_dp_score(rpf)
+                    print(f"\nNOE Validation (RPF) against BMRB {bmrb_id}:")
+                    print(f"  Recall:    {rpf['recall']:.3f}")
+                    print(f"  Precision: {rpf['precision']:.3f}")
+                    print(f"  F-measure: {rpf['f_measure']:.3f}")
+                    print(f"  DP-score:  {dp:.3f}")
+                i += 3
+            elif sub == "structure":
+                deviations = calculate_c_beta_deviations(structure)
+                outliers = {rid: dev for rid, dev in deviations.items() if dev > 0.25}
+                print(f"\nStructural Validation (C-beta deviations):")
+                print(f"  Total residues checked: {len(deviations)}")
+                print(f"  Outliers (> 0.25 Å):    {len(outliers)}")
+                for rid, dev in sorted(outliers.items()):
+                    print(f"    ResID {rid:4d}: {dev:.3f} Å")
+                i += 2
+            else:
+                print(f"Error: Unknown validate subcommand: {sub}")
+                i += 2
         else:
             print(f"Error: Unknown command: {command}")
             i += 1
@@ -310,7 +366,59 @@ def handle_interactive_command(line: str) -> bool:
             print("  calculate rdc [Da] [R]       Calculate RDCs for single structure.")
             print("  predict shifts               Predict chemical shifts for single structure.")
             print("  calculate j-coupling         Calculate J-couplings for single structure.")
+            print("  validate shifts <bmrb_id>    Validate shifts against BMRB.")
+            print("  validate noes <bmrb_id>      Validate NOEs against BMRB (RPF scores).")
+            print("  validate structure           Check C-beta deviations.")
             print("  exit                         Exit the CLI.")
+        elif command == "validate" and len(parts) > 1:
+            sub = parts[1].lower()
+            if structure is None:
+                print("Error: No PDB file loaded. Use 'read pdb <filename>' first.")
+                return True
+
+            if sub == "shifts" and len(parts) > 2:
+                bmrb_id = parts[2]
+                bmrb_path = download_bmrb_file(int(bmrb_id))
+                if bmrb_path:
+                    exp_shifts = parse_bmrb_shifts(bmrb_path)
+                    pred_shifts = predict_chemical_shifts(structure)
+                    # Align exp_shifts (residue-based) to predicted (chain-based)
+                    # For simplicity, assume chain A
+                    ref_dict = {"A": exp_shifts}
+                    stats = compare_chemical_shifts(pred_shifts, ref_dict)
+                    r_cs = calculate_cs_r_factor(pred_shifts, ref_dict, atom="CA")
+
+                    print(f"\nValidation against BMRB {bmrb_id}:")
+                    for atom, m in stats.items():
+                        print(f"  {atom:4s}: RMSE={m['rmse']:.3f}, Pearson R={m['pearson']:.3f}")
+                    print(f"  Chemical Shift R-factor (CA): {r_cs:.4f}")
+
+            elif sub == "noes" and len(parts) > 2:
+                bmrb_id = parts[2]
+                bmrb_path = download_bmrb_file(int(bmrb_id))
+                if bmrb_path:
+                    exp_noes = parse_bmrb_restraints(bmrb_path)
+                    pred_noes = calculate_synthetic_noes(structure, cutoff=5.0)
+                    rpf = calculate_rpf_scores(pred_noes, exp_noes)
+                    dp = calculate_dp_score(rpf)
+
+                    print(f"\nNOE Validation (RPF) against BMRB {bmrb_id}:")
+                    print(f"  Recall:    {rpf['recall']:.3f}")
+                    print(f"  Precision: {rpf['precision']:.3f}")
+                    print(f"  F-measure: {rpf['f_measure']:.3f}")
+                    print(f"  DP-score:  {dp:.3f}")
+
+            elif sub == "structure":
+                deviations = calculate_c_beta_deviations(structure)
+                outliers = {rid: dev for rid, dev in deviations.items() if dev > 0.25}
+                print(f"\nStructural Validation (C-beta deviations):")
+                print(f"  Total residues checked: {len(deviations)}")
+                print(f"  Outliers (> 0.25 Å):    {len(outliers)}")
+                for rid, dev in sorted(outliers.items()):
+                    print(f"    ResID {rid:4d}: {dev:.3f} Å")
+            else:
+                print(f"Error: Unknown validate subcommand: {sub}")
+
         elif command == "read" and len(parts) > 2 and parts[1].lower() == "pdb":
             path = parts[2]
             try:
