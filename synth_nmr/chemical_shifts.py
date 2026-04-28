@@ -211,9 +211,9 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, D
             )
     else:
         logger.warning(
-            "SHIFTX2 executable not found in PATH or not executable. "
-            "Falling back to empirical chemical shift prediction (SPARTA+ algorithm). "
-            "For best results, install SHIFTX2 (e.g., via 'sbgrid-cli install shiftx2' or http://www.shiftx2.ca/download.html)."
+            "SHIFTX2 executable not found. Falling back to empirical SPARTA+ model. "
+            "To use SHIFTX2, ensure it is in your PATH or set the SHIFTX2_DIR environment variable. "
+            "For installation, see http://www.shiftx2.ca/download.html or use SBGrid ('sbgrid-cli install shiftx2')."
         )
     return predict_empirical_shifts(structure)
 
@@ -540,16 +540,53 @@ class ShiftX2Predictor:
     """
     Wrapper for the external ShiftX2 predictor.
 
-    Requires the 'shiftx2.py' (or 'shiftx2') executable to be in the system PATH.
+    Requires the 'shiftx2.py' (or 'shiftx2') executable to be in the system PATH,
+    in the directory specified by SHIFTX2_DIR, or in typical installation locations.
+
     ShiftX2 can be installed via SBGrid: 'sbgrid-cli install shiftx2'
     It can also be downloaded from here: http://www.shiftx2.ca/download.html
     """
 
     def __init__(self, executable: str = "shiftx2.py"):
-        self.executable = executable
+        self.executable = self._resolve_path(executable)
+
+    def _resolve_path(self, executable: str) -> str:
+        """Resolve the full path to the ShiftX2 executable."""
+        from shutil import which
+
+        # 1. Check if the provided name is already found by 'which'
+        # (this handles absolute paths, relative paths, and PATH search)
+        found = which(executable)
+        if found:
+            return found
+
+        # 2. Check SHIFTX2_DIR environment variable
+        shiftx2_dir = os.environ.get("SHIFTX2_DIR")
+        if shiftx2_dir:
+            for name in [executable, "shiftx2.py", "shiftx2"]:
+                if not os.path.isabs(name):
+                    path = os.path.join(shiftx2_dir, name)
+                    found = which(path)
+                    if found:
+                        return found
+
+        # 3. Check typical locations
+        home = os.path.expanduser("~")
+        typical_locations = [
+            os.path.join(home, "shiftx2", "shiftx2.py"),
+            "/opt/shiftx2/shiftx2.py",
+            "/usr/local/bin/shiftx2.py",
+            "/usr/local/bin/shiftx2",
+        ]
+        for loc in typical_locations:
+            found = which(loc)
+            if found:
+                return found
+
+        return executable
 
     def is_available(self) -> bool:
-        """Check if ShiftX2 executable is available in PATH."""
+        """Check if ShiftX2 executable is available."""
         from shutil import which
 
         return which(self.executable) is not None
@@ -567,7 +604,7 @@ class ShiftX2Predictor:
         if not self.is_available():
             raise RuntimeError(
                 f"ShiftX2 executable '{self.executable}' not found. "
-                "Please install it (e.g., via SBGrid) and add it to your PATH."
+                "Please install it (e.g., via SBGrid), add it to your PATH, or set SHIFTX2_DIR."
             )
 
         with tempfile.TemporaryDirectory() as tmpdir:

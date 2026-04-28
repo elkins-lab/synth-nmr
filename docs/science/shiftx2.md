@@ -52,13 +52,16 @@ applies per-secondary-structure mean offsets and a point-dipole ring current mod
 ┌─────────────────────────────────────────────────┐
 │  predict_chemical_shifts(structure)              │
 │                                                 │
-│  1. Is 'shiftx2.py' executable in PATH?         │
-│     YES → run SHIFTX2 subprocess                │
+│  1. Locate 'shiftx2.py' in:                     │
+│     a. System PATH                              │
+│     b. SHIFTX2_DIR environment variable         │
+│     c. Typical locations (~/shiftx2/, /opt/...) │
+│                                                 │
+│  2. If found → run SHIFTX2 subprocess           │
 │            └─ non-empty output? → return it ✓   │
 │            └─ empty / crash?    → ⚠ log warning  │
-│     NO  → ⚠ log warning                         │
 │                                                 │
-│  2. Fallback: predict_empirical_shifts()         │
+│  3. Fallback: predict_empirical_shifts()         │
 │     (SPARTA+ offsets + ring current model)      │
 └─────────────────────────────────────────────────┘
 ```
@@ -88,14 +91,18 @@ SHIFTX2 is free for non-commercial use.  Two installation routes:
 chmod +x shiftx2.py
 ```
 
-4. Move it into your PATH (or add the directory to PATH):
+4. Configure the location (choose one):
 
 ```bash
-# Example: move to a directory already on PATH
-mv shiftx2.py /usr/local/bin/shiftx2.py
-
-# Or add to PATH in your shell profile
+# A. Add to PATH in your shell profile
 export PATH="/path/to/shiftx2_dir:$PATH"
+
+# B. OR set the SHIFTX2_DIR environment variable
+export SHIFTX2_DIR="/path/to/shiftx2_dir"
+
+# C. OR move it to a typical location that synth-nmr searches automatically
+mkdir -p ~/shiftx2
+mv shiftx2.py ~/shiftx2/
 ```
 
 5. Verify installation:
@@ -123,6 +130,7 @@ from synth_nmr.chemical_shifts import ShiftX2Predictor
 
 predictor = ShiftX2Predictor()
 print("SHIFTX2 available:", predictor.is_available())
+print("Using executable at:", predictor.executable)
 ```
 
 To verify end-to-end:
@@ -136,10 +144,6 @@ logging.basicConfig(level=logging.INFO)   # so you can see which engine is used
 
 structure = strucio.load_structure("protein.pdb")
 shifts = predict_chemical_shifts(structure)
-
-# Inspect a few Cα shifts
-for res_id, atoms in list(shifts.get("A", {}).items())[:5]:
-    print(f"Res {res_id}: Cα = {atoms.get('CA', 'N/A')} ppm")
 ```
 
 The log output will say either:
@@ -151,8 +155,8 @@ INFO  synth_nmr.chemical_shifts: Successfully predicted chemical shifts using SH
 or:
 
 ```
-WARNING  synth_nmr.chemical_shifts: SHIFTX2 executable not found in PATH ...
-         Falling back to empirical chemical shift prediction (SPARTA+ algorithm).
+WARNING  synth_nmr.chemical_shifts: SHIFTX2 executable not found. Falling back to empirical SPARTA+ model.
+         To use SHIFTX2, ensure it is in your PATH or set the SHIFTX2_DIR environment variable.
 ```
 
 ---
@@ -186,8 +190,9 @@ work unchanged.
 
 ## Custom Executable Path
 
-If `shiftx2.py` is not on your PATH (e.g., it's inside a conda environment or module
-system), pass the path explicitly:
+If `shiftx2.py` is not on your PATH or in a standard location, you can set the `SHIFTX2_DIR` environment variable to the directory containing `shiftx2.py`.
+
+Alternatively, you can pass the path explicitly in code:
 
 ```python
 predictor = ShiftX2Predictor(executable="/path/to/shiftx2.py")
