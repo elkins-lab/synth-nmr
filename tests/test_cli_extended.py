@@ -63,6 +63,25 @@ class TestCLIExtended(unittest.TestCase):
             assert "NOE Validation (RPF) against BMRB 12345:" in output
             assert "Recall:    0.900" in output
 
+    def test_cli_validate_rdc(self):
+        """Test validate rdc subcommand."""
+        cli.structure = MagicMock(spec=struc.AtomArray)
+        rdc_file = "test_exp_rdcs.csv"
+        with open(rdc_file, "w") as f:
+            f.write("1,10.0\n2,20.0\n")
+
+        try:
+            with patch(
+                "synth_nmr.synth_nmr_cli.calculate_rdcs", return_value={1: 11.0, 2: 21.0}
+            ), patch("sys.stdout", new=StringIO()) as fake_out:
+                handle_interactive_command(f"validate rdc {rdc_file}")
+                output = fake_out.getvalue()
+                assert "RDC Validation (Cornilescu Q-factor)" in output
+                assert "Q-factor:" in output
+        finally:
+            if os.path.exists(rdc_file):
+                os.remove(rdc_file)
+
     def test_cli_export_errors(self):
         """Test export commands error handling."""
         # No PDB loaded

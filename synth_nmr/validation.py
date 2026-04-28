@@ -3,8 +3,9 @@ Validation and comparison utilities for chemical shift predictions.
 """
 
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
+import biotite.structure as struc
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -234,6 +235,97 @@ def calculate_cs_r_factor(
 
     r_cs = np.sum(diffs) / np.sum(baseline)
     return round(float(r_cs), 4)
+
+
+def calculate_rdc_q_factor(predicted: Dict[int, float], experimental: Dict[int, float]) -> float:
+    """
+    Calculate the RDC Q-factor (Cornilescu Q).
+
+    EDUCATIONAL BACKGROUND — The RDC Q-factor
+    ───────────────────────────────────────────────────────────────────
+    The Q-factor is the standard metric for Residual Dipolar Coupling (RDC)
+    validation. It measures the agreement between calculated and
+    observed couplings, normalized by the magnitude of the observed data.
+
+    Formula: Q = sqrt( sum( (D_calc - D_exp)^2 ) / sum( D_exp^2 ) )
+
+    Interpretation:
+    - Q < 0.2:  Excellent agreement (high-resolution structure).
+    - 0.2 < Q < 0.5: Reasonable agreement.
+    - Q > 0.5:  Poor agreement or incorrect alignment tensor.
+
+    Args:
+        predicted: Map of {residue_id: RDC_value}
+        experimental: Map of {residue_id: RDC_value}
+
+    Returns:
+        float: The Q-factor.
+    """
+    common_res = set(predicted.keys()) & set(experimental.keys())
+    if not common_res:
+        logger.warning("No overlapping residues found for RDC Q-factor calculation.")
+        return 1.0
+
+    y_pred = np.array([predicted[r] for r in common_res])
+    y_exp = np.array([experimental[r] for r in common_res])
+
+    num = np.sum((y_pred - y_exp) ** 2)
+    den = np.sum(y_exp**2)
+
+    if den == 0:
+        return 1.0
+
+    q = np.sqrt(num / den)
+    return round(float(q), 4)
+
+
+def validate_against_bmrb(
+    bmrb_id: int, structure: struc.AtomArray, predictor: Any = None
+) -> Dict[str, Dict[str, float]]:
+
+    """
+    Automated validation of a structure against a BMRB entry.
+
+    This high-level function:
+    1. Downloads experimental data from BMRB.
+    2. Predicts observables for the provided structure.
+    3. Calculates accuracy metrics (RMSE, R-factor, RPF).
+
+    Args:
+        bmrb_id: BMRB accession ID.
+        structure: biotite.structure.AtomArray.
+        predictor: Optional custom shift predictor.
+
+    Returns:
+        Dict: Validation metrics.
+    """
+    from synth_nmr.chemical_shifts import predict_chemical_shifts
+    from synth_nmr.data_pipeline import download_bmrb_file, parse_bmrb_shifts
+
+    # 1. Get Experimental Data
+    bmrb_path = download_bmrb_file(bmrb_id)
+    if not bmrb_path:
+        raise RuntimeError(f"Could not retrieve BMRB entry {bmrb_id}")
+
+    exp_shifts = parse_bmrb_shifts(bmrb_path)
+
+    # 2. Prediction
+    if predictor:
+        pred_shifts = predictor.predict(structure)
+    else:
+        pred_shifts = predict_chemical_shifts(structure)
+
+    # 3. Validation
+    # Align and compare (assuming chain A for simplified automated check)
+    ref_dict = {"A": exp_shifts}
+    stats = compare_chemical_shifts(pred_shifts, ref_dict)
+
+    # Add R-factor for CA
+    r_cs = calculate_cs_r_factor(pred_shifts, ref_dict, atom="CA")
+    if "CA" in stats:
+        stats["CA"]["r_factor"] = r_cs
+
+    return stats
 
 
 def print_validation_report(stats: Dict[str, Dict[str, float]]) -> None:

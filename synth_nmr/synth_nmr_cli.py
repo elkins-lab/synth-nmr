@@ -20,6 +20,7 @@
 
 """A command-line interface for synth-nmr."""
 
+import os
 import sys
 from typing import Dict, List, Optional
 
@@ -131,6 +132,7 @@ def handle_interactive_command(line: str) -> bool:
             print("  calculate j-coupling         Calculate J-couplings for single structure.")
             print("  validate shifts <bmrb_id>    Validate shifts against BMRB.")
             print("  validate noes <bmrb_id>      Validate NOEs against BMRB (RPF scores).")
+            print("  validate rdc <filename>      Validate RDCs (Q-factor) against CSV file.")
             print("  validate structure           Check C-beta deviations.")
             print("  export nef <filename>        Export structure and data to NEF.")
             print("  export shifts <filename>     Export chemical shifts to CSV.")
@@ -172,6 +174,32 @@ def handle_interactive_command(line: str) -> bool:
                     print(f"  Precision: {rpf['precision']:.3f}")
                     print(f"  F-measure: {rpf['f_measure']:.3f}")
                     print(f"  DP-score:  {dp:.3f}")
+
+            elif sub == "rdc" and len(parts) > 2:
+                filename = parts[2]
+                if not os.path.exists(filename):
+                    print(f"Error: File not found: {filename}")
+                    return True
+
+                from synth_nmr.validation import calculate_rdc_q_factor
+
+                exp_rdcs = {}
+                with open(filename) as f:
+                    for line in f:
+                        if line.startswith("#") or not line.strip():
+                            continue
+                        row = line.strip().split(",")
+                        if len(row) >= 2:
+                            try:
+                                exp_rdcs[int(row[0])] = float(row[1])
+                            except ValueError:
+                                continue
+
+                            pred_rdcs = calculate_rdcs(structure, Da=10.0, R=0.5)
+                            q = calculate_rdc_q_factor(pred_rdcs, exp_rdcs)
+
+                print(f"\nRDC Validation (Cornilescu Q-factor) against {filename}:")
+                print(f"  Q-factor: {q:.4f}")
 
             elif sub == "structure":
                 deviations = calculate_c_beta_deviations(structure)
