@@ -82,4 +82,5 @@ def test_cli_nonexistent_pdb():
     """Test that an error is raised with a nonexistent PDB file."""
     commands = ["read", "pdb", "nonexistent.pdb"]
     stdout, stderr = run_cli_commands(commands)
-    assert "Error: File not found" in stdout
+    assert "Error: Could not read" in stdout
+
