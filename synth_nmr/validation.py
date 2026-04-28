@@ -282,7 +282,6 @@ def calculate_rdc_q_factor(predicted: Dict[int, float], experimental: Dict[int, 
 def validate_against_bmrb(
     bmrb_id: int, structure: struc.AtomArray, predictor: Any = None
 ) -> Dict[str, Dict[str, float]]:
-
     """
     Automated validation of a structure against a BMRB entry.
 
