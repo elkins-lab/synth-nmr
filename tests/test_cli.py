@@ -83,4 +83,3 @@ def test_cli_nonexistent_pdb():
     commands = ["read", "pdb", "nonexistent.pdb"]
     stdout, stderr = run_cli_commands(commands)
     assert "Error: Could not read" in stdout
-
