@@ -64,6 +64,13 @@ pythonpath = ["."]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+filterwarnings = [
+    "ignore:pathlib.Path.__enter__.*:DeprecationWarning",
+    "ignore:.*elements were guessed from atom name:UserWarning",
+    "ignore:Calling nonzero on 0d arrays is deprecated.*:DeprecationWarning",
+    "ignore:`torch_geometric.distributed` has been deprecated.*:DeprecationWarning",
+    "ignore:`torch.jit.script` is deprecated.*:DeprecationWarning",
+]
 
 [tool.black]
 line-length = 100
@@ -100,6 +107,16 @@ line-ending = "auto"
 [tool.mypy]
 python_version = "3.12"
 disallow_untyped_defs = true
+explicit_package_bases = true
+exclude = [
+    "build/",
+    "dist/",
+    "scratch/"
+]
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "scripts.*", "scratch.*"]
+disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
 module = [

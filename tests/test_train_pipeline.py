@@ -38,6 +38,9 @@ def test_train_gnn_script_execution(mocker, tmp_path):
         str(tmp_path / "model.pt"),
     ]
     with mock.patch.object(sys, "argv", test_args):
+        # Clear module from sys.modules to avoid RuntimeWarning when running as script
+        if "synth_nmr.scripts.train_gnn" in sys.modules:
+            del sys.modules["synth_nmr.scripts.train_gnn"]
         runpy.run_module("synth_nmr.scripts.train_gnn", run_name="__main__")
 
     assert (tmp_path / "model.pt").exists()

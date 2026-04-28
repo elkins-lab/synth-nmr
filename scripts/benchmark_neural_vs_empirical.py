@@ -317,7 +317,8 @@ def main():
 
     # ── 5. Feature importance insight ────────────────────────────────────
     print("\n── 5. Key Design Differences ───────────────────────────────")
-    print("""
+    print(
+        """
   ┌─────────────────────┬──────────────────────┬─────────────────────┐
   │ Property            │ Empirical (SPARTA+)  │ Neural MLP          │
   ├─────────────────────┼──────────────────────┼─────────────────────┤
@@ -331,7 +332,8 @@ def main():
   │ Requires training   │ ✗                    │ ✓ (or random noise) │
   │ PyTorch dependency  │ ✗                    │ ✓ (optional [ml])   │
   └─────────────────────┴──────────────────────┴─────────────────────┘
-""")
+"""
+    )
     print("=" * 62)
 
 

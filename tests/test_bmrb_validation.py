@@ -5,6 +5,7 @@ Validation tests for comparing predicted chemical shifts against BMRB experiment
 import os
 import re
 import urllib.request
+from typing import Dict, List
 
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb
@@ -208,8 +209,8 @@ def test_bmrb_chemical_shift_validation(
     )  # Format: {res_id: {atom_type: shift_value}}
 
     # Initialize storage for comparison
-    experimental_vals_by_atom_type = {"HA": [], "CA": [], "N": []}
-    predicted_vals_by_atom_type = {"HA": [], "CA": [], "N": []}
+    experimental_vals_by_atom_type: Dict[str, List[float]] = {"HA": [], "CA": [], "N": []}
+    predicted_vals_by_atom_type: Dict[str, List[float]] = {"HA": [], "CA": [], "N": []}
 
     # Store per-residue differences for analysis
     ha_differences = []
