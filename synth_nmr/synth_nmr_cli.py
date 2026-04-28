@@ -21,7 +21,7 @@
 """A command-line interface for synth-nmr."""
 
 import sys
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import biotite.structure as struc
 import biotite.structure.io.pdb as pdb

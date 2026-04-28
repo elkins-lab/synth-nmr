@@ -3,9 +3,6 @@ import unittest
 from io import StringIO
 from unittest.mock import patch
 
-import biotite.structure as struc
-import biotite.structure.io.pdb as pdb
-
 from synth_nmr import synth_nmr_cli as cli
 from synth_nmr.synth_nmr_cli import interactive_mode, process_commands
 
