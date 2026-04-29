@@ -4,10 +4,10 @@ This document serves as a repository for future ideas, feature proposals, and po
 
 ## 1. Expanding the Physics & Observables
 
-- [ ] **Expanded J-Coupling Subtypes**:
-    Currently, the project only calculates the $^3J_{H_N, H_\alpha}$ coupling (which depends on the backbone $\Phi$ dihedral angle) via the Karplus equation in `synth_nmr/j_coupling.py`. This should be expanded to include:
-    - [ ] $^3J_{H_\alpha, H_\beta}$ (derived from the $\chi_1$ side-chain angle).
-    - [ ] $^3J_{C', C_\gamma}$ couplings.
+- [x] **Expanded J-Coupling Subtypes**:
+    Currently, the project calculates the $^3J_{H_N, H_\alpha}$ coupling (using Vuister & Bax coefficients) as well as:
+    - [x] $^3J_{H_\alpha, H_\beta}$ (derived from the $\chi_1$ side-chain angle).
+    - [x] $^3J_{C', C_\gamma}$ couplings.
 - [ ] **Paramagnetic Relaxation Enhancements (PRE) & Pseudocontact Shifts (PCS)**:
     Adding support for predicting PREs and PCSs. These spatial observables are critical in modern NMR for analyzing long-range distances and large multi-domain proteins or protein-ligand complexes.
 

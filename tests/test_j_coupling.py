@@ -3,9 +3,11 @@ import numpy as np
 import pytest
 
 from synth_nmr.j_coupling import (
+    KARPLUS_PARAMS,
     calculate_c_cg_coupling,
     calculate_ha_hb_coupling,
     calculate_hn_ha_coupling,
+    calculate_hn_ha_coupling_from_phi,
 )
 
 
@@ -126,3 +128,28 @@ def test_structure_iteration(mocker):
     # Logic in code: if len(phi) != len(res_starts): return {}
     res = calculate_hn_ha_coupling(structure)
     assert res == {}
+
+
+def test_vuister_bax_karplus_parameters():
+    """
+    Explicitly verify that the engine uses the Vuister & Bax (1993) parameters.
+    Reference: J. Am. Chem. Soc. 1993, 115, 7772-7777.
+    """
+    # 1. Assert exact parameter values (A=6.51, B=-1.76, C=1.60)
+    assert KARPLUS_PARAMS["A"] == 6.51
+    assert KARPLUS_PARAMS["B"] == -1.76
+    assert KARPLUS_PARAMS["C"] == 1.60
+
+    # 2. Assert precise calculation for a Beta-Sheet angle (Phi = -120)
+    # Theta = Phi - 60 = -180. Cos(-180) = -1.
+    # J = A(-1)^2 + B(-1) + C = A - B + C = 6.51 - (-1.76) + 1.60 = 9.87
+    phi_sheet = np.array([-120.0])
+    j_sheet = calculate_hn_ha_coupling_from_phi(phi_sheet)[0]
+    assert np.isclose(j_sheet, 9.87)
+
+    # 3. Assert precise calculation for an Alpha-Helix angle (Phi = -60)
+    # Theta = Phi - 60 = -120. Cos(-120) = -0.5.
+    # J = A(-0.5)^2 + B(-0.5) + C = 6.51(0.25) + 0.88 + 1.60 = 1.6275 + 0.88 + 1.60 = 4.1075
+    phi_helix = np.array([-60.0])
+    j_helix = calculate_hn_ha_coupling_from_phi(phi_helix)[0]
+    assert np.isclose(j_helix, 4.1075)
