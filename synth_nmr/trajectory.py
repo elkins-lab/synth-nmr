@@ -744,22 +744,14 @@ def compute_s2_from_trajectory(
         return {}
 
     # Get final indices for paired N and H atoms
-    final_n_indices = []
-    final_h_indices = []
-    final_res_ids = []
-
-    # Vectorized lookup for matching N and H indices
-    # This is slightly more complex but still much faster than per-frame loop
+    # We use vectorized lookup for matching N and H indices.
+    # This is slightly more complex but still much faster than per-frame loop.
     n_id_to_idx = {rid: idx for rid, idx in zip(n_res_ids, n_indices)}
     h_id_to_idx = {rid: idx for rid, idx in zip(h_res_ids, h_indices)}
 
-    for rid in common_res_ids:
-        final_n_indices.append(n_id_to_idx[rid])
-        final_h_indices.append(h_id_to_idx[rid])
-        final_res_ids.append(int(rid))
-
-    final_n_indices = np.array(final_n_indices)
-    final_h_indices = np.array(final_h_indices)
+    final_n_indices = np.array([n_id_to_idx[rid] for rid in common_res_ids])
+    final_h_indices = np.array([h_id_to_idx[rid] for rid in common_res_ids])
+    final_res_ids = [int(rid) for rid in common_res_ids]
 
     # ── Vectorized Calculation ───────────────────────────────────────────────
     # PERFORMANCE NOTE — The Power of Vectorization:
