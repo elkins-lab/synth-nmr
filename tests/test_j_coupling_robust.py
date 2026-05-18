@@ -136,6 +136,33 @@ def test_chi1_atom_selection_diversity():
         ]
     )
 
+    # 4. GLY - no CB, should be skipped
+    atoms.extend(
+        [
+            struc.Atom(
+                atom_name="N", res_id=4, res_name="GLY", chain_id="A", element="N", coord=[0, 0, 0]
+            ),
+            struc.Atom(
+                atom_name="CA", res_id=4, res_name="GLY", chain_id="A", element="C", coord=[1, 0, 0]
+            ),
+        ]
+    )
+
+    # 5. ALA - has CB but no gamma atom, should be skipped
+    atoms.extend(
+        [
+            struc.Atom(
+                atom_name="N", res_id=5, res_name="ALA", chain_id="A", element="N", coord=[0, 0, 0]
+            ),
+            struc.Atom(
+                atom_name="CA", res_id=5, res_name="ALA", chain_id="A", element="C", coord=[1, 0, 0]
+            ),
+            struc.Atom(
+                atom_name="CB", res_id=5, res_name="ALA", chain_id="A", element="C", coord=[1, 1, 0]
+            ),
+        ]
+    )
+
     structure = struc.array(atoms)
 
     j_hahb = calculate_ha_hb_coupling(structure)
@@ -144,6 +171,11 @@ def test_chi1_atom_selection_diversity():
     assert 1 in j_hahb["A"]
     assert 2 in j_hahb["A"]
     assert 3 in j_hahb["A"]
+    assert 4 not in j_hahb["A"]
+    assert 5 not in j_hahb["A"]
+
     assert 1 in j_ccg["A"]
     assert 2 in j_ccg["A"]
     assert 3 in j_ccg["A"]
+    assert 4 not in j_ccg["A"]
+    assert 5 not in j_ccg["A"]

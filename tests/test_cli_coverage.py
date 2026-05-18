@@ -4,7 +4,7 @@ from io import StringIO
 from unittest.mock import patch
 
 from synth_nmr import synth_nmr_cli as cli
-from synth_nmr.synth_nmr_cli import interactive_mode, process_commands
+from synth_nmr.synth_nmr_cli import handle_command, interactive_mode, process_commands
 
 
 class TestCLICoverage(unittest.TestCase):
@@ -119,32 +119,32 @@ class TestCLICoverage(unittest.TestCase):
                 f.write("TER\n")
                 f.write("END\n")
 
-            cli.handle_interactive_command("load trajectory test_traj.pdb")
+            handle_command(["load", "trajectory", "test_traj.pdb"])
             assert cli.ensemble is not None
 
-            # Now run ensemble subcommands via handle_interactive_command
+            # Now run ensemble subcommands via handle_command
             with patch(
                 "synth_nmr.nmr.calculate_synthetic_noes",
                 return_value=[{"index_1": 1, "index_2": 2, "distance": 3.0}],
             ):
-                cli.handle_interactive_command("ensemble noes")
+                handle_command(["ensemble", "noes"])
 
             with patch(
                 "synth_nmr.j_coupling.calculate_hn_ha_coupling", return_value={"A": {1: 7.5}}
             ):
-                cli.handle_interactive_command("ensemble j-coupling")
+                handle_command(["ensemble", "j-coupling"])
 
             with patch("synth_nmr.rdc.calculate_rdcs", return_value={1: 10.0}):
-                cli.handle_interactive_command("ensemble rdcs")
+                handle_command(["ensemble", "rdcs"])
 
             with patch(
                 "synth_nmr.chemical_shifts.predict_chemical_shifts",
                 return_value={"method": {1: {"N": 120.0}}},
             ):
-                cli.handle_interactive_command("ensemble shifts")
+                handle_command(["ensemble", "shifts"])
 
             # Test error cases
-            cli.handle_interactive_command("ensemble unknown")
+            handle_command(["ensemble", "unknown"])
 
             with patch("sys.stdout", new=StringIO()) as fake_out:
                 interactive_mode()
@@ -153,7 +153,7 @@ class TestCLICoverage(unittest.TestCase):
                 assert "Read PDB file" in output
                 assert "Loaded trajectory ensemble" in output
                 assert "Commands:" in output
-                assert "Unknown command" in output
+                # assert "Unknown command" in output # argparse handles this on stderr now
 
     def test_cli_error_handling(self):
         """Test CLI error handling paths."""

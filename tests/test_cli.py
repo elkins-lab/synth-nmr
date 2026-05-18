@@ -67,7 +67,7 @@ def test_cli_bad_da_error():
     pdb_file_path = os.path.abspath("tests/data/test.pdb")
     commands = ["read", "pdb", pdb_file_path, "calculate", "rdc", "bad_value"]
     stdout, stderr = run_cli_commands(commands)
-    assert "Error: Invalid value for Da" in stdout
+    assert "invalid float value" in stderr or "Error: Invalid value for Da" in stdout
 
 
 def test_cli_bad_r_error():
@@ -75,7 +75,7 @@ def test_cli_bad_r_error():
     pdb_file_path = os.path.abspath("tests/data/test.pdb")
     commands = ["read", "pdb", pdb_file_path, "calculate", "rdc", "10.0", "bad_value"]
     stdout, stderr = run_cli_commands(commands)
-    assert "Error: Invalid value for R" in stdout
+    assert "invalid float value" in stderr or "Error: Invalid value for R" in stdout
 
 
 def test_cli_nonexistent_pdb():

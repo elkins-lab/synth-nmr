@@ -60,4 +60,5 @@ def test_cli_validate_unknown_subcommand():
     pdb_file_path = os.path.abspath("tests/data/test.pdb")
     commands = ["read", "pdb", pdb_file_path, "validate", "unknown"]
     stdout, stderr = run_cli_commands(commands)
-    assert "Error: Unknown validate subcommand" in stdout
+    # With argparse, 'unknown' is an invalid choice for the 'validate' subparser
+    assert "invalid choice" in stderr or "Error: Unknown validate subcommand" in stdout

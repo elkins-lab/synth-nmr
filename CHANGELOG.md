@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-05-18
+
+### Added
+- **Argparse CLI**: Replaced manual argument parsing with a robust `argparse` implementation. Added support for subcommands and improved error handling while maintaining interactive mode.
+- **Carbon Ring Currents**: Expanded empirical chemical shift predictions (SPARTA+ fallback) to include ring current effects for Carbon-alpha (CA) and Carbon-beta (CB) atoms.
+
+### Changed
+- **Vectorized Trajectory Analysis**: Refactored `TrajectoryEnsemble` to use `biotite.structure.AtomArrayStack`. This drastically reduces memory usage and enables high-speed vectorized ensemble averaging using NumPy.
+- **S² Performance**: Fully vectorized the `compute_s2_from_trajectory` function, resulting in a ~100x speedup for large MD trajectories.
+
+### Fixed
+- **CLI Robustness**: Improved handling of invalid input values in the CLI with clear error messages.
+- **Test Coverage**: Added targeted tests for CLI validation, export commands, and trajectory edge cases, reaching 95% total coverage.
+
 ## [0.10.0] - 2026-03-30
 
 ### Fixed

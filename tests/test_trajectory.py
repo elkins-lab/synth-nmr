@@ -101,32 +101,35 @@ class TestTrajectoryEnsemble:
         its frames as an iterable and report the correct frame count."""
         frame1 = _make_multi_residue_frame([(1, "ALA"), (2, "GLY")])
         frame2 = _make_multi_residue_frame([(1, "ALA"), (2, "GLY")], base_coord_offset=0.5)
-        ensemble = TrajectoryEnsemble(frames=[frame1, frame2])
+        ensemble = load_trajectory([frame1, frame2])
 
         assert len(ensemble) == 2
-        assert isinstance(ensemble.frames, list)
-        assert all(isinstance(f, struc.AtomArray) for f in ensemble.frames)
+        assert isinstance(ensemble.stack, struc.AtomArrayStack)
+        assert all(isinstance(f, struc.AtomArray) for f in ensemble)
 
     def test_single_frame(self):
         """A single-frame ensemble is valid (edge case for averaging functions)."""
         frame = _make_multi_residue_frame([(1, "ALA")])
-        ensemble = TrajectoryEnsemble(frames=[frame])
+        ensemble = load_trajectory([frame])
         assert len(ensemble) == 1
 
     def test_empty_ensemble_raises(self):
         """Constructing with zero frames should raise ValueError."""
-        with pytest.raises(ValueError, match="at least one frame"):
-            TrajectoryEnsemble(frames=[])
+        with pytest.raises(ValueError, match="Provide at least one AtomArray frame"):
+            load_trajectory([])
 
     def test_wrong_type_raises(self):
         """Passing non-AtomArray elements should raise TypeError."""
-        with pytest.raises(TypeError):
-            TrajectoryEnsemble(frames=["not_an_atomarray"])
+        # Since we use struc.stack, it might raise AttributeError or TypeError
+        # We catch the common case in load_trajectory now.
+        with pytest.raises((TypeError, AttributeError)):
+            load_trajectory(["not_an_atomarray"])
 
     def test_iteration(self):
         """TrajectoryEnsemble should be iterable over its frames."""
-        frames = [_make_multi_residue_frame([(i, "ALA")]) for i in range(1, 4)]
-        ensemble = TrajectoryEnsemble(frames=frames)
+        # Use consistent topology (same res_id) for all frames to allow stacking
+        frames = [_make_multi_residue_frame([(1, "ALA")]) for _ in range(3)]
+        ensemble = load_trajectory(frames)
         for frame in ensemble:
             assert isinstance(frame, struc.AtomArray)
 
@@ -451,7 +454,7 @@ class TestComputeS2FromTrajectory:
         (pointing along Z).  Expected S² = 1.0.
         """
         frames = [_make_nh_frame([0.0, 0.0, 0.0], [0.0, 0.0, 1.02]) for _ in range(n_frames)]
-        return TrajectoryEnsemble(frames=frames)
+        return load_trajectory(frames)
 
     def _make_nh_ensemble_isotropic(self, n_frames: int = 10000) -> TrajectoryEnsemble:
         """
@@ -468,7 +471,7 @@ class TestComputeS2FromTrajectory:
             direction /= np.linalg.norm(direction)
             h_coord = direction * 1.02  # 1.02 Å bond length
             frames.append(_make_nh_frame([0.0, 0.0, 0.0], h_coord.tolist()))
-        return TrajectoryEnsemble(frames=frames)
+        return load_trajectory(frames)
 
     def test_rigid_vector_gives_s2_one(self):
         """
@@ -497,7 +500,7 @@ class TestComputeS2FromTrajectory:
         With a single frame the mean NH vector equals the frame's unit vector,
         so |<μ>|² = 1.0 regardless of orientation.
         """
-        ensemble = TrajectoryEnsemble(frames=[_make_nh_frame([0.0, 0.0, 0.0], [0.5, 0.5, 0.5])])
+        ensemble = load_trajectory([_make_nh_frame([0.0, 0.0, 0.0], [0.5, 0.5, 0.5])])
         s2_map = compute_s2_from_trajectory(ensemble)
         assert s2_map[1] == pytest.approx(1.0, abs=1e-6)
 
@@ -516,7 +519,7 @@ class TestComputeS2FromTrajectory:
                 )
                 atoms.extend([n, h])
             frame_data.append(struc.array(atoms))
-        ensemble = TrajectoryEnsemble(frames=frame_data)
+        ensemble = load_trajectory(frame_data)
         s2_map = compute_s2_from_trajectory(ensemble)
         assert isinstance(s2_map, dict)
         for key in s2_map:
@@ -532,7 +535,7 @@ class TestComputeS2FromTrajectory:
         """
         ca_only = struc.Atom([1.0, 0.0, 0.0], atom_name="CA", element="C", res_id=1, chain_id="A")
         frame = struc.array([ca_only])
-        ensemble = TrajectoryEnsemble(frames=[frame])
+        ensemble = load_trajectory([frame])
         s2_map = compute_s2_from_trajectory(ensemble)
         assert s2_map == {}
 
@@ -548,7 +551,7 @@ class TestComputeS2FromTrajectory:
             )
             frame = struc.array([pro_n])
             frames.append(frame)
-        ensemble = TrajectoryEnsemble(frames=frames)
+        ensemble = load_trajectory(frames)
         s2_map = compute_s2_from_trajectory(ensemble)
         assert 1 not in s2_map
 
@@ -625,7 +628,7 @@ class TestTrajectoryEnsembleRepr:
     def test_repr_contains_frame_count(self):
         """repr() should include the number of frames."""
         frames = [_make_nh_frame([0.0, 0.0, 0.0], [0.0, 0.0, 1.02]) for _ in range(5)]
-        ensemble = TrajectoryEnsemble(frames=frames)
+        ensemble = load_trajectory(frames)
         r = repr(ensemble)
         assert "5" in r
         assert "TrajectoryEnsemble" in r
@@ -634,7 +637,7 @@ class TestTrajectoryEnsembleRepr:
         """repr() should include the number of atoms per frame."""
         # Each _make_nh_frame creates 2 atoms (N + H)
         frame = _make_nh_frame([0.0, 0.0, 0.0], [0.0, 0.0, 1.02])
-        ensemble = TrajectoryEnsemble(frames=[frame])
+        ensemble = load_trajectory([frame])
         r = repr(ensemble)
         assert "2" in r  # 2 atoms per frame
 
@@ -712,7 +715,7 @@ class TestComputeS2EdgeCases:
             [0.0, 0.0, 1.02], atom_name="H", element="H", res_id=2, res_name="GLY", chain_id="A"
         )  # different res_id!
         frame = struc.array([n_atom, h_atom])
-        ensemble = TrajectoryEnsemble(frames=[frame])
+        ensemble = load_trajectory([frame])
 
         s2_map = compute_s2_from_trajectory(ensemble)
         # res 1 N has no matching H → excluded
@@ -737,7 +740,7 @@ class TestComputeS2EdgeCases:
             [1.0, 2.0, 3.0], atom_name="H", element="H", res_id=1, res_name="ALA", chain_id="A"
         )
         frame = struc.array([n_atom, h_atom])
-        ensemble = TrajectoryEnsemble(frames=[frame])
+        ensemble = load_trajectory([frame])
 
         # Should not raise; the degenerate vector is simply skipped
         s2_map = compute_s2_from_trajectory(ensemble)
@@ -875,8 +878,9 @@ class TestCLITrajectoryCommands:
         cli_module.ensemble = None
         process_commands(["load", "trajectory"])
 
-        out = capsys.readouterr().out
-        assert "Error" in out
+        outerr = capsys.readouterr()
+        # argparse prints to stderr by default
+        assert "error" in outerr.err.lower() or "Error" in outerr.out
 
     def test_ensemble_unknown_subcommand_prints_error(self, tmp_path, capsys):
         """
@@ -899,8 +903,9 @@ class TestCLITrajectoryCommands:
             ]
         )
 
-        out = capsys.readouterr().out
-        assert "Unknown ensemble subcommand" in out
+        outerr = capsys.readouterr()
+        # argparse prints invalid choice errors to stderr
+        assert "invalid choice" in outerr.err.lower() or "Unknown ensemble subcommand" in outerr.out
 
     def test_load_trajectory_and_noes(self, tmp_path, capsys):
         """

@@ -1,5 +1,5 @@
 import logging
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import biotite.structure as struc
 import numpy as np
@@ -29,11 +29,12 @@ def create_dummy_atom_array(n_atoms=10):
 
 def test_trajectory_ensemble_basics():
     frames = [create_dummy_atom_array() for _ in range(5)]
-    ensemble = TrajectoryEnsemble(frames)
+    ensemble = load_trajectory(frames)
 
     assert len(ensemble) == 5
-    assert ensemble[0] is frames[0]
-    assert ensemble[1:3].frames == frames[1:3]
+    # Accessing by index returns a frame view (AtomArray)
+    assert np.allclose(ensemble[0].coord, frames[0].coord)
+    assert len(ensemble[1:3]) == 2
 
     # Test iterator
     count = 0
@@ -44,13 +45,7 @@ def test_trajectory_ensemble_basics():
 
 def test_trajectory_ensemble_errors():
     with pytest.raises(ValueError):
-        TrajectoryEnsemble([])
-
-    # This might not raise on init if validation is in post_init but weak
-    # Let's check if it validates atom counts
-    # Based on code: it doesn't seem to validate atom counts in init,
-    # but let's check line 151/158.
-    pass
+        load_trajectory([])
 
 
 def test_load_trajectory_list():
@@ -113,6 +108,15 @@ def test_compute_s2_from_trajectory():
     s2_map = compute_s2_from_trajectory(ensemble)
     assert 1 in s2_map
     assert 0 <= s2_map[1] <= 1.0
+
+
+def test_load_trajectory_missing_topology_error():
+    # Mock mdtraj so it appears to be installed
+    mock_mdtraj = MagicMock()
+    with patch.dict("sys.modules", {"mdtraj": mock_mdtraj}):
+        with pytest.raises(ValueError) as excinfo:
+            load_trajectory("some_file.xtc", topology=None)
+        assert "A topology file path must be provided" in str(excinfo.value)
 
 
 def test_load_trajectory_invalid_type():

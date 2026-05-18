@@ -307,11 +307,20 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
                 # Add secondary structure offset to the random coil baseline
                 val = _apply_secondary_structure_offsets(atom_type, ss_state, base_val)
 
-                # Add ring current shift for protons
-                if rings.size > 0 and atom_type.startswith("H"):
+                # Add ring current shift
+                # EDUCATIONAL NOTE - Ring Currents for Carbons:
+                # While most prominent for protons due to their proximity to the ring plane,
+                # ring currents also affect Carbon shifts (CA, CB). The magnitude is
+                # typically smaller in ppm than for protons.
+                is_proton = atom_type.startswith("H")
+                is_carbon = atom_type in ["CA", "CB"]
+
+                if rings.size > 0 and (is_proton or is_carbon):
                     try:
                         target_atom = res_atoms[res_atoms.atom_name == atom_type][0]
-                        rc_shift = _calculate_ring_current_shift(target_atom.coord, rings)
+                        # We pass a flag or different B-factor for Carbon
+                        b_factor = 11.0 if is_proton else 2.0
+                        rc_shift = _calculate_ring_current_shift(target_atom.coord, rings, b_factor)
                         val += rc_shift
                     except IndexError:
                         # Atom not found in this specific residue, skip ring current
@@ -496,7 +505,9 @@ def _get_aromatic_rings(structure: struc.AtomArray) -> np.ndarray:
 
 
 @njit
-def _calculate_ring_current_shift(proton_coord: np.ndarray, rings: np.ndarray) -> float:
+def _calculate_ring_current_shift(
+    proton_coord: np.ndarray, rings: np.ndarray, b_factor: float = 11.0
+) -> float:
     """
     Calculate total ring current shift for a proton from all rings.
     'rings' is a numpy array of shape (N, 7): [cx, cy, cz, nx, ny, nz, intensity]
@@ -507,7 +518,6 @@ def _calculate_ring_current_shift(proton_coord: np.ndarray, rings: np.ndarray) -
     # experimental data or theoretical calculations for a reference aromatic system.
     # It converts the dimensionless geometric factor and intensity into ppm.
     # Typical values range from 8 to 15 ppm*A^3.
-    B_FACTOR = 11.0  # Empirical scaling factor (ppm * A^3)
 
     for j in range(rings.shape[0]):
         center = rings[j, 0:3]
@@ -529,7 +539,7 @@ def _calculate_ring_current_shift(proton_coord: np.ndarray, rings: np.ndarray) -
         # If theta = 90 (in plane), cos=0 -> (1-0)/r^3 =  1/r^3 (Deshielding)
         geom_factor = (1.0 - 3.0 * costheta**2) / (r**3)
 
-        shift = intensity * B_FACTOR * geom_factor
+        shift = intensity * b_factor * geom_factor
 
         total_shift += shift
 

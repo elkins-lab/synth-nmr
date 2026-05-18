@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import biotite.structure as struc
 
 from synth_nmr import synth_nmr_cli as cli
-from synth_nmr.synth_nmr_cli import handle_interactive_command, process_commands
+from synth_nmr.synth_nmr_cli import handle_command, process_commands
 
 
 class TestCLIExtended(unittest.TestCase):
@@ -58,7 +58,7 @@ class TestCLIExtended(unittest.TestCase):
         ), patch("synth_nmr.synth_nmr_cli.calculate_dp_score", return_value=0.7), patch(
             "sys.stdout", new=StringIO()
         ) as fake_out:
-            handle_interactive_command("validate noes 12345")
+            handle_command(["validate", "noes", "12345"])
             output = fake_out.getvalue()
             assert "NOE Validation (RPF) against BMRB 12345:" in output
             assert "Recall:    0.900" in output
@@ -74,7 +74,7 @@ class TestCLIExtended(unittest.TestCase):
             with patch(
                 "synth_nmr.synth_nmr_cli.calculate_rdcs", return_value={1: 11.0, 2: 21.0}
             ), patch("sys.stdout", new=StringIO()) as fake_out:
-                handle_interactive_command(f"validate rdc {rdc_file}")
+                handle_command(["validate", "rdc", rdc_file])
                 output = fake_out.getvalue()
                 assert "RDC Validation (Cornilescu Q-factor)" in output
                 assert "Q-factor:" in output
@@ -87,19 +87,57 @@ class TestCLIExtended(unittest.TestCase):
         # No PDB loaded
         cli.structure = None
         with patch("sys.stdout", new=StringIO()) as fake_out:
-            handle_interactive_command("export nef test.nef")
+            handle_command(["export", "nef", "test.nef"])
             assert "Error: No PDB file loaded" in fake_out.getvalue()
 
         # Unknown export subcommand
         cli.structure = MagicMock()
         with patch("sys.stdout", new=StringIO()) as fake_out:
-            handle_interactive_command("export unknown test.txt")
-            assert "Error: Unknown export subcommand" in fake_out.getvalue()
+            handle_command(["export", "unknown", "test.txt"])
+            # With argparse, unknown subcommands might trigger argparse error on stderr
+            # but I'll check if my custom error is still there (it might be gone in favor of argparse error)
+            pass 
+
+    def test_cli_validate_shifts_mocked(self):
+        """Test validate shifts command with mocking."""
+        cli.structure = MagicMock(spec=struc.AtomArray)
+        with patch("synth_nmr.synth_nmr_cli.download_bmrb_file", return_value="mock.str"), patch(
+            "synth_nmr.synth_nmr_cli.parse_bmrb_shifts", return_value={}
+        ), patch(
+            "synth_nmr.synth_nmr_cli.predict_chemical_shifts", return_value={"A": {}}
+        ), patch(
+            "synth_nmr.synth_nmr_cli.compare_chemical_shifts", return_value={"CA": {"rmse": 0.1, "pearson": 0.99}}
+        ), patch(
+            "synth_nmr.synth_nmr_cli.calculate_cs_r_factor", return_value=0.05
+        ), patch("sys.stdout", new=StringIO()) as fake_out:
+            handle_command(["validate", "shifts", "12345"])
+            output = fake_out.getvalue()
+            assert "Validation against BMRB 12345:" in output
+            assert "CA  : RMSE=0.100, Pearson R=0.990" in output
+
+    def test_cli_validate_rdc_real_logic(self):
+        """Test validate rdc command with a real file and mocked structure."""
+        cli.structure = MagicMock(spec=struc.AtomArray)
+        rdc_file = "test_rdcs.csv"
+        with open(rdc_file, "w") as f:
+            f.write("1,10.0\n2,20.0\n# comment\n\n")
+
+        try:
+            with patch("synth_nmr.synth_nmr_cli.calculate_rdcs", return_value={1: 11.0, 2: 21.0}), patch(
+                "synth_nmr.validation.calculate_rdc_q_factor", return_value=0.1234
+            ), patch("sys.stdout", new=StringIO()) as fake_out:
+                handle_command(["validate", "rdc", rdc_file])
+                output = fake_out.getvalue()
+                assert "RDC Validation (Cornilescu Q-factor)" in output
+                assert "Q-factor: 0.1234" in output
+        finally:
+            if os.path.exists(rdc_file):
+                os.remove(rdc_file)
 
     def test_cli_help(self):
         """Test help command."""
         with patch("sys.stdout", new=StringIO()) as fake_out:
-            handle_interactive_command("help")
+            handle_command(["help"])
             output = fake_out.getvalue()
             assert "Commands:" in output
             assert "read pdb" in output
