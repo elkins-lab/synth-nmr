@@ -350,6 +350,7 @@ def handle_command(args: List[str]) -> bool:
                     print(f"Error: File not found: {filename}")
                     return True
                 from synth_nmr.validation import calculate_rdc_q_factor
+
                 exp_rdcs = {}
                 with open(filename) as f:
                     for line in f:
@@ -380,13 +381,30 @@ def handle_command(args: List[str]) -> bool:
             sub = parsed_args.subcommand
             if sub == "nef":
                 from synth_nmr.nef_io import write_nef_file
+
                 filename = parsed_args.filename
                 _, _, res_names, _ = get_residue_info(structure)
                 map3to1 = {
-                    "ALA": "A", "CYS": "C", "ASP": "D", "GLU": "E", "PHE": "F",
-                    "GLY": "G", "HIS": "H", "ILE": "I", "LYS": "K", "LEU": "L",
-                    "MET": "M", "ASN": "N", "PRO": "P", "GLN": "Q", "ARG": "R",
-                    "SER": "S", "THR": "T", "VAL": "V", "TRP": "W", "TYR": "Y",
+                    "ALA": "A",
+                    "CYS": "C",
+                    "ASP": "D",
+                    "GLU": "E",
+                    "PHE": "F",
+                    "GLY": "G",
+                    "HIS": "H",
+                    "ILE": "I",
+                    "LYS": "K",
+                    "LEU": "L",
+                    "MET": "M",
+                    "ASN": "N",
+                    "PRO": "P",
+                    "GLN": "Q",
+                    "ARG": "R",
+                    "SER": "S",
+                    "THR": "T",
+                    "VAL": "V",
+                    "TRP": "W",
+                    "TYR": "Y",
                 }
                 seq = "".join([map3to1.get(n, "X") for n in res_names])
                 noes = calculate_synthetic_noes(structure, cutoff=5.0)

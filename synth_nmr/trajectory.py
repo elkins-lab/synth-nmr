@@ -80,7 +80,7 @@ References:
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, Iterator, Tuple
 
 import biotite.structure as struc
@@ -149,24 +149,24 @@ class TrajectoryEnsemble:
     stack: struc.AtomArrayStack
 
     # ── Educational Note: The Advantage of AtomArrayStack ────────────────────
-    # In earlier versions of synth-nmr, a TrajectoryEnsemble was stored as a 
-    # simple Python list of AtomArray objects. While intuitive, this had 
+    # In earlier versions of synth-nmr, a TrajectoryEnsemble was stored as a
+    # simple Python list of AtomArray objects. While intuitive, this had
     # two major drawbacks:
     #
-    # 1. Memory Overhead: Each AtomArray stores its own copy of the topology 
-    #    (atom names, residue IDs, chain IDs, elements). In a 100,000 frame 
-    #    trajectory, this is 100,000 redundant copies of the same strings and 
+    # 1. Memory Overhead: Each AtomArray stores its own copy of the topology
+    #    (atom names, residue IDs, chain IDs, elements). In a 100,000 frame
+    #    trajectory, this is 100,000 redundant copies of the same strings and
     #    integers.
     #
-    # 2. Performance Bottleneck: To calculate an ensemble average, we had to 
-    #    loop over the list in Python, extract coordinates, and perform 
-    #    arithmetic. This "for-loop" in Python is orders of magnitude slower 
+    # 2. Performance Bottleneck: To calculate an ensemble average, we had to
+    #    loop over the list in Python, extract coordinates, and perform
+    #    arithmetic. This "for-loop" in Python is orders of magnitude slower
     #    than optimized C or Fortran code.
     #
     # By switching to biotite.structure.AtomArrayStack, we solve both:
     # - Topology is stored ONCE for all frames (Global arrays).
     # - Coordinates are stored in a single 3D NumPy array (frames, atoms, 3).
-    # - We can use NumPy vectorization to perform math across all frames 
+    # - We can use NumPy vectorization to perform math across all frames
     #   at once (e.g., np.mean(stack.coord, axis=0)).
     # ─────────────────────────────────────────────────────────────────────────
 
@@ -303,9 +303,7 @@ def load_trajectory(
             )
         mdtraj_traj = mdtraj.load(source, top=topology, stride=stride)
         stack = _mdtraj_to_stack(mdtraj_traj)
-        logger.info(
-            f"load_trajectory: loaded {stack.stack_depth()} frames from '{source}'."
-        )
+        logger.info(f"load_trajectory: loaded {stack.stack_depth()} frames from '{source}'.")
         return TrajectoryEnsemble(stack=stack)
 
     # Check if source is an MDTraj Trajectory object (without hard-importing mdtraj)
@@ -440,8 +438,8 @@ def ensemble_average_shifts(
     # Step 1: Collect all (res_id, atom_name) pairs that appear in EVERY frame.
     # We build a set of keys present in each frame and intersect.
     #
-    # Implementation note: we use a dictionary to accumulate values for each 
-    # nucleus. We only average those that are consistently present across 
+    # Implementation note: we use a dictionary to accumulate values for each
+    # nucleus. We only average those that are consistently present across
     # all frames to avoid introducing statistical bias from missing data.
 
     # {(res_id, atom_name): list of float}
@@ -466,8 +464,8 @@ def ensemble_average_shifts(
             # Present in every frame → include in average
             if res_id not in result:
                 result[res_id] = {}
-            # Use vectorized NumPy mean for efficiency. Even though we are 
-            # iterating in Python, NumPy handles the numerical sum/division 
+            # Use vectorized NumPy mean for efficiency. Even though we are
+            # iterating in Python, NumPy handles the numerical sum/division
             # in optimized C code.
             result[res_id][atom_name] = float(np.mean(np.array(values, dtype=np.float64)))
         else:
@@ -620,7 +618,7 @@ def ensemble_average_rdcs(
     RDCs depend linearly on the order parameters of the alignment tensor.
     As long as the protein structure undergoes small-amplitude fluctuations
     around a mean state, and the alignment tensor remains constant (or also
-    averages), the observed coupling is the direct average of the 
+    averages), the observed coupling is the direct average of the
     instantaneous values.
 
     Parameters
@@ -768,7 +766,7 @@ def compute_s2_from_trajectory(
     # Instead of looping over frames and residues in Python, we perform
     # high-dimensional NumPy operations. For a 10,000 frame trajectory,
     # this is typically 100x faster.
-    
+
     # stack.coord has shape (frames, atoms, 3)
     # Extract coordinates for all matched N and H atoms across all frames
     # Shape: (frames, pairs, 3)
@@ -785,10 +783,10 @@ def compute_s2_from_trajectory(
 
     # PHYSICS VALIDATION: Skip residues where ANY frame has a zero-length vector
     # (norm < 1e-9). These are degenerate geometries where the N and H are
-    # placed at the same position. In such cases, the bond vector is 
+    # placed at the same position. In such cases, the bond vector is
     # undefined, and normalising it would produce NaNs.
     valid_pair_mask = np.all(norms > 1e-9, axis=0)
-    
+
     if not np.any(valid_pair_mask):
         logger.warning("compute_s2_from_trajectory: all N-H pairs have degenerate geometry.")
         return {}
@@ -811,7 +809,7 @@ def compute_s2_from_trajectory(
     # S² = <μ_x>² + <μ_y>² + <μ_z>²
     # Shape: (pairs,)
     s2_values = np.sum(mu_mean**2, axis=1)
-    
+
     # Clamp to [0, 1] to prevent floating point noise from exceeding 1.0
     s2_values = np.clip(s2_values, 0.0, 1.0)
 
@@ -838,13 +836,13 @@ def ensemble_average_j_couplings(
 
     PHYSICS — Fast-exchange averaging of J-couplings:
     ================================================
-    Scalar couplings (J-couplings) arise from the mediated interaction 
-    between nuclear spins via the bonding electrons. The observed coupling 
+    Scalar couplings (J-couplings) arise from the mediated interaction
+    between nuclear spins via the bonding electrons. The observed coupling
     is extremely sensitive to the local dihedral angles (Karplus relationship).
 
-    In the fast-exchange limit (where the timescale of conformational 
-    transitions is faster than the reciprocal of the coupling difference), 
-    the observed J-coupling is the simple arithmetic mean of the 
+    In the fast-exchange limit (where the timescale of conformational
+    transitions is faster than the reciprocal of the coupling difference),
+    the observed J-coupling is the simple arithmetic mean of the
     instantaneous values:
 
         J_obs = <J(theta(t))>_t = (1/N) Σ J(theta_i)
@@ -855,10 +853,10 @@ def ensemble_average_j_couplings(
 
     Importance of Rotameric Averaging:
     ==================================
-    Side-chain couplings (Ha-Hb, C'-Cg) depend on the chi1 angle. In solution, 
+    Side-chain couplings (Ha-Hb, C'-Cg) depend on the chi1 angle. In solution,
     side-chains often jump between staggered rotamers (e.g., -60, 180, +60).
-    The spectrometer does not see separate peaks for each rotamer; it sees 
-    a single peak at the weighted average position. This averaging 
+    The spectrometer does not see separate peaks for each rotamer; it sees
+    a single peak at the weighted average position. This averaging
     correctly accounts for the populations of different rotameric states.
 
     Parameters
@@ -878,8 +876,8 @@ def ensemble_average_j_couplings(
 
     # Accumulate J-coupling values across the ensemble.
     # We use a tuple (chain_id, res_id) as the key for precise tracking.
-    # PHYSICS NOTE: J-couplings are typically positive for 3-bond HN-HA 
-    # interactions, but can be negative in other cases. The arithmetic 
+    # PHYSICS NOTE: J-couplings are typically positive for 3-bond HN-HA
+    # interactions, but can be negative in other cases. The arithmetic
     # mean preserves the correct physical average.
     accumulator: dict[tuple[str, int], list[float]] = {}
 

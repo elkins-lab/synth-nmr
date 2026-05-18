@@ -96,20 +96,19 @@ class TestCLIExtended(unittest.TestCase):
             handle_command(["export", "unknown", "test.txt"])
             # With argparse, unknown subcommands might trigger argparse error on stderr
             # but I'll check if my custom error is still there (it might be gone in favor of argparse error)
-            pass 
+            pass
 
     def test_cli_validate_shifts_mocked(self):
         """Test validate shifts command with mocking."""
         cli.structure = MagicMock(spec=struc.AtomArray)
         with patch("synth_nmr.synth_nmr_cli.download_bmrb_file", return_value="mock.str"), patch(
             "synth_nmr.synth_nmr_cli.parse_bmrb_shifts", return_value={}
-        ), patch(
-            "synth_nmr.synth_nmr_cli.predict_chemical_shifts", return_value={"A": {}}
-        ), patch(
-            "synth_nmr.synth_nmr_cli.compare_chemical_shifts", return_value={"CA": {"rmse": 0.1, "pearson": 0.99}}
-        ), patch(
-            "synth_nmr.synth_nmr_cli.calculate_cs_r_factor", return_value=0.05
-        ), patch("sys.stdout", new=StringIO()) as fake_out:
+        ), patch("synth_nmr.synth_nmr_cli.predict_chemical_shifts", return_value={"A": {}}), patch(
+            "synth_nmr.synth_nmr_cli.compare_chemical_shifts",
+            return_value={"CA": {"rmse": 0.1, "pearson": 0.99}},
+        ), patch("synth_nmr.synth_nmr_cli.calculate_cs_r_factor", return_value=0.05), patch(
+            "sys.stdout", new=StringIO()
+        ) as fake_out:
             handle_command(["validate", "shifts", "12345"])
             output = fake_out.getvalue()
             assert "Validation against BMRB 12345:" in output
@@ -123,9 +122,11 @@ class TestCLIExtended(unittest.TestCase):
             f.write("1,10.0\n2,20.0\n# comment\n\n")
 
         try:
-            with patch("synth_nmr.synth_nmr_cli.calculate_rdcs", return_value={1: 11.0, 2: 21.0}), patch(
-                "synth_nmr.validation.calculate_rdc_q_factor", return_value=0.1234
-            ), patch("sys.stdout", new=StringIO()) as fake_out:
+            with patch(
+                "synth_nmr.synth_nmr_cli.calculate_rdcs", return_value={1: 11.0, 2: 21.0}
+            ), patch("synth_nmr.validation.calculate_rdc_q_factor", return_value=0.1234), patch(
+                "sys.stdout", new=StringIO()
+            ) as fake_out:
                 handle_command(["validate", "rdc", rdc_file])
                 output = fake_out.getvalue()
                 assert "RDC Validation (Cornilescu Q-factor)" in output
