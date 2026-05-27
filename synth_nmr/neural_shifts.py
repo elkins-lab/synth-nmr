@@ -126,7 +126,7 @@ USAGE
 
 import logging
 import os
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, cast
 
 import numpy as np
 
@@ -230,11 +230,11 @@ def build_residue_features(structure: Any) -> np.ndarray:
 
     # Pad/trim to match n_res exactly
     def _pad(arr: Any, length: int) -> np.ndarray:
-        arr = np.asarray(arr, dtype=np.float32)
-        if len(arr) == length:
-            return arr
+        arr_np: np.ndarray = np.asarray(arr, dtype=np.float32)
+        if len(arr_np) == length:
+            return arr_np
         out = np.zeros(length, dtype=np.float32)
-        out[: min(len(arr), length)] = arr[: min(len(arr), length)]
+        out[: min(len(arr_np), length)] = arr_np[: min(len(arr_np), length)]
         return out
 
     phi_angles = _pad(phi_angles, n_res)
@@ -318,7 +318,7 @@ def build_residue_features(structure: Any) -> np.ndarray:
 
         assert col == N_FEATURES, f"Feature column count mismatch: {col} != {N_FEATURES}"
 
-    return X
+    return cast(np.ndarray, X)
 
 
 def build_graph_data(structure: Any) -> Any:

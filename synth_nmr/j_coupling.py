@@ -108,7 +108,7 @@ def calculate_hn_ha_coupling_from_phi(phi_degrees: np.ndarray) -> np.ndarray:
         + (KARPLUS_PARAMS["B"] * cos_theta)
         + KARPLUS_PARAMS["C"]
     )
-    return j_vals
+    return np.asarray(j_vals, dtype=np.float64)
 
 
 def predict_couplings_from_phi_map(phi_map: Dict[int, float]) -> Dict[int, float]:

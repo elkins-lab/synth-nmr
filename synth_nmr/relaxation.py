@@ -184,7 +184,7 @@ def _calculate_csa_constant(csa_n: float, omega_n: float) -> float:
     with magnetic field strength. At high fields (>800 MHz), CSA becomes dominant over Dipolar.
     """
     csa_const = (csa_n * omega_n) / np.sqrt(3)
-    return csa_const**2
+    return float(csa_const**2)
 
 
 def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:

@@ -180,7 +180,7 @@ class TrajectoryEnsemble:
 
     def __len__(self) -> int:
         """Return the number of frames in the ensemble."""
-        return self.stack.stack_depth()
+        return int(self.stack.stack_depth())
 
     def __getitem__(self, index: int | slice) -> struc.AtomArray | TrajectoryEnsemble:
         """
