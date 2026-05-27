@@ -78,9 +78,7 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[tool.black]
-line-length = 100
-target-version = ['py38']
+# formatting handled by ruff format (see [tool.ruff.format] above)
 
 [tool.ruff]
 line-length = 100
@@ -101,41 +99,38 @@ ignore = [
     "PTH",   # Use pathlib (out of scope for initial integration)
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # re-exports are intentional
+"tests/*" = ["N", "B"]   # naming/bugbear not enforced in tests
+
 [tool.ruff.lint.isort]
 known-first-party = ["synth_nmr"]
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
 disallow_untyped_defs = true
-explicit_package_bases = true
-exclude = [
-    "build/",
-    "dist/",
-    "scratch/"
-]
+check_untyped_defs = true
+strict_equality = true
+exclude = ["build/", "dist/", "scratch/", "site/"]
 
 [[tool.mypy.overrides]]
-module = ["tests.*", "scripts.*", "scratch.*"]
+module = ["tests.*", "scripts.*", "examples.*", "scratch.*"]
 disallow_untyped_defs = false
 
 [[tool.mypy.overrides]]
 module = [
     "biotite.*",
     "numba.*",
+    "numpy.*",
     "torch.*",
     "torch_geometric.*",
     "sklearn.*",
     "scipy.*",
-    "mdtraj.*"
+    "mdtraj.*",
 ]
 ignore_missing_imports = true
 
-[tool.pyright]
-include = ["synth_nmr"]
-venvPath = "."
-venv = "venv"
-pythonVersion = "3.12"
-typeCheckingMode = "basic"
-reportMissingImports = true
-reportMissingTypeStubs = false
+# pyright config removed — mypy is the primary type checker for this project
 

@@ -257,8 +257,13 @@ MIT License - see LICENSE file for details
 
 ## Related Projects
 
-- [synth-pdb](https://github.com/elkins/synth-pdb) - Synthetic protein structure generation
-- [Biotite](https://www.biotite-python.org/) - Computational biology toolkit
+- [synth-pdb](https://github.com/elkins/synth-pdb) — Core synthetic protein structure generator
+- [synth-saxs](https://github.com/elkins/synth-saxs) — SAXS profile simulator (use with synth-dynamics ensembles)
+- [synth-cryo-em](https://github.com/elkins/synth-cryo-em) — Cryo-EM map simulator
+- [synth-dynamics](https://github.com/georgeelkins/synth-dynamics) — ANM/Langevin dynamics for NMR ensemble averaging
+- [diff-biophys](https://github.com/elkins/diff-biophys) — Differentiable JAX versions of all NMR kernels
+- [diff-ensemble](https://github.com/elkins/diff-ensemble) — IDP structural ensemble prediction with NMR restraints
+- [Biotite](https://www.biotite-python.org/) — Computational biology toolkit
 
 ## References
 
