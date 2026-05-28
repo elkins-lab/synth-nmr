@@ -1801,7 +1801,11 @@ It can also be downloaded from here: http://www.shiftx2.ca/download.html</p>
 <span class="normal"><a href="#__codelineno-0-718">718</a></span>
 <span class="normal"><a href="#__codelineno-0-719">719</a></span>
 <span class="normal"><a href="#__codelineno-0-720">720</a></span>
-<span class="normal"><a href="#__codelineno-0-721">721</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-571"><a id="__codelineno-0-571" name="__codelineno-0-571"></a><span class="k">class</span><span class="w"> </span><span class="nc">ShiftX2Predictor</span><span class="p">:</span>
+<span class="normal"><a href="#__codelineno-0-721">721</a></span>
+<span class="normal"><a href="#__codelineno-0-722">722</a></span>
+<span class="normal"><a href="#__codelineno-0-723">723</a></span>
+<span class="normal"><a href="#__codelineno-0-724">724</a></span>
+<span class="normal"><a href="#__codelineno-0-725">725</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-571"><a id="__codelineno-0-571" name="__codelineno-0-571"></a><span class="k">class</span><span class="w"> </span><span class="nc">ShiftX2Predictor</span><span class="p">:</span>
 </span><span id="__span-0-572"><a id="__codelineno-0-572" name="__codelineno-0-572"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="__span-0-573"><a id="__codelineno-0-573" name="__codelineno-0-573"></a><span class="sd">    Wrapper for the external ShiftX2 predictor.</span>
 </span><span id="__span-0-574"><a id="__codelineno-0-574" name="__codelineno-0-574"></a>
@@ -1941,17 +1945,21 @@ It can also be downloaded from here: http://www.shiftx2.ca/download.html</p>
 </span><span id="__span-0-708"><a id="__codelineno-0-708" name="__codelineno-0-708"></a>                    <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 </span><span id="__span-0-709"><a id="__codelineno-0-709" name="__codelineno-0-709"></a>
 </span><span id="__span-0-710"><a id="__codelineno-0-710" name="__codelineno-0-710"></a>                    <span class="c1"># Determine chain: use CHAIN column if present, else default &#39;A&#39;</span>
-</span><span id="__span-0-711"><a id="__codelineno-0-711" name="__codelineno-0-711"></a>                    <span class="n">chain_id</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="n">chain_col</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">if</span> <span class="n">chain_col</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">chain_col</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;A&quot;</span>
-</span><span id="__span-0-712"><a id="__codelineno-0-712" name="__codelineno-0-712"></a>
-</span><span id="__span-0-713"><a id="__codelineno-0-713" name="__codelineno-0-713"></a>                    <span class="k">if</span> <span class="n">chain_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shifts</span><span class="p">:</span>
-</span><span id="__span-0-714"><a id="__codelineno-0-714" name="__codelineno-0-714"></a>                        <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="__span-0-715"><a id="__codelineno-0-715" name="__codelineno-0-715"></a>                    <span class="k">if</span> <span class="n">res_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]:</span>
-</span><span id="__span-0-716"><a id="__codelineno-0-716" name="__codelineno-0-716"></a>                        <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="n">res_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-</span><span id="__span-0-717"><a id="__codelineno-0-717" name="__codelineno-0-717"></a>                    <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="n">res_id</span><span class="p">][</span><span class="n">atom_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-</span><span id="__span-0-718"><a id="__codelineno-0-718" name="__codelineno-0-718"></a>                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-</span><span id="__span-0-719"><a id="__codelineno-0-719" name="__codelineno-0-719"></a>                    <span class="k">continue</span>
-</span><span id="__span-0-720"><a id="__codelineno-0-720" name="__codelineno-0-720"></a>
-</span><span id="__span-0-721"><a id="__codelineno-0-721" name="__codelineno-0-721"></a>        <span class="k">return</span> <span class="n">shifts</span>
+</span><span id="__span-0-711"><a id="__codelineno-0-711" name="__codelineno-0-711"></a>                    <span class="n">chain_id</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="__span-0-712"><a id="__codelineno-0-712" name="__codelineno-0-712"></a>                        <span class="n">parts</span><span class="p">[</span><span class="n">chain_col</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="__span-0-713"><a id="__codelineno-0-713" name="__codelineno-0-713"></a>                        <span class="k">if</span> <span class="n">chain_col</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">chain_col</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+</span><span id="__span-0-714"><a id="__codelineno-0-714" name="__codelineno-0-714"></a>                        <span class="k">else</span> <span class="s2">&quot;A&quot;</span>
+</span><span id="__span-0-715"><a id="__codelineno-0-715" name="__codelineno-0-715"></a>                    <span class="p">)</span>
+</span><span id="__span-0-716"><a id="__codelineno-0-716" name="__codelineno-0-716"></a>
+</span><span id="__span-0-717"><a id="__codelineno-0-717" name="__codelineno-0-717"></a>                    <span class="k">if</span> <span class="n">chain_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shifts</span><span class="p">:</span>
+</span><span id="__span-0-718"><a id="__codelineno-0-718" name="__codelineno-0-718"></a>                        <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="__span-0-719"><a id="__codelineno-0-719" name="__codelineno-0-719"></a>                    <span class="k">if</span> <span class="n">res_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">]:</span>
+</span><span id="__span-0-720"><a id="__codelineno-0-720" name="__codelineno-0-720"></a>                        <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="n">res_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span id="__span-0-721"><a id="__codelineno-0-721" name="__codelineno-0-721"></a>                    <span class="n">shifts</span><span class="p">[</span><span class="n">chain_id</span><span class="p">][</span><span class="n">res_id</span><span class="p">][</span><span class="n">atom_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+</span><span id="__span-0-722"><a id="__codelineno-0-722" name="__codelineno-0-722"></a>                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span id="__span-0-723"><a id="__codelineno-0-723" name="__codelineno-0-723"></a>                    <span class="k">continue</span>
+</span><span id="__span-0-724"><a id="__codelineno-0-724" name="__codelineno-0-724"></a>
+</span><span id="__span-0-725"><a id="__codelineno-0-725" name="__codelineno-0-725"></a>        <span class="k">return</span> <span class="n">shifts</span>
 </span></code></pre></div></td></tr></table></div>
               </details>
 
