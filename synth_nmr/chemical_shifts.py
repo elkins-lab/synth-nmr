@@ -74,8 +74,8 @@ _NOISE_SCALE = 0.15
 # Reference: Case, D.A. (1995) Curr. Opin. Struct. Biol. 5, 272–276.
 #            Haigh, C.W. & Mallion, R.B. (1980) Prog. NMR Spectrosc. 13, 303–344.
 # Units: ppm·Å³
-RC_B_FACTOR_H: float = 11.0   # Proton ring-current scaling (literature range 8–15 ppm·Å³)
-RC_B_FACTOR_C: float = 2.0    # Carbon ring-current scaling (ca. 5–6× smaller than proton)
+RC_B_FACTOR_H: float = 11.0  # Proton ring-current scaling (literature range 8–15 ppm·Å³)
+RC_B_FACTOR_C: float = 2.0  # Carbon ring-current scaling (ca. 5–6× smaller than proton)
 
 
 # --- Secondary Structure Offsets (SPARTA+) ---
@@ -708,7 +708,11 @@ class ShiftX2Predictor:
                     val = float(parts[3])
 
                     # Determine chain: use CHAIN column if present, else default 'A'
-                    chain_id = parts[chain_col].strip() if chain_col >= 0 and chain_col < len(parts) else "A"
+                    chain_id = (
+                        parts[chain_col].strip()
+                        if chain_col >= 0 and chain_col < len(parts)
+                        else "A"
+                    )
 
                     if chain_id not in shifts:
                         shifts[chain_id] = {}

@@ -235,9 +235,7 @@ def calculate_cs_r_factor(
     from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
 
     # Pre-compute fallback: median random-coil value across all standard residues
-    _rc_vals = [
-        v[atom] for v in RANDOM_COIL_SHIFTS.values() if atom in v and v[atom] != 0.0
-    ]
+    _rc_vals = [v[atom] for v in RANDOM_COIL_SHIFTS.values() if atom in v and v[atom] != 0.0]
     _rc_fallback = float(np.median(_rc_vals)) if _rc_vals else 0.0
 
     diffs: List[float] = []
