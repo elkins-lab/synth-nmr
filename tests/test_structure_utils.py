@@ -29,14 +29,22 @@ class TestStructureUtils(unittest.TestCase):
         self.assertIn("coil", ss)
 
     def test_get_secondary_structure_left_handed_helix(self):
-        """Test the classification of left-handed alpha helices."""
-        # Create a mock structure with left-handed alpha helix geometry
+        """
+        Test the classification of left-handed alpha helices (αL).
+
+        αL conformations (positive φ) are structurally distinct from
+        canonical right-handed α-helices.  They almost exclusively occur
+        in Glycine residues and applying α-helix chemical shift offsets
+        to them would be physically incorrect.  The corrected code
+        classifies them as 'coil'.
+        """
+        # Create a mock structure with left-handed helix geometry
         structure = struc.AtomArray(3)
         structure.atom_name = np.array(["N", "CA", "C"])
         structure.res_id = np.array([1, 1, 1])
         structure.res_name = np.array(["ALA", "ALA", "ALA"])
 
-        # Mock the dihedral angles to represent a left-handed helix
+        # Mock the dihedral angles to represent a left-handed helix (positive φ)
         phi = np.deg2rad(np.array([60.0]))
         psi = np.deg2rad(np.array([-40.0]))
         omega = np.deg2rad(np.array([180.0]))
@@ -45,7 +53,8 @@ class TestStructureUtils(unittest.TestCase):
             "biotite.structure.dihedral_backbone", return_value=(phi, psi, omega)
         ):
             ss = get_secondary_structure(structure)
-            self.assertEqual(ss, ["alpha"])
+            # αL residues are now correctly classified as coil, not alpha.
+            self.assertEqual(ss, ["coil"])
 
     def test_smoothing(self):
         """Test the secondary structure smoothing logic."""

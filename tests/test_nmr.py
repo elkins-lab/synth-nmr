@@ -42,7 +42,7 @@ def test_calculate_synthetic_noes_normal_case(sample_structure):
     # Check the contents of the first restraint
     if len(restraints) > 0:
         restraint = restraints[0]
-        assert "index_1" in restraint
+        assert "seq_1" in restraint
         assert "res_name_1" in restraint
         assert "atom_name_1" in restraint
         assert "distance" in restraint
@@ -94,7 +94,7 @@ def test_exclude_intra_residue(sample_structure):
     # Verify that no intra-residue restraints are in the 'inter_restraints' list
     for restraint in inter_restraints:
         assert not (
-            restraint["index_1"] == restraint["index_2"]
+            restraint["seq_1"] == restraint["seq_2"]
             and restraint["chain_1"] == restraint["chain_2"]
         )
 
@@ -192,7 +192,7 @@ def test_calculate_synthetic_noes_geminal_exclusion():
         # Check if both atoms in the restraint are HBx protons of the same residue
         is_hb1 = restraint["atom_name_1"] in hb_atom_names
         is_hb2 = restraint["atom_name_2"] in hb_atom_names
-        is_same_res = (restraint["index_1"] == restraint["index_2"]) and (
+        is_same_res = (restraint["seq_1"] == restraint["seq_2"]) and (
             restraint["res_name_1"] == restraint["res_name_2"]
         )
 

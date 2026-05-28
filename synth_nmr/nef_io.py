@@ -94,8 +94,8 @@ def write_nef_file(
         # Naming is tricky (HB2 vs 2HB). We output what we have.
 
         row = f"      {idx} {idx} "
-        row += f"{r['chain_1']} {r['index_1']} {r['res_name_1']} {r['atom_name_1']} "
-        row += f"{r['chain_2']} {r['index_2']} {r['res_name_2']} {r['atom_name_2']} "
+        row += f"{r['chain_1']} {r['seq_1']} {r['res_name_1']} {r['atom_name_1']} "
+        row += f"{r['chain_2']} {r['seq_2']} {r['res_name_2']} {r['atom_name_2']} "
         row += f"{r['distance']:.3f} {r['upper_limit']:.3f} {r.get('lower_limit', 1.8):.3f} 1.0\n"
         nc += row
 

@@ -125,7 +125,7 @@ class TestCLICoverage(unittest.TestCase):
             # Now run ensemble subcommands via handle_command
             with patch(
                 "synth_nmr.nmr.calculate_synthetic_noes",
-                return_value=[{"index_1": 1, "index_2": 2, "distance": 3.0}],
+                return_value=[{"seq_1": 1, "seq_2": 2, "distance": 3.0}],
             ):
                 handle_command(["ensemble", "noes"])
 

@@ -196,6 +196,7 @@ def calculate_cs_r_factor(
     predicted: Dict[str, Dict[int, Dict[str, float]]],
     reference: Dict[str, Dict[int, Dict[str, float]]],
     atom: str = "CA",
+    res_name_map: Optional[Dict[int, str]] = None,
 ) -> float:
     """
     Calculate the Chemical Shift R-factor (Rcs).
@@ -203,20 +204,44 @@ def calculate_cs_r_factor(
     EDUCATIONAL BACKGROUND — Chemical Shift R-factors
     ───────────────────────────────────────────────────────────────────
     Inspired by X-ray Crystallography, the Rcs factor measures the
-    normalized agreement between predicted and experimental shifts.
+    normalised agreement between predicted and experimental shifts.
 
-    Unlike RMSE, which is in absolute units (ppm), the R-factor is
-    dimensionless, making it easier to compare the quality of different
-    atom types (e.g., comparing CA shifts to N shifts).
+    Unlike RMSE (which is in absolute ppm), the R-factor is dimensionless,
+    making it comparable across different atom types (CA vs. N vs. H).
 
-    Formula: Rcs = sum(|calc - exp|) / sum(|exp - random_coil|)
+    Correct formula (Wishart 1995 / SPARTA+ convention):
+        Rcs = Σ |δ_calc − δ_exp|  /  Σ |δ_exp − δ_rc|
 
-    A low Rcs (< 0.1) indicates excellent structural agreement.
+    where δ_rc is the per-residue *random-coil* baseline.  The denominator
+    is the total secondary shift amplitude in the reference data — normalising
+    by this quantity ensures Rcs ~ 1 for a random model and Rcs ~ 0 for a
+    perfect model.
+
+    NOTE: Correct normalisation requires knowing each residue's amino acid
+    type.  Supply ``res_name_map`` ({res_id: three_letter_code}) for full
+    accuracy.  When omitted the function falls back to using the mean
+    random-coil value across all 20 standard amino acids for the requested
+    atom type, which is a reasonable approximation for CA (mean ~ 56 ppm).
+
+    Args:
+        predicted:    {chain_id: {res_id: {atom_name: value}}}
+        reference:    {chain_id: {res_id: {atom_name: value}}}
+        atom:         Atom type to compare (default "CA").
+        res_name_map: Optional {res_id: three_letter_code} for exact RC lookup.
+
+    Returns:
+        Dimensionless R-factor.  Returns 0.0 if there is no overlapping data.
     """
-    # Simplified version: normalize by the range of observed shifts
-    # In practice, one would subtract random coil shifts (Wishart et al.)
-    diffs = []
-    baseline = []
+    from synth_nmr.chemical_shifts import RANDOM_COIL_SHIFTS
+
+    # Pre-compute fallback: median random-coil value across all standard residues
+    _rc_vals = [
+        v[atom] for v in RANDOM_COIL_SHIFTS.values() if atom in v and v[atom] != 0.0
+    ]
+    _rc_fallback = float(np.median(_rc_vals)) if _rc_vals else 0.0
+
+    diffs: List[float] = []
+    baseline: List[float] = []
 
     for chain_id, chain_data in predicted.items():
         if chain_id not in reference:
@@ -227,13 +252,36 @@ def calculate_cs_r_factor(
                 and atom in atoms
                 and atom in reference[chain_id][res_id]
             ):
-                diffs.append(abs(atoms[atom] - reference[chain_id][res_id][atom]))
-                baseline.append(abs(reference[chain_id][res_id][atom]))
+                exp_val = reference[chain_id][res_id][atom]
+                calc_val = atoms[atom]
+
+                # Numerator: |predicted − experimental|
+                diffs.append(abs(calc_val - exp_val))
+
+                # Denominator: |experimental − random_coil|
+                # Use per-residue RC value when res_name_map is provided.
+                if res_name_map is not None:
+                    res_name = res_name_map.get(res_id)
+                    rc_val = (
+                        RANDOM_COIL_SHIFTS.get(res_name, {}).get(atom, _rc_fallback)
+                        if res_name
+                        else _rc_fallback
+                    )
+                else:
+                    rc_val = _rc_fallback
+
+                baseline.append(abs(exp_val - rc_val))
 
     if not diffs:
         return 0.0
 
-    r_cs = np.sum(diffs) / np.sum(baseline)
+    denom = np.sum(baseline)
+    if denom == 0.0:
+        # Defensive: if all exp values equal their RC (perfectly random coil),
+        # the denominator is zero and Rcs is undefined — return 0.
+        return 0.0
+
+    r_cs = np.sum(diffs) / denom
     return round(float(r_cs), 4)
 
 

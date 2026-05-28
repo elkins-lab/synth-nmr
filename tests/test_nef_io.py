@@ -8,11 +8,11 @@ def test_write_nef_file_basic(tmp_path):
     restraints = [
         {
             "chain_1": "A",
-            "index_1": 1,
+            "seq_1": 1,
             "res_name_1": "GLY",
             "atom_name_1": "HA2",
             "chain_2": "A",
-            "index_2": 2,
+            "seq_2": 2,
             "res_name_2": "ALA",
             "atom_name_2": "HN",
             "distance": 3.5,

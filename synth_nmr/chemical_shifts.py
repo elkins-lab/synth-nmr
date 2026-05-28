@@ -63,8 +63,19 @@ RANDOM_COIL_SHIFTS: Dict[str, Dict[str, float]] = {
     "VAL": {"HA": 4.12, "CA": 62.2, "CB": 32.9, "C": 176.3, "N": 119.9, "H": 8.03},
 }
 
-# Module-level variable for noise scale, allowing easy monkeypatching in tests
+# Module-level variable for noise scale, allowing easy monkeypatching in tests.
+# Only used when add_noise=True is passed to predict_empirical_shifts.
 _NOISE_SCALE = 0.15
+
+# --- Ring Current B-factors ---
+# These empirical scaling constants convert the dimensionless geometric factor
+# (1 − 3cos²θ) / r³  into ppm.  They are derived by fitting to experimental
+# ring-current-shifted NMR data for aromatic rings in proteins.
+# Reference: Case, D.A. (1995) Curr. Opin. Struct. Biol. 5, 272–276.
+#            Haigh, C.W. & Mallion, R.B. (1980) Prog. NMR Spectrosc. 13, 303–344.
+# Units: ppm·Å³
+RC_B_FACTOR_H: float = 11.0   # Proton ring-current scaling (literature range 8–15 ppm·Å³)
+RC_B_FACTOR_C: float = 2.0    # Carbon ring-current scaling (ca. 5–6× smaller than proton)
 
 
 # --- Secondary Structure Offsets (SPARTA+) ---
@@ -218,7 +229,10 @@ def predict_chemical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, D
     return predict_empirical_shifts(structure)
 
 
-def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, Dict[str, float]]]:
+def predict_empirical_shifts(
+    structure: struc.AtomArray,
+    add_noise: bool = False,
+) -> Dict[str, Dict[int, Dict[str, float]]]:
     """
     Predict chemical shifts based on secondary structure and ring currents.
 
@@ -253,6 +267,13 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
     Raises:
         TypeError: If the input is not a biotite.structure.AtomArray.
         ValueError: If the input structure is empty.
+
+    LIMITATIONS:
+    - Noise: By default this function is *deterministic* (add_noise=False).
+      Pass add_noise=True to add small Gaussian noise (~0.15 ppm) to each
+      predicted shift, simulating experimental measurement error.  This is
+      useful for generating synthetic training data but should NOT be used
+      for validation or structure refinement, where reproducibility matters.
     """
     logger.info("Predicting chemical shifts (SPARTA+ model with ring currents)...")
 
@@ -318,8 +339,8 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
                 if rings.size > 0 and (is_proton or is_carbon):
                     try:
                         target_atom = res_atoms[res_atoms.atom_name == atom_type][0]
-                        # We pass a flag or different B-factor for Carbon
-                        b_factor = 11.0 if is_proton else 2.0
+                        # Use named module constants for B-factors (see RC_B_FACTOR_H/C).
+                        b_factor = RC_B_FACTOR_H if is_proton else RC_B_FACTOR_C
                         rc_shift = _calculate_ring_current_shift(target_atom.coord, rings, b_factor)
                         val += rc_shift
                     except IndexError:
@@ -329,10 +350,11 @@ def predict_empirical_shifts(structure: struc.AtomArray) -> Dict[str, Dict[int, 
                         )
                         pass
 
-                # Add small random noise for "realism" (0.1 - 0.3 ppm)
-                # Experimental assignments always have error/variation
-                noise = np.random.normal(0, _NOISE_SCALE) if base_val != 0 else 0
-                val += noise
+                # Optionally add Gaussian noise to simulate experimental scatter.
+                # Disabled by default to ensure reproducible predictions.
+                # Enable with add_noise=True when generating synthetic training data.
+                if add_noise and base_val != 0:
+                    val += np.random.normal(0, _NOISE_SCALE)
 
                 atom_shifts[atom_type] = round(val, 3)
 
@@ -646,11 +668,13 @@ class ShiftX2Predictor:
     def _parse_output(self, file_path: str) -> Dict[str, Dict[int, Dict[str, float]]]:
         """
         Parse ShiftX2's default output format.
-        Expects a tabular format with columns like: NUM, RES, ATOMNAME, SHIFT
+        Expects a CSV with columns: NUM, RES, ATOMNAME, SHIFT
+        or extended columns: NUM, RES, ATOMNAME, SHIFT, CHAIN
+
+        Supports multi-chain proteins by reading the CHAIN column when present.
+        Falls back to chain 'A' when the column is absent (single-chain output).
         """
-        shifts: Dict[str, Dict[int, Dict[str, float]]] = {
-            "A": {}
-        }  # Assuming single chain for simplicity
+        shifts: Dict[str, Dict[int, Dict[str, float]]] = {}
 
         if not os.path.exists(file_path):
             raise FileNotFoundError(f"ShiftX2 output file not found: {file_path}")
@@ -660,6 +684,7 @@ class ShiftX2Predictor:
 
         # Skip header lines (usually starts with 'NUM' or similar)
         header_found = False
+        chain_col: int = -1  # Index of CHAIN column, -1 means not present
         for line in lines:
             line = line.strip()
             if not line:
@@ -667,6 +692,10 @@ class ShiftX2Predictor:
 
             if "NUM" in line and "RES" in line:
                 header_found = True
+                # Detect whether a CHAIN column is present
+                header_parts = [p.strip().upper() for p in line.split(",")]
+                if "CHAIN" in header_parts:
+                    chain_col = header_parts.index("CHAIN")
                 continue
             if not header_found:
                 continue
@@ -675,13 +704,17 @@ class ShiftX2Predictor:
             if len(parts) >= 4:
                 try:
                     res_id = int(parts[0])
-                    # res_name = parts[1]
                     atom_name = parts[2]
                     val = float(parts[3])
 
-                    if res_id not in shifts["A"]:
-                        shifts["A"][res_id] = {}
-                    shifts["A"][res_id][atom_name] = val
+                    # Determine chain: use CHAIN column if present, else default 'A'
+                    chain_id = parts[chain_col].strip() if chain_col >= 0 and chain_col < len(parts) else "A"
+
+                    if chain_id not in shifts:
+                        shifts[chain_id] = {}
+                    if res_id not in shifts[chain_id]:
+                        shifts[chain_id][res_id] = {}
+                    shifts[chain_id][res_id][atom_name] = val
                 except ValueError:
                     continue
 

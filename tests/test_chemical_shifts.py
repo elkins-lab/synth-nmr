@@ -574,9 +574,9 @@ def test_shiftx2_parse_output_bad_format(tmp_path):
     fake_csv = tmp_path / "fake_output.cs"
     fake_csv.write_text("NUM, RES, ATOMNAME, SHIFT\n1, ALA, CA, NOT_A_FLOAT\n2, GLY, N")
 
-    # Should catch ValueError and `continue`, resulting in empty dict
+    # Should catch ValueError and `continue`, resulting in empty dict (no chains populated)
     shifts = predictor._parse_output(str(fake_csv))
-    assert shifts == {"A": {}}
+    assert shifts == {}
 
 
 def test_predict_empirical_shifts_wrong_type():

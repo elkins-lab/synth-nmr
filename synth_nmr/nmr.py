@@ -53,12 +53,18 @@ def calculate_synthetic_noes(
         exclude_intra_residue: If True, ignore NOEs within same residue.
 
     Returns:
-        List of restraint dictionaries, corrected to match documentation:
+        List of restraint dictionaries:
         {
-            'index_1': int, 'res_name_1': str, 'atom_name_1': str, 'chain_1': str,
-            'index_2': int, 'res_name_2': str, 'atom_name_2': str, 'chain_2': str,
-            'distance': float,
-            'upper_limit': float
+            'seq_1': int,          # Residue sequence number (res_id) of atom 1
+            'res_name_1': str,
+            'atom_name_1': str,
+            'chain_1': str,
+            'seq_2': int,          # Residue sequence number (res_id) of atom 2
+            'res_name_2': str,
+            'atom_name_2': str,
+            'chain_2': str,
+            'distance': float,     # in Angstroms
+            'upper_limit': float   # distance + buffer, in Angstroms
         }
 
     Raises:
@@ -150,11 +156,11 @@ def calculate_synthetic_noes(
                     continue
 
                 restraint = {
-                    "index_1": center.res_id,
+                    "seq_1": int(center.res_id),
                     "res_name_1": center.res_name,
                     "atom_name_1": center.atom_name,
                     "chain_1": center.chain_id,
-                    "index_2": neighbor.res_id,
+                    "seq_2": int(neighbor.res_id),
                     "res_name_2": neighbor.res_name,
                     "atom_name_2": neighbor.atom_name,
                     "chain_2": neighbor.chain_id,

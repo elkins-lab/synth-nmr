@@ -251,8 +251,8 @@ def handle_command(args: List[str]) -> bool:
                         noe_list = calculate_synthetic_noes(frame, cutoff=cutoff)
                         flat = {}
                         for restraint in noe_list:
-                            ri = int(restraint["index_1"])
-                            rj = int(restraint["index_2"])
+                            ri = int(restraint["seq_1"])
+                            rj = int(restraint["seq_2"])
                             dist = float(restraint["distance"])
                             flat[(ri, rj)] = dist
                         per_frame_n.append(flat)

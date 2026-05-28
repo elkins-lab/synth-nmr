@@ -22,8 +22,8 @@ def test_calculate_noes_simple_dimer():
     r = restraints[0]
     assert r["distance"] == 3.0
     assert r["upper_limit"] == 3.5  # buffer 0.5
-    assert r["index_1"] == 1
-    assert r["index_2"] == 2
+    assert r["seq_1"] == 1
+    assert r["seq_2"] == 2
 
 
 def test_calculate_noes_cutoff_exclusion():
@@ -46,11 +46,11 @@ def test_write_nef_structure(tmp_path):
     sequence = "AG"
     restraints = [
         {
-            "index_1": 1,
+            "seq_1": 1,
             "res_name_1": "ALA",
             "atom_name_1": "H",
             "chain_1": "A",
-            "index_2": 2,
+            "seq_2": 2,
             "res_name_2": "GLY",
             "atom_name_2": "H",
             "chain_2": "A",

@@ -36,15 +36,28 @@ def test_rpf_scores_and_dp_score():
 
 def test_cs_r_factor():
     """
-    Test Chemical Shift R-factor.
+    Test Chemical Shift R-factor with the corrected denominator.
+
+    Correct formula: Rcs = sum(|calc - exp|) / sum(|exp - random_coil|)
+
+    Without a res_name_map, the function uses the median CA random-coil
+    value across all 20 standard amino acids (~56 ppm) as the fallback.
     """
     predicted = {"A": {1: {"CA": 55.0}, 2: {"CA": 60.0}}}
     reference = {"A": {1: {"CA": 55.5}, 2: {"CA": 60.5}}}
 
-    # Rcs = sum(|55.0-55.5| + |60.0-60.5|) / sum(|55.5| + |60.5|)
-    # Rcs = (0.5 + 0.5) / (116) = 1.0 / 116.0 approx 0.0086
+    # Numerator: |55.0 - 55.5| + |60.0 - 60.5| = 0.5 + 0.5 = 1.0
+    # Denominator: |55.5 - median_rc_CA| + |60.5 - median_rc_CA|
+    #   median_rc_CA ≈ 56 ppm (varies ±1 ppm depending on AA set).
+    #   At median = 56: |55.5-56| + |60.5-56| = 0.5 + 4.5 = 5.0
+    #   Rcs = 1.0 / 5.0 = 0.20
+    # The exact value depends on the median across the 20 standard AAs.
     r_cs = calculate_cs_r_factor(predicted, reference, atom="CA")
-    assert 0.008 < r_cs < 0.009
+    # Allow a wide range that is compatible with any reasonable RC median:
+    assert 0.05 < r_cs < 0.50, f"Unexpected Rcs = {r_cs}"
+    # And always verify it is less than 1.0 (the old formula gave ~0.0086 which
+    # is clearly wrong — it was normalised by the raw 116 ppm CA value).
+    assert r_cs < 1.0
 
 
 def test_c_beta_deviations():

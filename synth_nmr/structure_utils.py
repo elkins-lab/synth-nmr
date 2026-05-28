@@ -115,10 +115,15 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
             # Beta-sheet / Extended region
             elif (-160 < p < -80) and (80 < s < 170):
                 ss_state = "beta"
-            # Broader helical region, including potential left-handed helices or
-            # alternative alpha-helical conformations sometimes produced by synthetic generators.
-            elif (0 < p < 150) and (-90 < s < -10):
-                ss_state = "alpha"
+            # NOTE: The positive-φ region (0° < φ < 150°, −90° < ψ < −10°)
+            # corresponds to the left-handed α-helix (αL).  These conformations
+            # are almost exclusively found in Glycine residues and are structurally
+            # distinct from canonical right-handed α-helices.  Applying α-helix
+            # chemical shift offsets (e.g., CA +3.1 ppm) to αL residues would
+            # be physically incorrect; they are treated as coil here.
+            # Reference: Richardson, D.C. & Richardson, J.S. (1989)
+            #   "Principles and patterns of protein conformation."
+            #   Prediction of Protein Structure and the Principles of Protein Conformation, 1-98.
 
         ss_list.append(ss_state)
 

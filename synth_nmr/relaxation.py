@@ -29,7 +29,11 @@ GAMMA_H = 267.522e6  # Proton gyromagnetic ratio (rad s^-1 T^-1)
 GAMMA_N = -27.126e6  # Nitrogen-15 gyromagnetic ratio (rad s^-1 T^-1)
 
 R_NH = 1.02e-10  # NH Bond length (meters) - standard value
-CSA_N = -160e-6  # Polimorphic 15N CSA (unitless, ppm) -160 to -170 typical
+# 15N Chemical Shift Anisotropy (Δσ).
+# The 15N CSA varies across residues (~−100 ppm in loops to ~−200 ppm in helices).
+# The commonly used fixed value of −160 ppm is a backbone-average approximation.
+# For residue-specific accuracy see: Loth, K. et al. (2005) J. Am. Chem. Soc. 127, 6062–6068.
+CSA_N = -160e-6  # Mean backbone 15N CSA (dimensionless, fraction; corresponds to -160 ppm)
 
 
 # --- Spectral Density Mapping and Theory ────────────────────────────
@@ -314,10 +318,9 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
             # Modulate by SASA (Must call helper for test mocking)
             s2 = _predict_s2_from_sasa(rel_sasa, base_s2)
 
-            # Add realistic noise
-            s2 += np.random.normal(0, 0.02)
-            s2 = np.clip(s2, 0.01, 0.98)
-            results[rid] = float(s2)
+            # Clamp to physically valid range [0, 1]
+            s2 = float(np.clip(s2, 0.01, 0.98))
+            results[rid] = s2
 
         logger.info(f"Successfully predicted S2 for {len(results)} residues.")
         return results
@@ -397,8 +400,14 @@ def calculate_relaxation_rates(
     active_res_ids = res_ids[valid_mask]
     active_s2 = s2_arr[valid_mask]
 
-    # Heuristic tau_f
-    tau_f_vals = (1.0 - active_s2) * 500e-12 + 50e-12
+    # Heuristic tau_f for extended model-free
+    # ─────────────────────────────────────────────────────────────────────
+    # The fast-limit model-free (tau_f = 0) is the standard single-field
+    # approach: spectral density = (2/5) * S² * τ_m / (1 + (ωτ_m)²).
+    # This avoids the unphysical assumption that tau_f scales inversely
+    # with S².  When tau_f is unknown, the fast-limit is the correct
+    # conservative choice (Lipari & Szabo, 1982).
+    tau_f_vals = np.zeros(len(active_res_ids), dtype=np.float64)
 
     results = {}
     for i in range(len(active_res_ids)):
