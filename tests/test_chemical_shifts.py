@@ -1,6 +1,9 @@
+import pathlib
+
 import biotite.structure as struc
 import numpy as np
 import pytest
+import pytest_mock
 
 from synth_nmr.chemical_shifts import (
     RANDOM_COIL_SHIFTS,
@@ -537,7 +540,13 @@ def test_shiftx2_predict_subprocess_error(mocker, tmp_path):
 
     predictor = ShiftX2Predictor()
     mocker.patch.object(predictor, "is_available", return_value=True)
-    mocker.patch("tempfile.TemporaryDirectory", return_value=tmp_path)
+    # TemporaryDirectory is used as a context manager in production code, so the
+    # mock must support __enter__/__exit__.  __enter__ returns the directory path
+    # as a string, matching what `with tempfile.TemporaryDirectory() as tmpdir` binds.
+    mock_tmpdir_cm = mocker.MagicMock()
+    mock_tmpdir_cm.__enter__ = mocker.Mock(return_value=str(tmp_path))
+    mock_tmpdir_cm.__exit__ = mocker.Mock(return_value=False)
+    mocker.patch("tempfile.TemporaryDirectory", return_value=mock_tmpdir_cm)
 
     # Fully mock PDBFile to bypass all biotite.structure.io.pdb logic
     mock_pdb_file = mocker.patch("synth_nmr.chemical_shifts.pdb.PDBFile")
@@ -781,3 +790,160 @@ def test_shiftx2_parse_output(tmp_path):
     assert shifts["A"][1]["CA"] == 50.5
     assert "CB" not in shifts["A"][1]
     assert shifts["A"][2]["CA"] == 45.0
+
+
+def test_predict_empirical_shifts_non_standard_residue(caplog: pytest.LogCaptureFixture) -> None:
+    """Test that non-standard residues are skipped."""
+    import logging
+
+    # Ensure debug logs are captured
+    caplog.set_level(logging.DEBUG)
+
+    structure = struc.AtomArray(2)
+    structure.res_name = np.array(["ALA", "MSE"])
+    structure.res_id = np.array([1, 2])
+    structure.chain_id = np.array(["A", "A"])
+    structure.atom_name = np.array(["CA", "CA"])
+    structure.coord = np.array([[0, 0, 0], [1, 1, 1]], dtype=np.float32)
+
+    shifts = predict_empirical_shifts(structure)
+
+    assert "A" in shifts
+    assert 1 in shifts["A"]
+    assert 2 not in shifts["A"]
+    assert "Skipping non-standard residue: MSE 2" in caplog.text
+
+
+def test_predict_empirical_shifts_with_noise() -> None:
+    """Test that noise is added when requested."""
+    # We need a standard residue to get a baseline
+    structure = struc.AtomArray(1)
+    structure.res_name = np.array(["ALA"])
+    structure.res_id = np.array([1])
+    structure.chain_id = np.array(["A"])
+    structure.atom_name = np.array(["CA"])
+    structure.coord = np.array([[0, 0, 0]], dtype=np.float32)
+
+    # Run multiple times to see variation if possible, but just checking it doesn't crash
+    # and returns a slightly different value than baseline would be better.
+    shifts_no_noise = predict_empirical_shifts(structure, add_noise=False)
+    shifts_with_noise = predict_empirical_shifts(structure, add_noise=True)
+
+    assert shifts_no_noise["A"][1]["CA"] != shifts_with_noise["A"][1]["CA"]
+
+
+def test_predict_empirical_shifts_ring_currents() -> None:
+    """Test ring current calculation for aromatic residues."""
+    # Create a structure with a PHE and another residue nearby
+    # PHE ring is a hexagon.
+    # CG at (0,0,0), then hexagon in XY plane.
+    atoms = []
+    # Res 1: PHE
+    ring_coords = {
+        "CG": [0.0, 0.0, 0.0],
+        "CD1": [1.4, 0.0, 0.0],
+        "CE1": [2.1, 1.2, 0.0],
+        "CZ": [1.4, 2.4, 0.0],
+        "CE2": [0.0, 2.4, 0.0],
+        "CD2": [-0.7, 1.2, 0.0],
+    }
+    for name, coord in ring_coords.items():
+        atoms.append(
+            struc.Atom(coord=coord, res_name="PHE", res_id=1, atom_name=name, chain_id="A")
+        )
+
+    # Backbones for PHE
+    for i, name in enumerate(["N", "CA", "C", "O", "CB"]):
+        atoms.append(
+            struc.Atom(
+                coord=[-1.0, -1.0, -float(i)],
+                res_name="PHE",
+                res_id=1,
+                atom_name=name,
+                chain_id="A",
+            )
+        )
+
+    # Res 2: ALA (the target of the ring current)
+    # Put it 2.0 A above the center of the ring [0.7, 1.2, 0.0]
+    atom_target = struc.Atom(
+        coord=[0.7, 1.2, 2.0], res_name="ALA", res_id=2, atom_name="CA", chain_id="A"
+    )
+    atoms.append(atom_target)
+
+    structure = struc.array(atoms)
+
+    # We need to ensure residues are correctly identified
+    # Biotite uses res_id AND res_name and sometimes chain_id to group residues.
+
+    shifts = predict_empirical_shifts(structure)
+    assert "A" in shifts
+    assert 2 in shifts["A"]
+    # CA of ALA should have a ring current contribution from PHE 1
+    assert "CA" in shifts["A"][2]
+
+
+def test_calculate_ring_current_shift_singularity() -> None:
+    """Test _calculate_ring_current_shift handles atoms too close to the ring."""
+    from synth_nmr.chemical_shifts import _calculate_ring_current_shift
+
+    # One ring at origin, normal along Z
+    rings = np.array([[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0]], dtype=np.float64)
+    # Proton at origin (exactly at center)
+    proton_coord = np.array([0.0, 0.0, 0.0], dtype=np.float32)
+
+    shift = _calculate_ring_current_shift(proton_coord, rings, 1.0)
+    assert shift == 0.0  # Should continue and return 0.0
+
+
+def test_shiftx2_resolve_path_env_var(mocker: pytest_mock.plugin.MockerFixture) -> None:
+    """Test ShiftX2 path resolution via SHIFTX2_DIR."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+
+    mocker.patch("shutil.which", side_effect=lambda x: x if "fake_dir" in x else None)
+    mocker.patch.dict("os.environ", {"SHIFTX2_DIR": "/fake_dir"})
+
+    predictor = ShiftX2Predictor(executable="my_shiftx2")
+    assert "/fake_dir/my_shiftx2" in predictor.executable
+
+
+def test_shiftx2_parse_output_with_chain(tmp_path: pathlib.Path) -> None:
+    """Test _parse_output with a CHAIN column."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+
+    predictor = ShiftX2Predictor()
+
+    fake_csv = tmp_path / "chain_output.cs"
+    fake_csv.write_text("NUM, RES, ATOMNAME, SHIFT, CHAIN\n1, ALA, CA, 52.5, B")
+
+    shifts = predictor._parse_output(str(fake_csv))
+    assert "B" in shifts
+    assert shifts["B"][1]["CA"] == 52.5
+
+
+def test_shiftx2_resolve_path_absolute(mocker: pytest_mock.plugin.MockerFixture) -> None:
+    """Test ShiftX2 path resolution with absolute path."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+
+    mocker.patch("shutil.which", return_value="/absolute/path/to/shiftx2")
+    predictor = ShiftX2Predictor(executable="/absolute/path/to/shiftx2")
+    assert predictor.executable == "/absolute/path/to/shiftx2"
+
+
+def test_shiftx2_resolve_path_typical_location(
+    mocker: pytest_mock.plugin.MockerFixture,
+) -> None:
+    """Test ShiftX2 path resolution in typical locations."""
+    from synth_nmr.chemical_shifts import ShiftX2Predictor
+
+    # Mock which to return None for everything except one typical location
+    def mock_which(path: str) -> str | None:
+        if "/opt/shiftx2/shiftx2.py" in path:
+            return "/opt/shiftx2/shiftx2.py"
+        return None
+
+    mocker.patch("shutil.which", side_effect=mock_which)
+    mocker.patch("os.environ.get", return_value=None)
+
+    predictor = ShiftX2Predictor()
+    assert predictor.executable == "/opt/shiftx2/shiftx2.py"
