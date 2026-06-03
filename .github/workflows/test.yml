@@ -6,42 +6,64 @@ on:
   pull_request:
     branches: [ "master", "main" ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        os: [ubuntu-latest, macos-latest]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        numpy-version: ["1.26.4", "2.2.6", "2.3.5"]
+        exclude:
+          # Python 3.11 and 3.12 are only tested with the stable 1.x branch (1.26.4)
+          # to reduce CI load. 3.13 and 3.14 track the modern NumPy 2.x releases.
+          - python-version: "3.11"
+            numpy-version: "2.2.6"
+          - python-version: "3.11"
+            numpy-version: "2.3.5"
+          - python-version: "3.12"
+            numpy-version: "2.2.6"
+          - python-version: "3.12"
+            numpy-version: "2.3.5"
+          # Skip oldest NumPy on newest Python versions
+          - python-version: "3.13"
+            numpy-version: "1.26.4"
+          - python-version: "3.14"
+            numpy-version: "1.26.4"
 
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        pip install "numpy==${{ matrix.numpy-version }}"
         pip install -e ".[dev]"
-        
+
     - name: Check code formatting (Ruff)
       run: |
         ruff format --check synth_nmr tests/
-        
+
     - name: Lint code (Ruff)
       run: |
         ruff check synth_nmr tests/
-        
+
     - name: Static type check (Mypy)
       run: |
         mypy synth_nmr
-        
+
     - name: Run tests (Pytest)
       run: |
         pytest tests/ -v
