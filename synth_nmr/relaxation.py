@@ -259,7 +259,22 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
 
         ss_list = get_secondary_structure(structure)
 
-        # Heuristic Max SASA per residue (Angstrom^2) for normalization
+        # Heuristic Max SASA per residue (Å²) used to compute relative solvent
+        # exposure: rel_sasa = total_residue_sasa / MAX_SASA, clamped to [0, 1].
+        #
+        # APPROXIMATION NOTICE — single constant for all residue types:
+        # The maximum possible SASA varies substantially with residue size:
+        #   Gly  ~  75 Å²,  Ala ~  92 Å²,  Val ~ 142 Å²,
+        #   Leu ~ 168 Å²,   Phe ~ 197 Å²,  Trp ~ 240 Å²
+        # (Miller et al., 1987, J. Mol. Biol. 196, 641-656)
+        #
+        # Using 150 Å² as a single backbone-average therefore introduces a
+        # systematic bias: small residues (Gly, Ala) score as "more buried"
+        # than they physically are (→ S² over-estimated), while large aromatic
+        # residues (Trp, Phe) score as "more exposed" (→ S² under-estimated).
+        # For applications requiring accurate per-residue dynamics, replace
+        # this constant with a residue-type lookup table derived from the
+        # Miller et al. (1987) extended-chain reference SASA values.
         MAX_SASA = 150.0
 
         # Calculate SASA for "Packing Awareness"
