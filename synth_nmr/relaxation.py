@@ -21,12 +21,12 @@ except ImportError:
 
 # --- Physical Constants for NMR Relaxation ---
 # SI Units used for internal calculation
-MU_0 = 4 * np.pi * 1e-7  # Vacuum permeability derived (T*m/A)
-H_PLANCK = 6.62607015e-34  # Planck constant (J*s)
-H_BAR = H_PLANCK / (2 * np.pi)
-
-GAMMA_H = 267.522e6  # Proton gyromagnetic ratio (rad s^-1 T^-1)
-GAMMA_N = -27.126e6  # Nitrogen-15 gyromagnetic ratio (rad s^-1 T^-1)
+from synth_core.constants import (
+    GAMMA_15N,
+    GAMMA_1H,
+    REDUCED_PLANCK_CONSTANT,
+    VACUUM_PERMEABILITY,
+)
 
 R_NH = 1.02e-10  # NH Bond length (meters) - standard value
 # 15N Chemical Shift Anisotropy (Δσ).
@@ -166,7 +166,7 @@ def _calculate_dipolar_constant(r_nh: float) -> float:
     This constant represents the strength of the magnetic interaction distance dependence (r^-3).
     In relaxation rate equations (R1, R2), it appears squared (d^2), leading to the famous r^-6 dependence.
     """
-    dd_const = (MU_0 / (4 * np.pi)) * H_BAR * GAMMA_H * GAMMA_N * (r_nh**-3)
+    dd_const = (VACUUM_PERMEABILITY / (4 * np.pi)) * REDUCED_PLANCK_CONSTANT * GAMMA_1H * GAMMA_15N * (r_nh**-3)
     return dd_const**2
 
 
@@ -386,8 +386,8 @@ def calculate_relaxation_rates(
     # Physical constants and frequencies
     tau_m = tau_m_ns * 1e-9
     omega_h = 2 * np.pi * field_mhz * 1e6
-    b0 = omega_h / GAMMA_H
-    omega_n = GAMMA_N * b0
+    b0 = omega_h / GAMMA_1H
+    omega_n = GAMMA_15N * b0
     d_sq = _calculate_dipolar_constant(R_NH)
     c_sq = _calculate_csa_constant(CSA_N, omega_n)
 
@@ -444,7 +444,7 @@ def calculate_relaxation_rates(
         ) * c_sq * (4 * j0 + 3 * jwn)
 
         if r1 != 0:
-            noe = 1.0 + (GAMMA_H / GAMMA_N) * 0.25 * d_sq * (6 * j_sum - j_diff) * (1.0 / r1)
+            noe = 1.0 + (GAMMA_1H / GAMMA_15N) * 0.25 * d_sq * (6 * j_sum - j_diff) * (1.0 / r1)
         else:
             noe = np.nan
             logger.warning(f"R1 value for residue {rid} is zero, NOE cannot be calculated.")
