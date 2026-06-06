@@ -6,8 +6,6 @@ on:
   pull_request:
     branches: ["master", "main"]
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 permissions:
   contents: read
@@ -66,6 +64,10 @@ jobs:
       run: |
         mypy synth_nmr
 
+
+    - name: Ensure Hugging Face cache directory exists
+      run: mkdir -p ~/.cache/huggingface
+      shell: bash
 
     - name: Cache Hugging Face models
       uses: actions/cache@v4
