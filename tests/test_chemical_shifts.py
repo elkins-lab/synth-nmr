@@ -898,13 +898,16 @@ def test_calculate_ring_current_shift_singularity() -> None:
 
 def test_shiftx2_resolve_path_env_var(mocker: pytest_mock.plugin.MockerFixture) -> None:
     """Test ShiftX2 path resolution via SHIFTX2_DIR."""
+    import os
+
     from synth_nmr.chemical_shifts import ShiftX2Predictor
 
     mocker.patch("shutil.which", side_effect=lambda x: x if "fake_dir" in x else None)
     mocker.patch.dict("os.environ", {"SHIFTX2_DIR": "/fake_dir"})
 
     predictor = ShiftX2Predictor(executable="my_shiftx2")
-    assert "/fake_dir/my_shiftx2" in predictor.executable
+    expected_path = os.path.join("/fake_dir", "my_shiftx2")
+    assert expected_path in predictor.executable
 
 
 def test_shiftx2_parse_output_with_chain(tmp_path: pathlib.Path) -> None:

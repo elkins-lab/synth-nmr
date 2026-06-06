@@ -76,9 +76,12 @@ class TestCLICoverage(unittest.TestCase):
 
     def test_interactive_mode_coverage(self):
         """Test interactive mode with various commands."""
+        import pathlib
+
+        pdb_path_str = pathlib.Path(self.pdb_path).as_posix()
         commands = [
-            f"read pdb {self.pdb_path}",
-            f"load trajectory {self.pdb_path} {self.pdb_path}",
+            f"read pdb {pdb_path_str}",
+            f"load trajectory {pdb_path_str} {pdb_path_str}",
             "ensemble shifts",
             "ensemble noes 6.0",
             "ensemble rdcs 12.0 0.6",
