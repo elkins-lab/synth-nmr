@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ "master", "main" ]
+    branches: ["master", "main"]
   pull_request:
-    branches: [ "master", "main" ]
+    branches: ["master", "main"]
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -24,20 +24,22 @@ jobs:
         exclude:
           # Python 3.11 and 3.12 are only tested with the stable 1.x branch (1.26.4)
           # to reduce CI load. 3.13 and 3.14 track the modern NumPy 2.x releases.
-          - python-version: "3.11"
-            numpy-version: "2.2.6"
-          - python-version: "3.11"
-            numpy-version: "2.3.5"
-          - python-version: "3.12"
-            numpy-version: "2.2.6"
-          - python-version: "3.12"
-            numpy-version: "2.3.5"
+        - python-version: "3.11"
+          numpy-version: "2.2.6"
+        - python-version: "3.11"
+          numpy-version: "2.3.5"
+        - python-version: "3.12"
+          numpy-version: "2.2.6"
+        - python-version: "3.12"
+          numpy-version: "2.3.5"
           # Skip oldest NumPy on newest Python versions
-          - python-version: "3.13"
-            numpy-version: "1.26.4"
-          - python-version: "3.14"
-            numpy-version: "1.26.4"
+        - python-version: "3.13"
+          numpy-version: "1.26.4"
+        - python-version: "3.14"
+          numpy-version: "1.26.4"
 
+        - os: windows-latest
+          python-version: '3.14'
     steps:
     - uses: actions/checkout@v4
 
