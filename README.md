@@ -1,6 +1,7 @@
 # synth-nmr
 
 [![Tests](https://github.com/elkins/synth-nmr/actions/workflows/test.yml/badge.svg)](https://github.com/elkins/synth-nmr/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/elkins/synth-nmr/branch/main/graph/badge.svg)](https://codecov.io/gh/elkins/synth-nmr)
 [![PyPI version](https://img.shields.io/pypi/v/synth-nmr)](https://pypi.org/project/synth-nmr/)
 [![Python versions](https://img.shields.io/pypi/pyversions/synth-nmr)](https://pypi.org/project/synth-nmr/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
