@@ -35,12 +35,18 @@ def test_shiftx2_resolve_path_typical_location(mocker):
 
         # Mock which to only find it in a typical location
         import os
+
         typical_path = os.path.join(os.path.expanduser("~"), "shiftx2", "shiftx2.py")
         # Tolerate backslashes and forward slashes in comparison
-        mocker.patch("shutil.which", side_effect=lambda x: x if x.replace('\\', '/') == typical_path.replace('\\', '/') else None)
+        mocker.patch(
+            "shutil.which",
+            side_effect=lambda x: x
+            if x.replace("\\", "/") == typical_path.replace("\\", "/")
+            else None,
+        )
 
         predictor = ShiftX2Predictor()
-        assert predictor.executable.replace('\\', '/') == typical_path.replace('\\', '/')
+        assert predictor.executable.replace("\\", "/") == typical_path.replace("\\", "/")
         assert predictor.is_available() is True
 
 
