@@ -34,7 +34,6 @@ def test_shiftx2_resolve_path_typical_location(mocker):
             del os.environ["SHIFTX2_DIR"]
 
         # Mock which to only find it in a typical location
-        import os
 
         typical_path = os.path.join(os.path.expanduser("~"), "shiftx2", "shiftx2.py")
 
