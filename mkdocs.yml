@@ -65,6 +65,11 @@ nav:
     - NOEs: api/nmr.md
     - J-Coupling: api/j_coupling.md
     - RDCs: api/rdc.md
+  - Developer Guide:
+    - Overview: development/index.md
+    - Architecture: development/architecture.md
+    - Testing & CI: development/testing.md
+    - Release Process: development/release_process.md
 
 # Plugins
 plugins:
