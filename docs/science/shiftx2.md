@@ -237,7 +237,7 @@ All tests pass without SHIFTX2 installed and run in CI on every pull request.
 
 ## Reference
 
-> Han, B., Liu, Y., Ginzinger, S., & Wishart, D. (2011).  
-> **SHIFTX2: significantly improved protein chemical shift prediction.**  
-> *Journal of Biomolecular NMR*, 50(1), 43–57.  
+> Han, B., Liu, Y., Ginzinger, S., & Wishart, D. (2011).
+> **SHIFTX2: significantly improved protein chemical shift prediction.**
+> *Journal of Biomolecular NMR*, 50(1), 43–57.
 > [doi:10.1007/s10858-011-9478-4](https://doi.org/10.1007/s10858-011-9478-4)

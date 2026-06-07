@@ -18,7 +18,7 @@ Wüthrich demonstrated that researchers could systematically "walk" down the pep
 
 In modern hybrid structural biology, computational researchers often find themselves operating in reverse. Rather than starting with experimental spectra and trying to solve a structure, they start with a predicted structure (e.g., from AlphaFold) and need to simulate what the corresponding NMR experiment *should* look like.
 
-This is the primary directive of `synth-nmr`. 
+This is the primary directive of `synth-nmr`.
 
 By calculating what the NOEs, Chemical Shifts, and Relaxation rates should be for a specific atomic model, researchers can quantitatively assess how closely their in silico predictions match physical reality.
 

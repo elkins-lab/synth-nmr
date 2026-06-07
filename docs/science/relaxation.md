@@ -1,6 +1,6 @@
 # NMR Relaxation & Protein Dynamics
 
-Traditional structural biology (like X-ray crystallography) often yields static snapshots. NMR excels because it provides detailed information on the dynamic **timescales of motion** within a protein. 
+Traditional structural biology (like X-ray crystallography) often yields static snapshots. NMR excels because it provides detailed information on the dynamic **timescales of motion** within a protein.
 
 Macromolecular dynamics play crucial roles in defining function: active-site loop closure, allosteric regulation, and protein-protein interfacial adaptation all leave specialized signatures in the NMR relaxation rates.
 

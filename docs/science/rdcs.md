@@ -1,6 +1,6 @@
 # Residual Dipolar Couplings (RDCs)
 
-Before the late 1990s, NMR structures were determined almost exclusively using predominantly *local* restraints: NOEs (short distances) and J-Couplings (local dihedrals). 
+Before the late 1990s, NMR structures were determined almost exclusively using predominantly *local* restraints: NOEs (short distances) and J-Couplings (local dihedrals).
 
 While these were sufficient for small, rigid globular proteins, they often failed to properly orient distinct domains relative to one another in multi-domain proteins or loose complexes. The lack of long-range, *global* orientational information was a severe limitation.
 
@@ -18,13 +18,13 @@ Where $\theta$ is the angle the internuclear vector (e.g., the N-H bond) makes w
 
 ## The Breakthrough: Weak Alignment by Ad Bax
 
-In 1997, **Ad Bax** and Nico Tjandra introduced a revolutionary concept: **Residual Dipolar Couplings** (RDCs). 
+In 1997, **Ad Bax** and Nico Tjandra introduced a revolutionary concept: **Residual Dipolar Couplings** (RDCs).
 
 They realized that if you placed the protein into a dilute, anisotropic liquid crystalline medium (like a dilute solution of bicelles or phage particles), the protein would no longer tumble perfectly randomly. Because of steric or electrostatic interactions with the oriented medium, the protein would adopt a very slight preference to align in a specific direction relative to the magnetic field.
 
-Because the tumbling is no longer perfectly isotropic, the time-average of $(3\cos^2\theta - 1)$ is no longer zero, but a very small fraction of its static value (e.g., $10 - 20 \text{ Hz}$). 
+Because the tumbling is no longer perfectly isotropic, the time-average of $(3\cos^2\theta - 1)$ is no longer zero, but a very small fraction of its static value (e.g., $10 - 20 \text{ Hz}$).
 
-These smaller, **Residual** Dipolar Couplings can be easily measured as small splittings in the $J$-coupling peaks of a standard 2D HSQC spectrum. 
+These smaller, **Residual** Dipolar Couplings can be easily measured as small splittings in the $J$-coupling peaks of a standard 2D HSQC spectrum.
 
 Crucially, **RDCs provide global orientational restraints**. Every measured N-H RDC tells the researcher exactly what angle that specific peptide bond makes relative to the *single, global alignment frame* of the entire molecule, solving the domain-orientation problem definitively.
 

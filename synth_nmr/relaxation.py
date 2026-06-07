@@ -3,6 +3,12 @@ from typing import Any, Dict, Optional
 
 import biotite.structure as struc
 import numpy as np
+from synth_core.constants import (
+    GAMMA_1H,
+    GAMMA_15N,
+    REDUCED_PLANCK_CONSTANT,
+    VACUUM_PERMEABILITY,
+)
 
 from synth_nmr.structure_utils import get_secondary_structure
 
@@ -21,12 +27,6 @@ except ImportError:
 
 # --- Physical Constants for NMR Relaxation ---
 # SI Units used for internal calculation
-from synth_core.constants import (
-    GAMMA_15N,
-    GAMMA_1H,
-    REDUCED_PLANCK_CONSTANT,
-    VACUUM_PERMEABILITY,
-)
 
 R_NH = 1.02e-10  # NH Bond length (meters) - standard value
 # 15N Chemical Shift Anisotropy (Δσ).
@@ -166,7 +166,13 @@ def _calculate_dipolar_constant(r_nh: float) -> float:
     This constant represents the strength of the magnetic interaction distance dependence (r^-3).
     In relaxation rate equations (R1, R2), it appears squared (d^2), leading to the famous r^-6 dependence.
     """
-    dd_const = (VACUUM_PERMEABILITY / (4 * np.pi)) * REDUCED_PLANCK_CONSTANT * GAMMA_1H * GAMMA_15N * (r_nh**-3)
+    dd_const = (
+        (VACUUM_PERMEABILITY / (4 * np.pi))
+        * REDUCED_PLANCK_CONSTANT
+        * GAMMA_1H
+        * GAMMA_15N
+        * (r_nh**-3)
+    )
     return dd_const**2
 
 

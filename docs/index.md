@@ -2,7 +2,7 @@
 
 **NMR spectroscopy calculations for protein structures**
 
-A lightweight, standalone Python package for calculating NMR observables from protein structures. 
+A lightweight, standalone Python package for calculating NMR observables from protein structures.
 
 `synth-nmr` provides a focused toolkit that works with any protein structure source to predict experimental observables like NOEs, Relaxation rates, Chemical Shifts, and Residual Dipolar Couplings.
 

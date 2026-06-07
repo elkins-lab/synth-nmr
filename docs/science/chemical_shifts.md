@@ -2,7 +2,7 @@
 
 The **Chemical Shift** ($\delta$) is the defining parameter of NMR spectroscopy. The exact resonance frequency (Larmor frequency) of a nucleus is exquisitely sensitive to its local electronic environment.
 
-Because electrons are charged particles in motion, they generate tiny induced magnetic fields that oppose the giant external spectrometer field ($B_0$). We say the nucleus is **shielded** by its electron cloud. 
+Because electrons are charged particles in motion, they generate tiny induced magnetic fields that oppose the giant external spectrometer field ($B_0$). We say the nucleus is **shielded** by its electron cloud.
 
 $$
 B_{\text{effective}} = B_0 \cdot (1 - \sigma)
@@ -22,7 +22,7 @@ By simply analyzing the assigned backbone chemical shifts without any structures
 
 ## The Physics of Ring Currents
 
-A dramatic source of chemical shifting arises from **Aromatic Ring Currents**. 
+A dramatic source of chemical shifting arises from **Aromatic Ring Currents**.
 
 Residues like Phenylalanine, Tyrosine, and Tryptophan possess delocalized $\pi$-electron clouds above and below the plane of their aromatic rings. When placed in the $B_0$ spectrometer field, these $\pi$-electrons freely circulate in a loop, acting like a tiny electromagnet.
 
@@ -66,4 +66,3 @@ See the **[SHIFTX2 Integration](shiftx2.md)** page for:
 - How the automatic detection and fallback works
 - Direct API usage (`ShiftX2Predictor` class)
 - A table of all automated test cases
-

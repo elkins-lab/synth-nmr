@@ -4,7 +4,7 @@ The **Nuclear Overhauser Effect** (NOE) is the fundamental observable that allow
 
 ## The Physics of Cross-Relaxation
 
-The interaction underlying the NOE is the **Dipole-Dipole Interaction**. When two magnetic nuclei (like protons) are nearby in space, their magnetic fields interact. 
+The interaction underlying the NOE is the **Dipole-Dipole Interaction**. When two magnetic nuclei (like protons) are nearby in space, their magnetic fields interact.
 
 When you apply a radiofrequency pulse to perturb the spin state of **Proton A**, it will eventually return to equilibrium (relax). However, because its magnetic field is coupled to **Proton B**, some of that energy is transferred *through space* to Proton B, altering Proton B's signal intensity. This transfer is called **cross-relaxation**.
 

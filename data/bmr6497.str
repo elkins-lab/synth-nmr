@@ -523,7 +523,7 @@ save_
 #####################################
 #  Sample contents and methodology  #
 #####################################
-	 
+
     ########################
     #  Sample description  #
     ########################
@@ -1735,4 +1735,3 @@ G76            -0.0382       -0.0519          -0.0588
       2   '1JNH-modulated 2D HSQC'   1   $sample_1   isotropic   6497   1
    stop_
 save_
-

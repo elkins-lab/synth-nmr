@@ -1,6 +1,6 @@
 # API Reference
 
-This section provides auto-generated documentation for the public API of `synth-nmr`. 
+This section provides auto-generated documentation for the public API of `synth-nmr`.
 
 The core modules are responsible for taking a `biotite.structure.AtomArray` structural object and converting its 3D coordinates into predicted Nuclear Magnetic Resonance observables.
 
