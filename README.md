@@ -9,6 +9,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19341451-blue)](https://doi.org/10.5281/zenodo.19341451)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13129/badge)](https://www.bestpractices.dev/projects/13129)
 
 <img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
 
