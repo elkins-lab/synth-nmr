@@ -2578,7 +2578,7 @@ print(f"   N: {shifts['A'][10]['N']} ppm")</div>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">First 3 NOEs:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">_i</span><span class="p">,</span> <span class="n">noe</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">noes</span><span class="p">[:</span><span class="mi">3</span><span class="p">]):</span>
     <span class="nb">print</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å"</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'seq_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'seq_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> Å"</span>
     <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-5">from synth_nmr import calculate_synthetic_noes
@@ -2590,7 +2590,7 @@ print(f"Found {len(noes)} inter-residue NOE distance restraints!")
 print("\nFirst 3 NOEs:")
 for _i, noe in enumerate(noes[:3]):
     print(
-        f"  {noe['index_1']} {noe['atom_name_1']} &lt;--&gt; {noe['index_2']} {noe['atom_name_2']}: {noe['distance']:.2f} Å"
+        f"  {noe['seq_1']} {noe['atom_name_1']} &lt;--&gt; {noe['seq_2']} {noe['atom_name_2']}: {noe['distance']:.2f} Å"
     )</div>
 </div>
 </div>

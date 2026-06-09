@@ -2553,7 +2553,7 @@ are rarer, because $r^{-6}$ amplifies short distances enormously.</li>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">synth_nmr.nmr</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_synthetic_noes</span>
 
 <span class="c1"># calculate_synthetic_noes returns a list of dicts, each with keys:</span>
-<span class="c1"># 'index_1', 'atom_name_1', 'res_name_1', 'index_2', 'atom_name_2',</span>
+<span class="c1"># 'seq_1', 'atom_name_1', 'res_name_1', 'seq_2', 'atom_name_2',</span>
 <span class="c1"># 'res_name_2', 'distance', 'upper_limit'</span>
 <span class="n">noes</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">structure</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">buffer</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -2621,15 +2621,15 @@ are rarer, because $r^{-6}$ amplifies short distances enormously.</li>
 <span class="nb">print</span><span class="p">(</span><span class="s2">"Sample NOE Restraints:"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">noe</span> <span class="ow">in</span> <span class="n">noes</span><span class="p">[:</span><span class="mi">5</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_1'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; "</span>
-        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_2'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'index_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: "</span>
+        <span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_1'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'seq_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_1'</span><span class="p">]</span><span class="si">}</span><span class="s2"> &lt;--&gt; "</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'res_name_2'</span><span class="p">]</span><span class="si">}{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'seq_2'</span><span class="p">]</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'atom_name_2'</span><span class="p">]</span><span class="si">}</span><span class="s2">: "</span>
         <span class="sa">f</span><span class="s2">"Distance </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'distance'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2"> (Upper Limit: </span><span class="si">{</span><span class="n">noe</span><span class="p">[</span><span class="s1">'upper_limit'</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> </span><span class="se">\u00c5</span><span class="s2">)"</span>
     <span class="p">)</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">from synth_nmr.nmr import calculate_synthetic_noes
 
 # calculate_synthetic_noes returns a list of dicts, each with keys:
-# 'index_1', 'atom_name_1', 'res_name_1', 'index_2', 'atom_name_2',
+# 'seq_1', 'atom_name_1', 'res_name_1', 'seq_2', 'atom_name_2',
 # 'res_name_2', 'distance', 'upper_limit'
 noes = calculate_synthetic_noes(structure, cutoff=5.0, buffer=0.5, exclude_intra_residue=True)
 
@@ -2697,8 +2697,8 @@ plt.show()
 print("Sample NOE Restraints:")
 for noe in noes[:5]:
     print(
-        f"  {noe['res_name_1']}{noe['index_1']} {noe['atom_name_1']} &lt;--&gt; "
-        f"{noe['res_name_2']}{noe['index_2']} {noe['atom_name_2']}: "
+        f"  {noe['res_name_1']}{noe['seq_1']} {noe['atom_name_1']} &lt;--&gt; "
+        f"{noe['res_name_2']}{noe['seq_2']} {noe['atom_name_2']}: "
         f"Distance {noe['distance']:.2f} \u00c5 (Upper Limit: {noe['upper_limit']:.2f} \u00c5)"
     )</div>
 </div>
@@ -2870,7 +2870,7 @@ single-model distances, revealing which residues are most affected by flexibilit
     <span class="n">raw</span> <span class="o">=</span> <span class="n">calculate_synthetic_noes</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">5.5</span><span class="p">,</span> <span class="n">exclude_intra_residue</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">flat</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">raw</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"index_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"index_2"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_2"</span><span class="p">])</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="s2">"seq_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_1"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"seq_2"</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"atom_name_2"</span><span class="p">])</span>
         <span class="n">flat</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">"distance"</span><span class="p">]</span>
     <span class="n">per_frame_noes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
 
@@ -2910,7 +2910,7 @@ for frame in noe_ensemble:
     raw = calculate_synthetic_noes(frame, cutoff=5.5, exclude_intra_residue=True)
     flat = {}
     for entry in raw:
-        key = (entry["index_1"], entry["atom_name_1"], entry["index_2"], entry["atom_name_2"])
+        key = (entry["seq_1"], entry["atom_name_1"], entry["seq_2"], entry["atom_name_2"])
         flat[key] = entry["distance"]
     per_frame_noes.append(flat)
 
