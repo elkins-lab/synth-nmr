@@ -166,7 +166,7 @@ def _calculate_dipolar_constant(r_nh: float) -> float:
     This constant represents the strength of the magnetic interaction distance dependence (r^-3).
     In relaxation rate equations (R1, R2), it appears squared (d^2), leading to the famous r^-6 dependence.
     """
-    dd_const = (
+    dd_const = float(
         (VACUUM_PERMEABILITY / (4 * np.pi))
         * REDUCED_PLANCK_CONSTANT
         * GAMMA_1H
@@ -302,7 +302,7 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
             if np.any(ion_mask):
                 temp_struc = temp_struc[~ion_mask]
 
-            atom_sasa = struc.sasa(temp_struc, probe_radius=1.4)
+            atom_sasa = struc.sasa(temp_struc, probe_radius=1.4, vdw_radii="Single")
             atom_sasa = np.nan_to_num(atom_sasa, nan=50.0)
 
             # Vectorized aggregation of SASA per residue
