@@ -985,6 +985,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#7-3d-protein-visualization-colored-by-chemical-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 3D Protein Visualization Colored by Chemical Shift
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1583,6 +1594,17 @@
     <span class="md-ellipsis">
       
         6. Calculate J-Couplings
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-3d-protein-visualization-colored-by-chemical-shift" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 3D Protein Visualization Colored by Chemical Shift
       
     </span>
   </a>
@@ -2642,6 +2664,214 @@ j_couplings = calculate_hn_ha_coupling(structure)
 print("Predicted 3J(HN-HA) Couplings:")
 for res_id in [10, 11, 12]:
     print(f"  Residue {res_id}: {j_couplings['A'][res_id]:.2f} Hz")</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-7">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Add py3Dmol for visualization</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="n">IN_COLAB</span> <span class="o">=</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span>
+<span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">py3Dmol</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-7"># Add py3Dmol for visualization
+import sys
+
+IN_COLAB = "google.colab" in sys.modules
+if IN_COLAB:
+    !pip install -q py3Dmol</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h2 id="7-3d-protein-visualization-colored-by-chemical-shift">7. 3D Protein Visualization Colored by Chemical Shift<a class="anchor-link" href="#7-3d-protein-visualization-colored-by-chemical-shift">¶</a></h2><p>Finally, let's visualize the 3D protein structure. We will color the C-alpha atoms based on their predicted chemical shifts to see how local structure correlates with the NMR observables.</p>
+<p>(If running in a static environment where py3Dmol is unsupported, a static matplotlib 3D trace will be generated instead).</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In [ ]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+<div class="CodeMirror cm-s-jupyter">
+<div class="zeroclipboard-container">
+<clipboard-copy ,="" aria-label="Copy to Clipboard" for="cell-8">
+<div>
+<span class="notice" hidden="">Copied!</span>
+<svg aria-hidden="true" class="clipboard-copy-icon" data-view-component="true" height="20" version="1.1" viewbox="0 0 16 16" width="20">
+<path d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+<path d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+</clipboard-copy>
+</div>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Extract coordinates and chemical shifts for C-alpha atoms</span>
+<span class="n">ca_coords</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">ca_shifts</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">chain_a</span> <span class="o">=</span> <span class="n">shifts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"A"</span><span class="p">,</span> <span class="p">{})</span>
+<span class="k">for</span> <span class="n">res_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">chain_a</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="s2">"CA"</span> <span class="ow">in</span> <span class="n">chain_a</span><span class="p">[</span><span class="n">res_id</span><span class="p">]:</span>
+        <span class="c1"># We need to find the CA atom in the structure</span>
+        <span class="n">res_atoms</span> <span class="o">=</span> <span class="n">structure</span><span class="p">[(</span><span class="n">structure</span><span class="o">.</span><span class="n">res_id</span> <span class="o">==</span> <span class="n">res_id</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">structure</span><span class="o">.</span><span class="n">atom_name</span> <span class="o">==</span> <span class="s2">"CA"</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res_atoms</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ca_coords</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res_atoms</span><span class="o">.</span><span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">ca_shifts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chain_a</span><span class="p">[</span><span class="n">res_id</span><span class="p">][</span><span class="s2">"CA"</span><span class="p">])</span>
+
+<span class="n">ca_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ca_coords</span><span class="p">)</span>
+<span class="n">ca_shifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ca_shifts</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">py3Dmol</span>
+
+    <span class="c1"># Check if we are running interactively</span>
+    <span class="n">interactive</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="s2">"ipykernel"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+        <span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">IN_COLAB</span><span class="p">:</span>
+        <span class="n">interactive</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="n">interactive</span><span class="p">:</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">py3Dmol</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">800</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"ubiquitin.pdb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pdb_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">addModel</span><span class="p">(</span><span class="n">pdb_data</span><span class="p">,</span> <span class="s2">"pdb"</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">setStyle</span><span class="p">({</span><span class="s2">"cartoon"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"color"</span><span class="p">:</span> <span class="s2">"spectrum"</span><span class="p">}})</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">zoomTo</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Interactive py3Dmol Viewer:"</span><span class="p">)</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">"Static environment"</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"py3Dmol not available or running statically. Falling back to matplotlib 3D."</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">"3d"</span><span class="p">)</span>
+
+    <span class="c1"># Plot C-alpha trace</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ca_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">ca_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">ca_coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">"gray"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Scatter colored by chemical shift</span>
+    <span class="n">sc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+        <span class="n">ca_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="n">ca_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">ca_coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+        <span class="n">c</span><span class="o">=</span><span class="n">ca_shifts</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="s2">"viridis"</span><span class="p">,</span>
+        <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">depthshade</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sc</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Predicted CA Chemical Shift (ppm)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Ubiquitin (1D3Z) C-alpha trace"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"X (Å)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Y (Å)"</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">"Z (Å)"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+<div class="clipboard-copy-txt" id="cell-8">import matplotlib.pyplot as plt
+import numpy as np
+
+# Extract coordinates and chemical shifts for C-alpha atoms
+ca_coords = []
+ca_shifts = []
+
+chain_a = shifts.get("A", {})
+for res_id in sorted(chain_a.keys()):
+    if "CA" in chain_a[res_id]:
+        # We need to find the CA atom in the structure
+        res_atoms = structure[(structure.res_id == res_id) &amp; (structure.atom_name == "CA")]
+        if len(res_atoms) &gt; 0:
+            ca_coords.append(res_atoms.coord[0])
+            ca_shifts.append(chain_a[res_id]["CA"])
+
+ca_coords = np.array(ca_coords)
+ca_shifts = np.array(ca_shifts)
+
+try:
+    import py3Dmol
+
+    # Check if we are running interactively
+    interactive = False
+    if "ipykernel" in sys.modules:
+        interactive = True
+    if IN_COLAB:
+        interactive = True
+
+    if interactive:
+        view = py3Dmol.view(width=800, height=600)
+        with open("ubiquitin.pdb") as f:
+            pdb_data = f.read()
+        view.addModel(pdb_data, "pdb")
+        view.setStyle({"cartoon": {"color": "spectrum"}})
+        view.zoomTo()
+        print("Interactive py3Dmol Viewer:")
+        view.show()
+    else:
+        raise ImportError("Static environment")
+
+except (ImportError, Exception):
+    print("py3Dmol not available or running statically. Falling back to matplotlib 3D.")
+
+    fig = plt.figure(figsize=(10, 8))
+    ax = fig.add_subplot(111, projection="3d")
+
+    # Plot C-alpha trace
+    ax.plot(ca_coords[:, 0], ca_coords[:, 1], ca_coords[:, 2], color="gray", alpha=0.5, linewidth=1)
+
+    # Scatter colored by chemical shift
+    sc = ax.scatter(
+        ca_coords[:, 0],
+        ca_coords[:, 1],
+        ca_coords[:, 2],
+        c=ca_shifts,
+        cmap="viridis",
+        s=50,
+        depthshade=True,
+    )
+
+    plt.colorbar(sc, label="Predicted CA Chemical Shift (ppm)")
+    ax.set_title("Ubiquitin (1D3Z) C-alpha trace")
+    ax.set_xlabel("X (Å)")
+    ax.set_ylabel("Y (Å)")
+    ax.set_zlabel("Z (Å)")
+    plt.show()</div>
 </div>
 </div>
 </div>
