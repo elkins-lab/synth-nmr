@@ -2405,9 +2405,27 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">torch</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">torch</span> <span class="n">matplotlib</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"../../"</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">!pip install -q synth-nmr biotite torch</div>
+<div class="clipboard-copy-txt" id="cell-1">import sys
+
+if "google.colab" in sys.modules:
+    !pip install -q synth-nmr biotite torch matplotlib
+else:
+    sys.path.append("../../")
+
+import biotite.structure.io as strucio
+import matplotlib.pyplot as plt
+import numpy as np</div>
 </div>
 </div>
 </div>
@@ -2482,9 +2500,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
-
-<span class="c1"># Load the multi-model NMR ensemble</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Load the multi-model NMR ensemble</span>
 <span class="n">ensemble</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">"ubiquitin.pdb"</span><span class="p">)</span>
 
 <span class="c1"># Extract only the first model for our calculations</span>
@@ -2493,9 +2509,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">structure</span><span class="p">)</span><span class="si">}</span><span class="s2"> atoms for Ubiquitin Model 1."</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Contains Hydrogens? </span><span class="si">{</span><span class="s1">'H'</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">structure</span><span class="o">.</span><span class="n">element</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-3">import biotite.structure.io as strucio
-
-# Load the multi-model NMR ensemble
+<div class="clipboard-copy-txt" id="cell-3"># Load the multi-model NMR ensemble
 ensemble = strucio.load_structure("ubiquitin.pdb")
 
 # Extract only the first model for our calculations
@@ -2737,10 +2751,7 @@ if IN_COLAB:
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="c1"># Extract coordinates and chemical shifts for C-alpha atoms</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Extract coordinates and chemical shifts for C-alpha atoms</span>
 <span class="n">ca_coords</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">ca_shifts</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -2805,10 +2816,7 @@ if IN_COLAB:
     <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">"Z (Å)"</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-8">import matplotlib.pyplot as plt
-import numpy as np
-
-# Extract coordinates and chemical shifts for C-alpha atoms
+<div class="clipboard-copy-txt" id="cell-8"># Extract coordinates and chemical shifts for C-alpha atoms
 ca_coords = []
 ca_shifts = []
 

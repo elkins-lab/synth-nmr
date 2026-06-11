@@ -2433,49 +2433,35 @@ physically meaningful set of conformations sampled by the real protein in soluti
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="c1"># Install synth-nmr and its dependencies</span>
-<span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">matplotlib</span> <span class="n">numpy</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="c1"># Download the Ubiquitin NMR solution ensemble — 10 conformers from NOE-restrained MD</span>
-<span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin_ensemble</span><span class="o">.</span><span class="n">pdb</span>
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">torch</span> <span class="n">matplotlib</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"../../"</span><span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-    <span class="p">{</span>
-        <span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">120</span><span class="p">,</span>
-        <span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-        <span class="s2">"axes.titlesize"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span>
-        <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"Environment ready."</span><span class="p">)</span>
+<span class="c1"># Download the 1D3Z 10-conformer ensemble</span>
+<span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin_ensemble</span><span class="o">.</span><span class="n">pdb</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1"># Install synth-nmr and its dependencies
-!pip install -q synth-nmr biotite matplotlib numpy
+<div class="clipboard-copy-txt" id="cell-1">import sys
 
-# Download the Ubiquitin NMR solution ensemble — 10 conformers from NOE-restrained MD
-!wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin_ensemble.pdb
+if "google.colab" in sys.modules:
+    !pip install -q synth-nmr biotite torch matplotlib
+else:
+    sys.path.append("../../")
 
 import biotite.structure.io as strucio
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.rcParams.update(
-    {
-        "figure.dpi": 120,
-        "font.size": 11,
-        "axes.titlesize": 13,
-        "axes.spines.top": False,
-        "axes.spines.right": False,
-    }
-)
-print("Environment ready.")</div>
+# Download the 1D3Z 10-conformer ensemble
+!wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin_ensemble.pdb</div>
 </div>
 </div>
 </div>

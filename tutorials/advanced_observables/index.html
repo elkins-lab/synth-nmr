@@ -2368,39 +2368,37 @@ when protein flexibility is taken into account.</p>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">matplotlib</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin</span><span class="o">.</span><span class="n">pdb</span>
+<span class="k">if</span> <span class="s2">"google.colab"</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+    <span class="err">!</span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">q</span> <span class="n">synth</span><span class="o">-</span><span class="n">nmr</span> <span class="n">biotite</span> <span class="n">torch</span> <span class="n">matplotlib</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"../../"</span><span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">biotite.structure.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">strucio</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-    <span class="p">{</span><span class="s2">"figure.dpi"</span><span class="p">:</span> <span class="mi">110</span><span class="p">,</span> <span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">"axes.spines.top"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">"axes.spines.right"</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
-<span class="p">)</span>
-
-<span class="c1"># 1D3Z has 10 NMR conformers; use model 1 for single-structure analyses</span>
-<span class="n">stack</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">"ubiquitin.pdb"</span><span class="p">)</span>
-<span class="n">structure</span> <span class="o">=</span> <span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded 1D3Z: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">)</span><span class="si">}</span><span class="s2"> conformers — using model 1 for static analyses."</span><span class="p">)</span>
+<span class="c1"># Load Ubiquitin (1D3Z) for analysis</span>
+<span class="err">!</span><span class="n">wget</span> <span class="o">-</span><span class="n">q</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">files</span><span class="o">.</span><span class="n">rcsb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">download</span><span class="o">/</span><span class="mi">1</span><span class="n">D3Z</span><span class="o">.</span><span class="n">pdb</span> <span class="o">-</span><span class="n">O</span> <span class="n">ubiquitin</span><span class="o">.</span><span class="n">pdb</span>
+<span class="n">ensemble_stack</span> <span class="o">=</span> <span class="n">strucio</span><span class="o">.</span><span class="n">load_structure</span><span class="p">(</span><span class="s2">"ubiquitin.pdb"</span><span class="p">)</span>
+<span class="n">structure</span> <span class="o">=</span> <span class="n">ensemble_stack</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">!pip install -q synth-nmr biotite matplotlib
+<div class="clipboard-copy-txt" id="cell-1">import sys
 
-!wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin.pdb
+if "google.colab" in sys.modules:
+    !pip install -q synth-nmr biotite torch matplotlib
+else:
+    sys.path.append("../../")
 
 import biotite.structure.io as strucio
 import matplotlib.pyplot as plt
 import numpy as np
 
-plt.rcParams.update(
-    {"figure.dpi": 110, "font.size": 11, "axes.spines.top": False, "axes.spines.right": False}
-)
-
-# 1D3Z has 10 NMR conformers; use model 1 for single-structure analyses
-stack = strucio.load_structure("ubiquitin.pdb")
-structure = stack[0]
-print(f"Loaded 1D3Z: {len(stack)} conformers — using model 1 for static analyses.")</div>
+# Load Ubiquitin (1D3Z) for analysis
+!wget -q https://files.rcsb.org/download/1D3Z.pdb -O ubiquitin.pdb
+ensemble_stack = strucio.load_structure("ubiquitin.pdb")
+structure = ensemble_stack[0]</div>
 </div>
 </div>
 </div>
@@ -2857,7 +2855,7 @@ single-model distances, revealing which residues are most affected by flexibilit
 <span class="p">)</span>
 
 <span class="c1"># Load all 10 conformers into a TrajectoryEnsemble</span>
-<span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">stack</span><span class="p">))]</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="n">ensemble_stack</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ensemble_stack</span><span class="p">))]</span>
 <span class="n">noe_ensemble</span> <span class="o">=</span> <span class="n">load_trajectory</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">noe_ensemble</span><span class="p">)</span><span class="si">}</span><span class="s2">-conformer TrajectoryEnsemble for NOE analysis."</span><span class="p">)</span>
 
@@ -2897,7 +2895,7 @@ single-model distances, revealing which residues are most affected by flexibilit
 )
 
 # Load all 10 conformers into a TrajectoryEnsemble
-frames = [stack[i] for i in range(len(stack))]
+frames = [ensemble_stack[i] for i in range(len(ensemble_stack))]
 noe_ensemble = load_trajectory(frames)
 print(f"Loaded {len(noe_ensemble)}-conformer TrajectoryEnsemble for NOE analysis.")
 
