@@ -7,7 +7,7 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Mypy](https://img.shields.io/badge/type--checked-mypy-blue)](http://mypy-lang.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins.github.io/synth-nmr/)
+[![Documentation](https://img.shields.io/badge/docs-MkDocs-blue)](https://elkins-lab.github.io/synth-nmr/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19341451-blue)](https://doi.org/10.5281/zenodo.19341451)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13129/badge)](https://www.bestpractices.dev/projects/13129)
 
@@ -17,7 +17,7 @@
 
 A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
 
-**[Read the full documentation here!](https://elkins.github.io/synth-nmr/)**
+**[Read the full documentation here!](https://elkins-lab.github.io/synth-nmr/)**
 
 ## Features
 
