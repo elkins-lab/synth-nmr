@@ -33,6 +33,7 @@ class TestRelaxation(unittest.TestCase):
         structure.res_id = np.repeat(np.arange(1, res_count + 1), 4)
         structure.res_name = np.repeat(["ALA"], res_count * 4)
         structure.chain_id = np.repeat(["A"], res_count * 4)
+        structure.coord = np.random.random((res_count * 4, 3))
 
         s2_map = predict_order_parameters(structure)
         self.assertEqual(len(s2_map), res_count)
@@ -77,6 +78,7 @@ class TestRelaxation(unittest.TestCase):
         structure.res_id = [1, 1, 2, 2]
         structure.res_name = ["PRO", "PRO", "ALA", "ALA"]
         structure.chain_id = ["A", "A", "A", "A"]
+        structure.coord = np.random.random((4, 3))
         rates = calculate_relaxation_rates(structure)
         self.assertEqual(len(rates), 0)
 
@@ -130,6 +132,7 @@ class TestRelaxation(unittest.TestCase):
         structure.res_id = [1, 1, 1, 1, 2, 2]
         structure.res_name = ["SEP", "SEP", "SEP", "SEP", "ZN", "ZN"]
         structure.chain_id = ["A", "A", "A", "A", "A", "A"]
+        structure.coord = np.random.random((6, 3))
         s2_map = predict_order_parameters(structure)
         self.assertEqual(len(s2_map), 2)
 
@@ -250,6 +253,7 @@ def test_calculate_relaxation_rates_zero_s2():
     structure.res_id = np.array([1, 1])
     structure.res_name = np.array(["ALA", "ALA"])
     structure.atom_name = np.array(["N", "H"])
+    structure.coord = np.random.random((2, 3))
 
     rates = calculate_relaxation_rates(structure, 600.0, 10e-9, s2_map={1: 0.0})
     assert 1 in rates
@@ -439,6 +443,7 @@ def test_calculate_relaxation_rates_divide_by_zero_r1(mocker, caplog):
     structure.res_id = np.array([1, 1])
     structure.res_name = np.array(["ALA", "ALA"])
     structure.atom_name = np.array(["N", "H"])
+    structure.coord = np.random.random((2, 3))
 
     # Mock spectral density to force r1_val to be exactly 0
     mocker.patch("synth_nmr.relaxation.spectral_density", return_value=0.0)
@@ -497,6 +502,7 @@ def test_predict_order_parameters_proline():
     structure.res_id = np.array([1, 2])
     structure.res_name = np.array(["ALA", "PRO"])
     structure.atom_name = np.array(["CA", "N"])
+    structure.coord = np.random.random((2, 3))
 
     s2_map = predict_order_parameters(structure)
 
@@ -514,6 +520,7 @@ def test_calculate_relaxation_rates_proline():
     structure.res_id = np.array([1, 1, 2])
     structure.res_name = np.array(["ALA", "ALA", "PRO"])
     structure.atom_name = np.array(["N", "H", "N"])
+    structure.coord = np.random.random((3, 3))
 
     # Proline lacks HN so relax rates shouldn't be calculated
     rates = calculate_relaxation_rates(structure)

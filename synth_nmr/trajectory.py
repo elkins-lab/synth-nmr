@@ -355,11 +355,11 @@ def _mdtraj_to_stack(traj: Any) -> struc.AtomArrayStack:
     elements = np.array([a.element.symbol for a in topology.atoms], dtype=str)
 
     stack: struc.AtomArrayStack = struc.AtomArrayStack(n_frames, n_atoms)
-    stack.atom_name = atom_names
-    stack.res_name = res_names
-    stack.res_id = res_ids
-    stack.chain_id = chain_ids
-    stack.element = elements
+    stack.atom_name = atom_names  # type: ignore[assignment]
+    stack.res_name = res_names  # type: ignore[assignment]
+    stack.res_id = res_ids  # type: ignore[assignment]
+    stack.chain_id = chain_ids  # type: ignore[assignment]
+    stack.element = elements  # type: ignore[assignment]
     # MDTraj xyz is shape (n_frames, n_atoms, 3) in nm → convert to Å
     stack.coord = traj.xyz * 10.0
 
