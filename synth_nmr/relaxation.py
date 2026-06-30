@@ -298,12 +298,12 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
             ptm_atom_names = ["P", "O1P", "O2P", "O3P"]
             ptm_mask = np.isin(temp_struc.atom_name, ptm_atom_names)
             if np.any(ptm_mask):
-                temp_struc = temp_struc[~ptm_mask]
+                temp_struc = temp_struc[~ptm_mask]  # type: ignore[index]
 
             ion_res_names = ["ZN", "MG", "CA", "NA", "CL", "K", "FE", "CU", "MN"]
             ion_mask = np.isin(temp_struc.res_name, ion_res_names)
             if np.any(ion_mask):
-                temp_struc = temp_struc[~ion_mask]
+                temp_struc = temp_struc[~ion_mask]  # type: ignore[index]
 
             atom_sasa = struc.sasa(temp_struc, probe_radius=1.4, vdw_radii="Single")
             atom_sasa = np.nan_to_num(atom_sasa, nan=50.0)

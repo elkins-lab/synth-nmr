@@ -195,9 +195,11 @@ def handle_command(args: List[str]) -> bool:
                 path = parsed_args.filename
                 try:
                     pdb_file = pdb.PDBFile.read(path)
-                    structure = pdb_file.get_structure()
-                    if isinstance(structure, struc.AtomArrayStack):
-                        structure = structure[0]
+                    tmp_structure = pdb_file.get_structure()
+                    if isinstance(tmp_structure, struc.AtomArrayStack):
+                        structure = tmp_structure[0]
+                    else:
+                        structure = tmp_structure
                     print(f"Read PDB file: {path}")
                 except Exception as e:
                     print(f"Error: Could not read '{path}': {e}")
@@ -208,9 +210,11 @@ def handle_command(args: List[str]) -> bool:
                 for path in paths:
                     try:
                         pdb_file = pdb.PDBFile.read(path)
-                        frame = pdb_file.get_structure()
-                        if isinstance(frame, struc.AtomArrayStack):
-                            frame = frame[0]
+                        tmp_frame = pdb_file.get_structure()
+                        if isinstance(tmp_frame, struc.AtomArrayStack):
+                            frame = tmp_frame[0]
+                        else:
+                            frame = tmp_frame
                         frames.append(frame)
                     except Exception as e:
                         print(f"Warning: Could not read '{path}': {e}")
@@ -226,9 +230,9 @@ def handle_command(args: List[str]) -> bool:
             sub = parsed_args.subcommand
             if sub == "shifts":
                 per_frame = []
-                for frame in ensemble:
+                for ens_frame in ensemble:
                     try:
-                        raw = predict_chemical_shifts(frame)
+                        raw = predict_chemical_shifts(ens_frame)
                         merged: Dict[int, Dict[str, float]] = {}
                         for method_dict in raw.values():
                             for res_id, atoms in method_dict.items():
@@ -248,9 +252,9 @@ def handle_command(args: List[str]) -> bool:
             elif sub == "noes":
                 cutoff = parsed_args.cutoff
                 per_frame_n = []
-                for frame in ensemble:
+                for ens_frame in ensemble:
                     try:
-                        noe_list = calculate_synthetic_noes(frame, cutoff=cutoff)
+                        noe_list = calculate_synthetic_noes(ens_frame, cutoff=cutoff)
                         flat = {}
                         for restraint in noe_list:
                             ri = int(restraint["seq_1"])

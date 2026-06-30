@@ -139,7 +139,7 @@ def calculate_synthetic_noes(
                 if exclude_intra_residue and is_intra_residue:
                     continue
 
-                dist = struc.distance(center, neighbor)
+                dist: float = struc.distance(center, neighbor)
 
                 # Explicitly exclude very close intra-residue geminal protons (e.g., HBx-HBx on same carbon)
                 # These are usually trivial in NOE lists and have fixed distances (~1.77 Å).

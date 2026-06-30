@@ -348,11 +348,11 @@ def _mdtraj_to_stack(traj: Any) -> struc.AtomArrayStack:
     n_frames = traj.n_frames
 
     # Build per-atom static fields once
-    atom_names = np.array([a.name for a in topology.atoms])
-    res_names = np.array([a.residue.name for a in topology.atoms])
-    res_ids = np.array([a.residue.resSeq for a in topology.atoms])
-    chain_ids = np.array([a.residue.chain.chain_id for a in topology.atoms])
-    elements = np.array([a.element.symbol for a in topology.atoms])
+    atom_names = np.array([a.name for a in topology.atoms], dtype=str)
+    res_names = np.array([a.residue.name for a in topology.atoms], dtype=str)
+    res_ids = np.array([a.residue.resSeq for a in topology.atoms], dtype=int)
+    chain_ids = np.array([a.residue.chain.chain_id for a in topology.atoms], dtype=str)
+    elements = np.array([a.element.symbol for a in topology.atoms], dtype=str)
 
     stack: struc.AtomArrayStack = struc.AtomArrayStack(n_frames, n_atoms)
     stack.atom_name = atom_names
