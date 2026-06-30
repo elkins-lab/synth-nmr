@@ -65,6 +65,12 @@ nav:
     - NOEs: api/nmr.md
     - J-Coupling: api/j_coupling.md
     - RDCs: api/rdc.md
+    - Data Pipeline: api/data_pipeline.md
+    - NEF IO: api/nef_io.md
+    - Neural Shifts: api/neural_shifts.md
+    - Trajectory: api/trajectory.md
+    - Validation: api/validation.md
+    - Structure Utils: api/structure_utils.md
   - Developer Guide:
     - Overview: development/index.md
     - Architecture: development/architecture.md

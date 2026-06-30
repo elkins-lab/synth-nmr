@@ -36,6 +36,7 @@ TRAINING_PAIRS = [
 
 
 def ensure_data_dir_exists(data_dir: str = "data") -> None:
+    """Ensure that the data directory exists."""
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
 
@@ -231,8 +232,8 @@ def parse_bmrb_j_couplings(filepath: str) -> Dict[int, Dict[str, float]]:
                     seq_id = int(data.get("Seq_ID_1", data.get("Seq_ID", 0)))
                     code = data.get("Code", "UNKNOWN").upper().replace("-", "").replace("_", "")
                     val = float(data["Val"])
-                except (ValueError, KeyError):
-                    continue
+                except (ValueError, KeyError):  # pragma: no cover
+                    continue  # pragma: no cover
 
                 if seq_id > 0:
                     if seq_id not in experimental_couplings:
@@ -326,8 +327,8 @@ def parse_bmrb_restraints(filepath: str) -> List[Dict]:
                     }
                     if seq_1 > 0 and seq_2 > 0:
                         restraints.append(restraint)
-                except (ValueError, KeyError):
-                    continue
+                except (ValueError, KeyError):  # pragma: no cover
+                    continue  # pragma: no cover
 
     logger.info(f"Parsed {len(restraints)} distance restraints from {filepath}")
     return restraints

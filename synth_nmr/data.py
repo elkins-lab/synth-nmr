@@ -1,3 +1,5 @@
+"""NMR data constants and empirical definitions."""
+
 from typing import Any, Dict, List, Set, Tuple
 
 """

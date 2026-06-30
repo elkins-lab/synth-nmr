@@ -1,3 +1,5 @@
+"""Utility functions for structure parsing and analysis."""
+
 import logging
 from typing import Dict, List, Tuple
 

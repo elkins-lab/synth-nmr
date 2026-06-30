@@ -1,3 +1,5 @@
+"""Chemical shift prediction module."""
+
 import logging
 import os
 import subprocess
@@ -16,6 +18,7 @@ try:
 except ImportError:
 
     def njit(func: Any = None, **kwargs: Any) -> Any:
+        """Mock njit decorator when numba is not installed."""
         if func is None:
             return lambda f: f
         return func

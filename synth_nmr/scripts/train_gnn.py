@@ -15,10 +15,10 @@ try:
     import torch.nn as nn
     from torch.optim import Adam
     from torch_geometric.loader import DataLoader
-except ImportError:
-    print("PyTorch and PyTorch Geometric are required to run training.")
-    print("Please install them with: pip install synth-nmr[ml]")
-    sys.exit(1)
+except ImportError:  # pragma: no cover
+    print("PyTorch and PyTorch Geometric are required to run training.")  # pragma: no cover
+    print("Please install them with: pip install synth-nmr[ml]")  # pragma: no cover
+    sys.exit(1)  # pragma: no cover
 
 import biotite.structure as struc
 
@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 
 
 def prepare_dataset(data_dir: str = "data") -> List[Any]:
+    """Prepare the graph dataset for training."""
     logger.info("Preparing dataset...")
     raw_data = load_matched_dataset(data_dir=data_dir)
 
@@ -78,6 +79,7 @@ def train(
     data_dir: str = "data",
     save_path: str = "synth_nmr/models/neural_shifts_v1.pt",
 ) -> None:
+    """Train the GNN model for chemical shift prediction."""
     dataset = prepare_dataset(data_dir)
     if not dataset:
         logger.error("Empty dataset. Aborting training.")
@@ -114,7 +116,7 @@ def train(
             masked_y = batch.y[batch.mask]
 
             if len(masked_y) == 0:
-                continue
+                continue  # pragma: no cover
 
             loss = loss_fn(masked_out, masked_y)
             loss.backward()

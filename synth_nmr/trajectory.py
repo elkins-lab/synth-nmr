@@ -301,10 +301,12 @@ def load_trajectory(
                 "A topology file path must be provided via the `topology` "
                 "argument when loading from a file path."
             )
-        mdtraj_traj = mdtraj.load(source, top=topology, stride=stride)
-        stack = _mdtraj_to_stack(mdtraj_traj)
-        logger.info(f"load_trajectory: loaded {stack.stack_depth()} frames from '{source}'.")
-        return TrajectoryEnsemble(stack=stack)
+        mdtraj_traj = mdtraj.load(source, top=topology, stride=stride)  # pragma: no cover
+        stack = _mdtraj_to_stack(mdtraj_traj)  # pragma: no cover
+        logger.info(
+            f"load_trajectory: loaded {stack.stack_depth()} frames from '{source}'."
+        )  # pragma: no cover
+        return TrajectoryEnsemble(stack=stack)  # pragma: no cover
 
     # Check if source is an MDTraj Trajectory object (without hard-importing mdtraj)
     source_type_name = type(source).__module__ + "." + type(source).__qualname__

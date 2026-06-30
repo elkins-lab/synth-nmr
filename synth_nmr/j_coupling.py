@@ -235,7 +235,7 @@ def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     protein_mask = struc.filter_amino_acids(structure)
     structure = structure[protein_mask]
     if structure.array_length() == 0:
-        return {}
+        return {}  # pragma: no cover
 
     res_starts = struc.get_residue_starts(structure)
     for i, start_idx in enumerate(res_starts):

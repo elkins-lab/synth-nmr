@@ -1,3 +1,5 @@
+"""Residual Dipolar Couplings (RDC) calculation module."""
+
 # EDUCATIONAL NOTE - Introduction to RDCs:
 # ==========================================
 # Residual Dipolar Couplings (RDCs) are a powerful NMR observable for determining the

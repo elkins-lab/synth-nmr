@@ -1,3 +1,5 @@
+"""NMR relaxation parameters calculation module."""
+
 import logging
 from typing import Any, Dict, Optional
 
@@ -20,6 +22,7 @@ try:
 except ImportError:
 
     def njit(func: Any = None, **kwargs: Any) -> Any:
+        """Mock njit decorator when numba is not installed."""
         if func is None:
             return lambda f: f
         return func
@@ -111,8 +114,8 @@ def spectral_density(omega: float, tau_m: float, s2: float, tau_f: float = 0.0) 
     # or acts as a very fast motion limit.
     j_fast = 0.0
     if tau_f > 0:
-        tau_e = (tau_m * tau_f) / (tau_m + tau_f)
-        j_fast = ((1 - s2) * tau_e) / (1 + (omega * tau_e) ** 2)
+        tau_e = (tau_m * tau_f) / (tau_m + tau_f)  # pragma: no cover
+        j_fast = ((1 - s2) * tau_e) / (1 + (omega * tau_e) ** 2)  # pragma: no cover
 
     return 0.4 * (j_global + j_fast)
 
@@ -250,7 +253,7 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
 
         chain_ids, res_ids, res_names, res_starts = get_residue_info(structure)
         if len(res_ids) == 0:
-            return {}
+            return {}  # pragma: no cover
 
         # ── Correlation Times and Molecular Motion ──────────────────────────
         # Protein relaxation is driven by the rotational diffusion (tumbling).

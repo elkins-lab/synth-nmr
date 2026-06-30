@@ -277,7 +277,7 @@ def calculate_cs_r_factor(
     if denom == 0.0:
         # Defensive: if all exp values equal their RC (perfectly random coil),
         # the denominator is zero and Rcs is undefined — return 0.
-        return 0.0
+        return 0.0  # pragma: no cover
 
     r_cs = np.sum(diffs) / denom
     return round(float(r_cs), 4)

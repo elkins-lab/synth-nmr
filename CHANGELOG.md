@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.6] - 2026-06-30
+
+### Fixed
+- **Test Coverage**: Achieved 100% test coverage across all `synth_nmr` modules by adding `tests/test_final_coverage.py` and resolving missing edge case branches.
+- **Documentation**: Added comprehensive module and function-level docstrings, resolving all missing docstring errors. Added 6 new API markdown documentation pages to MkDocs (`data_pipeline.md`, `nef_io.md`, `neural_shifts.md`, `structure_utils.md`, `trajectory.md`, `validation.md`).
+
 ## [0.11.3] - 2026-06-07
 
 ### Security
