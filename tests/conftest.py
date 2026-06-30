@@ -5,10 +5,14 @@ Provides helper functions for creating test structures without
 requiring the full synth-pdb package.
 """
 
+from collections.abc import Callable
+
 import biotite.structure as struc
+import numpy as np
+import pytest
 
 
-def create_test_structure(sequence_str, num_atoms_per_residue=5):
+def create_test_structure(sequence_str: str, num_atoms_per_residue: int = 5) -> struc.AtomArray:
     """
     Create a minimal test structure for testing NMR functions.
 
@@ -73,3 +77,25 @@ def create_test_structure(sequence_str, num_atoms_per_residue=5):
             structure.coord[start_idx + j] = [i * 3.8, j * 1.5, 0.0]
 
     return structure
+
+
+@pytest.fixture
+def atom_array_factory() -> Callable[[int, list[str], str], struc.AtomArray]:
+    """
+    A Pytest fixture that returns a factory function for generating dummy
+    biotite.structure.AtomArray objects. Useful for avoiding boilerplate
+    in tests requiring simple mock protein structures.
+    """
+
+    def _create(res_count: int, atoms_per_res: list[str], res_name: str = "ALA") -> struc.AtomArray:
+        n_atoms = len(atoms_per_res)
+        structure = struc.AtomArray(res_count * n_atoms)
+        structure.atom_name = np.array(atoms_per_res * res_count)
+        structure.res_id = np.repeat(np.arange(1, res_count + 1), n_atoms)
+        structure.res_name = np.repeat([res_name], res_count * n_atoms)
+        structure.chain_id = np.repeat(["A"], res_count * n_atoms)
+        # Supply random coordinates to avoid division-by-zero warnings in Biotite calculations
+        structure.coord = np.random.random((res_count * n_atoms, 3))
+        return structure
+
+    return _create
