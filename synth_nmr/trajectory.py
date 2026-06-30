@@ -354,7 +354,7 @@ def _mdtraj_to_stack(traj: Any) -> struc.AtomArrayStack:
     chain_ids = np.array([a.residue.chain.chain_id for a in topology.atoms])
     elements = np.array([a.element.symbol for a in topology.atoms])
 
-    stack = struc.AtomArrayStack(n_frames, n_atoms)
+    stack: struc.AtomArrayStack = struc.AtomArrayStack(n_frames, n_atoms)
     stack.atom_name = atom_names
     stack.res_name = res_names
     stack.res_id = res_ids

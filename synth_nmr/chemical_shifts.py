@@ -417,7 +417,7 @@ def calculate_csi(
         # 2. Create a mapping from residue ID to residue name for quick lookup
         res_names = {}
         for idx in struc.get_residue_starts(structure):
-            res = structure[idx]
+            res = structure[int(idx)]
             res_names[res.res_id] = res.res_name
         if not res_names:
             logger.warning("Could not create a residue map from the provided structure.")
@@ -471,9 +471,9 @@ def _get_aromatic_rings(structure: struc.AtomArray) -> np.ndarray:
     rings = []
 
     # Iterate residues
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
     for idx in res_starts:
-        res = structure[idx]
+        res = structure[int(idx)]
         res_name = res.res_name
 
         if res_name in RING_INTENSITIES:

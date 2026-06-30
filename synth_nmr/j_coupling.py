@@ -237,7 +237,7 @@ def _get_chi1_angles(structure: struc.AtomArray) -> Dict[str, Dict[int, float]]:
     if structure.array_length() == 0:
         return {}  # pragma: no cover
 
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
     for i, start_idx in enumerate(res_starts):
         end_idx = res_starts[i + 1] if i + 1 < len(res_starts) else len(structure)
         res_atoms = structure[start_idx:end_idx]

@@ -106,7 +106,7 @@ def calculate_synthetic_noes(
 
         # 2. Calculate Cell List for efficient neighbor search
         # We want pairs within cutoff.
-        cell_list = struc.CellList(protons, cell_size=cutoff)
+        cell_list: struc.CellList = struc.CellList(protons, cell_size=cutoff)
 
         # 3. Find neighbors
         # EDUCATIONAL NOTE: Neighbor Search Strategy

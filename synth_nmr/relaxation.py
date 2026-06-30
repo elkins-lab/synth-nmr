@@ -309,7 +309,7 @@ def predict_order_parameters(structure: struc.AtomArray) -> Dict[int, float]:
             atom_sasa = np.nan_to_num(atom_sasa, nan=50.0)
 
             # Vectorized aggregation of SASA per residue
-            temp_res_starts = struc.get_residue_starts(temp_struc)
+            temp_res_starts: np.ndarray = struc.get_residue_starts(temp_struc)
             for i in range(len(temp_res_starts)):
                 start = temp_res_starts[i]
                 end = temp_res_starts[i + 1] if i + 1 < len(temp_res_starts) else len(temp_struc)

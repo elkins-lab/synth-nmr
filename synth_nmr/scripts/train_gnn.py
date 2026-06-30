@@ -39,7 +39,7 @@ def prepare_dataset(data_dir: str = "data") -> List[Any]:
     for structure, exp_shifts in raw_data:
         # Build node features and edges
         data_obj = build_graph_data(structure)
-        res_starts = struc.get_residue_starts(structure)
+        res_starts: np.ndarray = struc.get_residue_starts(structure)
         n_res = len(res_starts)
 
         # Build y and mask (n_res, 6)

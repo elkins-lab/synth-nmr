@@ -197,13 +197,13 @@ def build_residue_features(structure: Any) -> np.ndarray:
     from synth_nmr.structure_utils import get_secondary_structure
 
     # Filter for amino acids to ensure residue features match backbone-complete protein
-    protein_mask = struc.filter_amino_acids(structure)
+    protein_mask: np.ndarray = struc.filter_amino_acids(structure)
     structure = structure[protein_mask]
     if structure.array_length() == 0:
         return np.zeros((0, 74), dtype=np.float32)
 
     # ── Collect per-residue data ──────────────────────────────────────────
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
     n_res = len(res_starts)
 
     res_names = []
@@ -338,7 +338,7 @@ def build_graph_data(structure: Any) -> Any:
     from scipy.spatial import KDTree
 
     # Ensure consistency by filtering for amino acids here too
-    protein_mask = struc.filter_amino_acids(structure)
+    protein_mask: np.ndarray = struc.filter_amino_acids(structure)
     structure = structure[protein_mask]
     if structure.array_length() == 0:
         return None
@@ -346,7 +346,7 @@ def build_graph_data(structure: Any) -> Any:
     X = build_residue_features(structure)
     x = torch.tensor(X, dtype=torch.float32)
 
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
     n_res = len(res_starts)
 
     if n_res == 0:
@@ -606,7 +606,7 @@ class NeuralShiftPredictor:
 
         # Step 3 — Add corrections to Random Coil baseline
         # Map residue index → (chain_id, res_id) for merging
-        res_starts = struc.get_residue_starts(structure)
+        res_starts: np.ndarray = struc.get_residue_starts(structure)
         result: Dict[str, Dict[int, Dict[str, float]]] = {}
 
         for i, start in enumerate(res_starts):

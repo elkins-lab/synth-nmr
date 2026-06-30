@@ -19,7 +19,7 @@ def get_residue_info(
         tuple: (chain_ids, res_ids, res_names, res_starts)
         All as NumPy arrays.
     """
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
     # Extract identifiers at each start index
     chain_ids = structure.chain_id[res_starts]
     res_ids = structure.res_id[res_starts]
@@ -73,7 +73,7 @@ def get_secondary_structure(structure: struc.AtomArray) -> List[str]:
     # ── 2. Mapping and Classification ─────────────────────────────────────
     # We iterate over all original residues. For protein residues, we look
     # up their dihedral angles. For others (ions, water), we default to 'coil'.
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
     ss_list = []
 
     # Map protein residue indices back to their dihedrals
@@ -193,7 +193,7 @@ def calculate_c_beta_deviations(structure: struc.AtomArray) -> Dict[int, float]:
 
     # Filter for residues that have a C-beta (excludes GLY)
     # We iterate residue by residue
-    res_starts = struc.get_residue_starts(structure)
+    res_starts: np.ndarray = struc.get_residue_starts(structure)
 
     for i in range(len(res_starts)):
         start_idx = res_starts[i]
