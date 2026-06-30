@@ -182,6 +182,7 @@ def test_validation_bmrb() -> None:
 def test_train_missing() -> None:
     pytest.importorskip("torch")
     from synth_nmr.scripts.train_gnn import train
+
     with patch("synth_nmr.scripts.train_gnn.load_matched_dataset", return_value=[]):
         train()
 
