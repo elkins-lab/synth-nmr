@@ -11,7 +11,6 @@ from synth_nmr.data_pipeline import load_matched_dataset, parse_bmrb_shifts
 from synth_nmr.j_coupling import calculate_hn_ha_coupling
 from synth_nmr.neural_shifts import NeuralShiftPredictor
 from synth_nmr.relaxation import calculate_relaxation_rates
-from synth_nmr.scripts.train_gnn import train
 from synth_nmr.synth_nmr_cli import handle_command, main
 from synth_nmr.trajectory import TrajectoryEnsemble, ensemble_average_j_couplings, load_trajectory
 from synth_nmr.validation import (
@@ -181,6 +180,8 @@ def test_validation_bmrb() -> None:
 
 
 def test_train_missing() -> None:
+    pytest.importorskip("torch")
+    from synth_nmr.scripts.train_gnn import train
     with patch("synth_nmr.scripts.train_gnn.load_matched_dataset", return_value=[]):
         train()
 
