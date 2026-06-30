@@ -1,7 +1,7 @@
 # synth-nmr
 
-[![Tests](https://github.com/elkins/synth-nmr/actions/workflows/test.yml/badge.svg)](https://github.com/elkins/synth-nmr/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/elkins/synth-nmr/branch/master/graph/badge.svg)](https://codecov.io/gh/elkins/synth-nmr)
+[![Tests](https://github.com/elkins-lab/synth-nmr/actions/workflows/test.yml/badge.svg)](https://github.com/elkins-lab/synth-nmr/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/elkins-lab/synth-nmr/branch/master/graph/badge.svg)](https://codecov.io/gh/elkins-lab/synth-nmr)
 [![PyPI version](https://img.shields.io/pypi/v/synth-nmr)](https://pypi.org/project/synth-nmr/)
 [![Python versions](https://img.shields.io/pypi/pyversions/synth-nmr)](https://pypi.org/project/synth-nmr/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -11,11 +11,11 @@
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.19341451-blue)](https://doi.org/10.5281/zenodo.19341451)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13129/badge)](https://www.bestpractices.dev/projects/13129)
 
-<img src="https://raw.githubusercontent.com/elkins/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
+<img src="https://raw.githubusercontent.com/elkins-lab/synth-nmr/master/images/NOE_Avenue.jpg" alt="NOE Avenue" width="50%">
 
 **NMR spectroscopy calculations for protein structures**
 
-A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
+A lightweight, standalone Python package for calculating NMR observables from protein structures. Originally extracted from the [synth-pdb](https://github.com/elkins-lab/synth-pdb) package to provide a focused toolkit that works with any protein structure source.
 
 **[Read the full documentation here!](https://elkins-lab.github.io/synth-nmr/)**
 
@@ -34,10 +34,10 @@ A lightweight, standalone Python package for calculating NMR observables from pr
 
 Try out `synth-nmr` immediately in your browser using Google Colab!
 
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/examples/interactive_tutorials/basic_nmr_prediction.ipynb) **Basic NMR Prediction**
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/examples/interactive_tutorials/advanced_observables.ipynb) **Advanced Observables: J-Couplings, NOEs, and RDCs**
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/examples/interactive_tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
-- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins/synth-nmr/blob/master/examples/interactive_tutorials/ensemble_nmr_analysis.ipynb) **Ensemble NMR Analysis: Proteins in Motion**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins-lab/synth-nmr/blob/master/examples/interactive_tutorials/basic_nmr_prediction.ipynb) **Basic NMR Prediction**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins-lab/synth-nmr/blob/master/examples/interactive_tutorials/advanced_observables.ipynb) **Advanced Observables: J-Couplings, NOEs, and RDCs**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins-lab/synth-nmr/blob/master/examples/interactive_tutorials/relaxation_analysis.ipynb) **Relaxation & Dynamics Analysis**
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/elkins-lab/synth-nmr/blob/master/examples/interactive_tutorials/ensemble_nmr_analysis.ipynb) **Ensemble NMR Analysis: Proteins in Motion**
 
 
 ## Installation
@@ -245,7 +245,7 @@ If you use synth-nmr in your research, please cite:
   title = {synth-nmr: NMR spectroscopy calculations for protein structures},
   year = {2026},
   doi = {10.5281/zenodo.18855129},
-  url = {https://github.com/elkins/synth-nmr}
+  url = {https://github.com/elkins-lab/synth-nmr}
 }
 ```
 
@@ -255,12 +255,12 @@ MIT License - see LICENSE file for details
 
 ## Related Projects
 
-- [synth-pdb](https://github.com/elkins/synth-pdb) — Core synthetic protein structure generator
-- [synth-saxs](https://github.com/elkins/synth-saxs) — SAXS profile simulator (use with synth-dynamics ensembles)
-- [synth-cryo-em](https://github.com/elkins/synth-cryo-em) — Cryo-EM map simulator
-- [synth-dynamics](https://github.com/elkins/synth-dynamics) — ANM/Langevin dynamics for NMR ensemble averaging
-- [diff-biophys](https://github.com/elkins/diff-biophys) — Differentiable JAX versions of all NMR kernels
-- [diff-ensemble](https://github.com/elkins/diff-ensemble) — IDP structural ensemble prediction with NMR restraints
+- [synth-pdb](https://github.com/elkins-lab/synth-pdb) — Core synthetic protein structure generator
+- [synth-saxs](https://github.com/elkins-lab/synth-saxs) — SAXS profile simulator (use with synth-dynamics ensembles)
+- [synth-cryo-em](https://github.com/elkins-lab/synth-cryo-em) — Cryo-EM map simulator
+- [synth-dynamics](https://github.com/elkins-lab/synth-dynamics) — ANM/Langevin dynamics for NMR ensemble averaging
+- [diff-biophys](https://github.com/elkins-lab/diff-biophys) — Differentiable JAX versions of all NMR kernels
+- [diff-ensemble](https://github.com/elkins-lab/diff-ensemble) — IDP structural ensemble prediction with NMR restraints
 - [Biotite](https://www.biotite-python.org/) — Computational biology toolkit
 
 ## References
@@ -291,4 +291,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Support
 
-For issues and questions, please use the [GitHub issue tracker](https://github.com/elkins/synth-nmr/issues).
+For issues and questions, please use the [GitHub issue tracker](https://github.com/elkins-lab/synth-nmr/issues).
